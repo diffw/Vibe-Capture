@@ -37,6 +37,19 @@ echo "📋 Creating Info.plist..."
 # Copy Info.plist
 cp VibeCapture/Info.plist "$APP_BUNDLE/Contents/Info.plist"
 
+# Copy App Icon
+if [ -f "VibeCapture/Resources/AppIcon.icns" ]; then
+    cp VibeCapture/Resources/AppIcon.icns "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
+    echo "🎨 App icon copied"
+fi
+
+# Copy Menu Bar Icon
+if [ -f "VibeCapture/Resources/MenuBarIcon.png" ]; then
+    cp VibeCapture/Resources/MenuBarIcon.png "$APP_BUNDLE/Contents/Resources/MenuBarIcon.png"
+    cp "VibeCapture/Resources/MenuBarIcon@2x.png" "$APP_BUNDLE/Contents/Resources/MenuBarIcon@2x.png" 2>/dev/null || true
+    echo "🎨 Menu bar icon copied"
+fi
+
 # Create PkgInfo
 echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
 

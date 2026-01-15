@@ -55,17 +55,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupStatusItem() {
-        // Use variable length so the "VC" label is always visible even if the SF Symbol is unavailable.
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem.button {
-            button.title = "VC"
-            let image = NSImage(
-                systemSymbolName: "camera.viewfinder",
-                accessibilityDescription: "Vibe Capture"
-            ) ?? NSImage(systemSymbolName: "camera", accessibilityDescription: "Vibe Capture")
-            image?.isTemplate = true
-            button.image = image
-            button.imagePosition = .imageLeft
+            // 使用自定义模板图标（自动适应亮色/暗色模式）
+            var iconImage: NSImage?
+            
+            // 尝试从 bundle 加载
+            if let resourcePath = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png") {
+                iconImage = NSImage(contentsOfFile: resourcePath)
+            }
+            
+            if let image = iconImage {
+                image.size = NSSize(width: 16, height: 16)
+                image.isTemplate = true  // 自动适应亮色/暗色模式
+                button.image = image
+            } else {
+                // 回退到 SF Symbol
+                let image = NSImage(
+                    systemSymbolName: "camera.viewfinder",
+                    accessibilityDescription: "Vibe Capture"
+                )
+                image?.isTemplate = true
+                button.image = image
+            }
         }
 
         let menu = NSMenu()
