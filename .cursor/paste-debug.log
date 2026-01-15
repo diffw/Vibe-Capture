@@ -1,0 +1,103 @@
+[2026-01-15T17:57:40Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T17:57:55Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T17:58:08Z] [AutoPaste] pasteToApp called for: Chrome (com.google.Chrome)
+[2026-01-15T17:58:08Z] [AutoPaste] Browser detected: com.google.Chrome
+[2026-01-15T17:58:08Z] [WebAppService] AppleScript error: {
+    NSAppleScriptErrorAppName = "Google Chrome";
+    NSAppleScriptErrorBriefMessage = "Not authorized to send Apple events to Google Chrome.";
+    NSAppleScriptErrorMessage = "Not authorized to send Apple events to Google Chrome.";
+    NSAppleScriptErrorNumber = "-1743";
+    NSAppleScriptErrorRange = "NSRange: {41, 16}";
+}
+[2026-01-15T17:58:08Z] [AutoPaste] Failed to get browser URL
+[2026-01-15T17:58:26Z] [AutoPaste] pasteToApp called for: Chrome (com.google.Chrome)
+[2026-01-15T17:58:26Z] [AutoPaste] Browser detected: com.google.Chrome
+[2026-01-15T17:58:26Z] [WebAppService] AppleScript error: {
+    NSAppleScriptErrorAppName = "Google Chrome";
+    NSAppleScriptErrorBriefMessage = "Not authorized to send Apple events to Google Chrome.";
+    NSAppleScriptErrorMessage = "Not authorized to send Apple events to Google Chrome.";
+    NSAppleScriptErrorNumber = "-1743";
+    NSAppleScriptErrorRange = "NSRange: {41, 16}";
+}
+[2026-01-15T17:58:26Z] [AutoPaste] Failed to get browser URL
+[2026-01-15T17:58:33Z] [AutoPaste] pasteToApp called for: Chrome (com.google.Chrome)
+[2026-01-15T17:58:33Z] [AutoPaste] Browser detected: com.google.Chrome
+[2026-01-15T17:58:33Z] [WebAppService] AppleScript error: {
+    NSAppleScriptErrorAppName = "Google Chrome";
+    NSAppleScriptErrorBriefMessage = "Not authorized to send Apple events to Google Chrome.";
+    NSAppleScriptErrorMessage = "Not authorized to send Apple events to Google Chrome.";
+    NSAppleScriptErrorNumber = "-1743";
+    NSAppleScriptErrorRange = "NSRange: {41, 16}";
+}
+[2026-01-15T17:58:33Z] [AutoPaste] Failed to get browser URL
+[2026-01-15T17:59:33Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:02:46Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:03:02Z] [AutoPaste] pasteToApp called for: Chrome (com.google.Chrome)
+[2026-01-15T18:03:02Z] [AutoPaste] Browser detected: com.google.Chrome
+[2026-01-15T18:03:23Z] [WebAppService] AppleScript result: https://chatgpt.com/g/g-p-692f0d64ee188191ab08287099772a93-nwa/c/6962c3cb-1b04-8330-bd6b-70e2519a7ef9
+[2026-01-15T18:03:23Z] [AutoPaste] Got URL: https://chatgpt.com/g/g-p-692f0d64ee188191ab08287099772a93-nwa/c/6962c3cb-1b04-8330-bd6b-70e2519a7ef9
+[2026-01-15T18:03:23Z] [AutoPaste] Found web app: ChatGPT, selector: #prompt-textarea
+[2026-01-15T18:03:23Z] [WebAppService] AppleScript error: {
+    NSAppleScriptErrorAppName = "Google Chrome";
+    NSAppleScriptErrorBriefMessage = "Executing JavaScript through AppleScript is turned off. To turn it on, from the menu bar, go to View > Developer > Allow JavaScript from Apple Events. For more information: https://support.google.com/chrome/?p=applescript";
+    NSAppleScriptErrorMessage = "Google Chrome got an error: Executing JavaScript through AppleScript is turned off. To turn it on, from the menu bar, go to View > Developer > Allow JavaScript from Apple Events. For more information: https://support.google.com/chrome/?p=applescript";
+    NSAppleScriptErrorNumber = 12;
+    NSAppleScriptErrorRange = "NSRange: {83, 209}";
+}
+[2026-01-15T18:03:23Z] [AutoPaste] Auto focus result: failed
+[2026-01-15T18:03:30Z] [AutoPaste] pasteToApp called for: Chrome (com.google.Chrome)
+[2026-01-15T18:03:30Z] [AutoPaste] Browser detected: com.google.Chrome
+[2026-01-15T18:03:30Z] [WebAppService] AppleScript result: https://chatgpt.com/g/g-p-692f0d64ee188191ab08287099772a93-nwa/c/6962c3cb-1b04-8330-bd6b-70e2519a7ef9
+[2026-01-15T18:03:30Z] [AutoPaste] Got URL: https://chatgpt.com/g/g-p-692f0d64ee188191ab08287099772a93-nwa/c/6962c3cb-1b04-8330-bd6b-70e2519a7ef9
+[2026-01-15T18:03:30Z] [AutoPaste] Found web app: ChatGPT, selector: #prompt-textarea
+[2026-01-15T18:03:30Z] [WebAppService] AppleScript error: {
+    NSAppleScriptErrorAppName = "Google Chrome";
+    NSAppleScriptErrorBriefMessage = "Executing JavaScript through AppleScript is turned off. To turn it on, from the menu bar, go to View > Developer > Allow JavaScript from Apple Events. For more information: https://support.google.com/chrome/?p=applescript";
+    NSAppleScriptErrorMessage = "Google Chrome got an error: Executing JavaScript through AppleScript is turned off. To turn it on, from the menu bar, go to View > Developer > Allow JavaScript from Apple Events. For more information: https://support.google.com/chrome/?p=applescript";
+    NSAppleScriptErrorNumber = 12;
+    NSAppleScriptErrorRange = "NSRange: {83, 209}";
+}
+[2026-01-15T18:03:30Z] [AutoPaste] Auto focus result: failed
+[2026-01-15T18:04:18Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:04:49Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:25:56Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:26:10Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:26:31Z] [AutoPaste] pasteToApp called for: Chrome (com.google.Chrome)
+[2026-01-15T18:30:36Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:30:43Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:30:55Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:31:01Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:31:06Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:31:19Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:47:11Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:47:17Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:47:24Z] [AutoPaste] pasteToApp called for: Telegram (ru.keepcoder.Telegram)
+[2026-01-15T18:47:32Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:47:39Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:52:19Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T18:52:30Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T18:59:15Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:59:22Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:59:43Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T18:59:50Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T18:59:57Z] [AutoPaste] pasteToApp called for: Telegram (ru.keepcoder.Telegram)
+[2026-01-15T19:00:08Z] [AutoPaste] pasteToApp called for: Telegram (ru.keepcoder.Telegram)
+[2026-01-15T19:00:17Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:00:26Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T19:00:40Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:00:51Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:01:24Z] [AutoPaste] pasteToApp called for: Telegram (ru.keepcoder.Telegram)
+[2026-01-15T19:01:37Z] [AutoPaste] pasteToApp called for: Telegram (ru.keepcoder.Telegram)
+[2026-01-15T19:01:52Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T19:01:58Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T19:02:13Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:02:36Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:02:48Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:02:57Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T19:03:09Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:15:38Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:15:50Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:15:59Z] [AutoPaste] pasteToApp called for: Claude (com.anthropic.claudefordesktop)
+[2026-01-15T19:19:16Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:19:42Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)
+[2026-01-15T19:19:51Z] [AutoPaste] pasteToApp called for: Cursor (com.todesktop.230313mzl4w4u92)

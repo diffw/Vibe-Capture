@@ -27,7 +27,7 @@ final class ScreenshotOverlayController {
             windows.append(win)
         }
 
-        NSCursor.crosshair.set()
+        NSCursor.crosshair.push()
         cursorWasSet = true
 
         NSApp.activate(ignoringOtherApps: true)
@@ -41,6 +41,9 @@ final class ScreenshotOverlayController {
                 win.orderFront(nil)
             }
         }
+
+        // Initialize cursor position display
+        updateCursorPosition()
     }
 
     func stop() {
@@ -58,7 +61,7 @@ final class ScreenshotOverlayController {
         selectionRectGlobal = nil
 
         if cursorWasSet {
-            NSCursor.arrow.set()
+            NSCursor.pop()
             cursorWasSet = false
         }
     }
@@ -110,6 +113,11 @@ final class ScreenshotOverlayController {
         }
     }
 
+    func handleMouseMoved() {
+        guard !isFinishing else { return }
+        updateCursorPosition()
+    }
+
     private func finish(_ rect: CGRect?) {
         guard !isFinishing else { return }
         isFinishing = true
@@ -132,11 +140,30 @@ final class ScreenshotOverlayController {
                 // Only show selection if it intersects this window
                 if win.frame.intersects(globalRect) {
                     win.overlayView.selectionRect = local
+                    win.overlayView.selectionSize = globalRect.size
                 } else {
                     win.overlayView.selectionRect = nil
+                    win.overlayView.selectionSize = nil
                 }
             } else {
                 win.overlayView.selectionRect = nil
+                win.overlayView.selectionSize = nil
+            }
+        }
+        // Also update cursor position during drag
+        updateCursorPosition()
+    }
+
+    private func updateCursorPosition() {
+        let globalPos = NSEvent.mouseLocation
+        for win in windows {
+            if win.frame.contains(globalPos) {
+                let localPos = CGPoint(x: globalPos.x - win.frame.origin.x, y: globalPos.y - win.frame.origin.y)
+                win.overlayView.cursorPosition = localPos
+                win.overlayView.cursorGlobalPosition = globalPos
+            } else {
+                win.overlayView.cursorPosition = nil
+                win.overlayView.cursorGlobalPosition = nil
             }
         }
     }
@@ -179,6 +206,7 @@ final class OverlayWindow: NSWindow {
         backgroundColor = .clear
         hasShadow = false
         ignoresMouseEvents = false
+        acceptsMouseMovedEvents = true  // Enable mouse moved events for coordinate display
         level = .screenSaver
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         contentView = overlayView
@@ -187,6 +215,7 @@ final class OverlayWindow: NSWindow {
         overlayView.onMouseDragged = { [weak self] in self?.controller?.handleMouseDragged() }
         overlayView.onMouseUp = { [weak self] in self?.controller?.handleMouseUp() }
         overlayView.onKeyDown = { [weak self] event in self?.controller?.handleKeyDown(event) }
+        overlayView.onMouseMoved = { [weak self] in self?.controller?.handleMouseMoved() }
     }
 
     override var canBecomeKey: Bool { true }
@@ -198,12 +227,32 @@ final class OverlayView: NSView {
         didSet { needsDisplay = true }
     }
 
+    /// Current mouse position in local coordinates (for coordinate display)
+    var cursorPosition: CGPoint? {
+        didSet { needsDisplay = true }
+    }
+
+    /// Global mouse position (for display in label)
+    var cursorGlobalPosition: CGPoint?
+
+    /// Selection size for display during drag
+    var selectionSize: CGSize?
+
     var onMouseDown: (() -> Void)?
     var onMouseDragged: (() -> Void)?
     var onMouseUp: (() -> Void)?
     var onKeyDown: ((NSEvent) -> Void)?
+    var onMouseMoved: (() -> Void)?
 
     override var acceptsFirstResponder: Bool { true }
+
+    /// Accept first mouse click even when window is not key - critical for multi-monitor support
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    override func becomeFirstResponder() -> Bool {
+        NSCursor.crosshair.set()
+        return super.becomeFirstResponder()
+    }
 
     override func mouseDown(with event: NSEvent) {
         onMouseDown?()
@@ -221,6 +270,25 @@ final class OverlayView: NSView {
         onKeyDown?(event)
     }
 
+    override func mouseMoved(with event: NSEvent) {
+        NSCursor.crosshair.set()
+        onMouseMoved?()
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas { removeTrackingArea(area) }
+        addTrackingArea(NSTrackingArea(rect: bounds, options: [.mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate], owner: self, userInfo: nil))
+    }
+
+    override func cursorUpdate(with event: NSEvent) {
+        NSCursor.crosshair.set()
+    }
+
+    override func resetCursorRects() {
+        addCursorRect(bounds, cursor: .crosshair)
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
 
@@ -229,18 +297,67 @@ final class OverlayView: NSView {
         ctx.setFillColor(NSColor.black.withAlphaComponent(0.45).cgColor)
         ctx.fill(bounds)
 
-        guard let selectionRect else { return }
+        if let selectionRect {
+            // Cut out selected area.
+            ctx.saveGState()
+            ctx.setBlendMode(.clear)
+            ctx.fill(selectionRect)
+            ctx.restoreGState()
 
-        // Cut out selected area.
-        ctx.saveGState()
-        ctx.setBlendMode(.clear)
-        ctx.fill(selectionRect)
-        ctx.restoreGState()
+            // Border.
+            ctx.setStrokeColor(NSColor.white.withAlphaComponent(0.9).cgColor)
+            ctx.setLineWidth(2)
+            ctx.stroke(selectionRect.insetBy(dx: 1, dy: 1))
 
-        // Border.
-        ctx.setStrokeColor(NSColor.white.withAlphaComponent(0.9).cgColor)
-        ctx.setLineWidth(2)
-        ctx.stroke(selectionRect.insetBy(dx: 1, dy: 1))
+            // Draw size label near selection
+            if let size = selectionSize, size.width > 0, size.height > 0 {
+                let sizeText = "\(Int(size.width)) × \(Int(size.height))"
+                drawInfoLabel(text: sizeText, at: CGPoint(x: selectionRect.midX, y: selectionRect.minY - 30), centered: true)
+            }
+        }
+
+        // Draw cursor position label
+        if let pos = cursorPosition, let globalPos = cursorGlobalPosition {
+            let coordText = "X: \(Int(globalPos.x))  Y: \(Int(globalPos.y))"
+            // Position label offset from cursor
+            let labelPos = CGPoint(x: pos.x + 20, y: pos.y - 25)
+            drawInfoLabel(text: coordText, at: labelPos, centered: false)
+        }
+    }
+
+    private func drawInfoLabel(text: String, at point: CGPoint, centered: Bool) {
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: NSColor.white
+        ]
+
+        let attrStr = NSAttributedString(string: text, attributes: attrs)
+        let textSize = attrStr.size()
+
+        let padding: CGFloat = 6
+        let cornerRadius: CGFloat = 4
+        let bgWidth = textSize.width + padding * 2
+        let bgHeight = textSize.height + padding
+
+        var bgX = centered ? point.x - bgWidth / 2 : point.x
+        var bgY = point.y
+
+        // Keep label within bounds
+        bgX = max(4, min(bgX, bounds.width - bgWidth - 4))
+        bgY = max(4, min(bgY, bounds.height - bgHeight - 4))
+
+        let bgRect = CGRect(x: bgX, y: bgY, width: bgWidth, height: bgHeight)
+
+        // Draw background
+        let bgPath = NSBezierPath(roundedRect: bgRect, xRadius: cornerRadius, yRadius: cornerRadius)
+        NSColor.black.withAlphaComponent(0.75).setFill()
+        bgPath.fill()
+
+        // Draw text
+        let textX = bgX + padding
+        let textY = bgY + (bgHeight - textSize.height) / 2
+        attrStr.draw(at: CGPoint(x: textX, y: textY))
     }
 }
 

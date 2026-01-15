@@ -27,6 +27,8 @@
 		A1B2C3D4E5F60718293A4D12 /* KeyCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */; };
 		A1B2C3D4E5F60718293A4D13 /* NSImage+PNG.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */; };
 		A1B2C3D4E5F60718293A4D14 /* PermissionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */; };
+		A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */; };
+		A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */; };
 
 		A1B2C3D4E5F60718293A4B90 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */; };
 		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
@@ -50,6 +52,8 @@
 		A1B2C3D4E5F60718293A4C0A /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C0B /* ScreenCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C0C /* ScreenshotSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSaveService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetectionService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPasteService.swift; sourceTree = "<group>"; };
 
 		A1B2C3D4E5F60718293A4C0D /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 
@@ -137,6 +141,8 @@
 		A1B2C3D4E5F60718293A4B61 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
+				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
 				A1B2C3D4E5F60718293A4C09 /* HUDService.swift */,
 				A1B2C3D4E5F60718293A4C0A /* LaunchAtLoginService.swift */,
@@ -263,6 +269,8 @@
 				A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D04 /* ShortcutManager.swift in Sources */,
 				A1B2C3D4E5F60718293A4D05 /* CaptureSession.swift in Sources */,
+				A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D06 /* ClipboardService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D07 /* HUDService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D08 /* LaunchAtLoginService.swift in Sources */,

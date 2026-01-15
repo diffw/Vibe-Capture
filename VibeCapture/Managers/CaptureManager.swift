@@ -11,6 +11,9 @@ final class CaptureManager {
             PermissionsUI.showScreenRecordingPermissionAlert()
             return
         }
+        
+        // Record the current frontmost app before showing overlay
+        AppDetectionService.shared.recordCurrentAppAsPrevious()
 
         overlay.start { [weak self] rect, belowWindowID in
             guard let self, let rect else { return }
@@ -26,14 +29,23 @@ final class CaptureManager {
 
     private func presentModal(with image: NSImage) {
         let session = CaptureSession(image: image, prompt: "", createdAt: Date())
+        
+        // Get the target app (previous frontmost app)
+        let targetApp = AppDetectionService.shared.getTargetApp()
 
-        modal = CaptureModalWindowController(session: session) { result in
+        modal = CaptureModalWindowController(session: session, targetApp: targetApp) { result in
             switch result {
             case .cancelled:
                 break
-            case .copied(let didSave):
-                HUDService.shared.show(message: didSave ? "Copied & Saved" : "Copied", style: .success)
-            case .copyFailed(let message):
+            case .pasted(_, _):
+                // HUD is shown in the window controller
+                break
+            case .saved:
+                // HUD is shown in the window controller
+                break
+            case .pasteFailed(let message):
+                HUDService.shared.show(message: message, style: .error)
+            case .saveFailed(let message):
                 HUDService.shared.show(message: message, style: .error)
             }
         }
