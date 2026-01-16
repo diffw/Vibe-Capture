@@ -19,10 +19,13 @@ final class AppDetectionService {
     /// Whitelist of supported applications (Bundle ID -> Display Name)
     /// Future: Add URL patterns for browser-based apps (ChatGPT, Gemini, etc.)
     private let whitelistApps: [(bundleID: String, displayName: String)] = [
-        // Native apps
+        // AI Code Editors
         ("com.todesktop.230313mzl4w4u92", "Cursor"),
         ("com.cursor.Cursor", "Cursor"),
         ("com.microsoft.VSCode", "VS Code"),
+        ("com.exafunction.windsurf", "Windsurf"),
+        ("com.google.antigravity", "Antigravity"),
+        // Design & Chat
         ("com.figma.Desktop", "Figma"),
         ("ru.keepcoder.Telegram", "Telegram"),
         ("org.telegram.desktop", "Telegram"),

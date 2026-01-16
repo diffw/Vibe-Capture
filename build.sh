@@ -53,10 +53,15 @@ fi
 # Create PkgInfo
 echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
 
-echo "🔏 Signing app..."
+echo "🔏 Signing app with Developer ID..."
 
-# Sign the app with entitlements (ad-hoc signing for local use)
-codesign --force --deep --sign - --entitlements VibeCapture/VibeCapture.entitlements "$APP_BUNDLE"
+# Sign the app with Developer ID certificate (persistent permissions)
+codesign --force --deep --sign "Developer ID Application: Nan Wang (2257B2LRRF)" --entitlements VibeCapture/VibeCapture.entitlements "$APP_BUNDLE"
 
 echo "✅ Build complete!"
 echo "📍 App: $APP_BUNDLE"
+
+# Install to /Applications for persistent permissions
+echo "📲 Installing to /Applications..."
+cp -R "$APP_BUNDLE" /Applications/
+echo "✅ Installed to /Applications/$APP_NAME.app"
