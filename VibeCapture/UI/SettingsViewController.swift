@@ -3,15 +3,10 @@ import AppKit
 final class SettingsViewController: NSViewController {
     private let shortcutRecorder = ShortcutRecorderView()
 
-    // Auto-save section (after Paste)
+    // Save section
     private let saveCheckbox = NSButton(checkboxWithTitle: "Auto-save screenshots after Paste", target: nil, action: nil)
     private let saveFolderLabel = NSTextField(labelWithString: "")
     private let chooseFolderButton = NSButton(title: "Choose Folder…", target: nil, action: nil)
-
-    // Manual Save button default folder
-    private let screenshotSaveFolderLabel = NSTextField(labelWithString: "")
-    private let chooseScreenshotFolderButton = NSButton(title: "Choose Folder…", target: nil, action: nil)
-    private let clearScreenshotFolderButton = NSButton(title: "Clear", target: nil, action: nil)
 
     private let launchAtLoginCheckbox = NSButton(checkboxWithTitle: "Launch at Login", target: nil, action: nil)
 
@@ -26,7 +21,7 @@ final class SettingsViewController: NSViewController {
             self?.applyShortcut(combo)
         }
 
-        // Auto-save section
+        // Save section
         saveCheckbox.target = self
         saveCheckbox.action = #selector(saveToggled)
         saveCheckbox.state = SettingsStore.shared.saveEnabled ? .on : .off
@@ -38,27 +33,11 @@ final class SettingsViewController: NSViewController {
         chooseFolderButton.target = self
         chooseFolderButton.action = #selector(chooseFolderPressed)
 
-        // Screenshot Save folder section
-        let screenshotSaveSectionLabel = NSTextField(labelWithString: "Save Button Default Folder:")
-        screenshotSaveSectionLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
-        screenshotSaveSectionLabel.textColor = .labelColor
-
-        screenshotSaveFolderLabel.textColor = .secondaryLabelColor
-        screenshotSaveFolderLabel.font = NSFont.systemFont(ofSize: 12)
-        screenshotSaveFolderLabel.lineBreakMode = .byTruncatingMiddle
-
-        chooseScreenshotFolderButton.target = self
-        chooseScreenshotFolderButton.action = #selector(chooseScreenshotFolderPressed)
-
-        clearScreenshotFolderButton.target = self
-        clearScreenshotFolderButton.action = #selector(clearScreenshotFolderPressed)
-        clearScreenshotFolderButton.bezelStyle = .inline
-
         launchAtLoginCheckbox.target = self
         launchAtLoginCheckbox.action = #selector(launchAtLoginToggled)
         launchAtLoginCheckbox.state = LaunchAtLoginService.shared.isEnabled ? .on : .off
 
-        // Auto-save row
+        // Save row
         let saveRow = NSStackView(views: [chooseFolderButton, NSView(), saveFolderLabel])
         saveRow.orientation = .horizontal
         saveRow.alignment = .centerY
@@ -68,17 +47,7 @@ final class SettingsViewController: NSViewController {
         saveSection.orientation = .vertical
         saveSection.spacing = 6
 
-        // Screenshot save folder row
-        let screenshotFolderRow = NSStackView(views: [chooseScreenshotFolderButton, clearScreenshotFolderButton, NSView(), screenshotSaveFolderLabel])
-        screenshotFolderRow.orientation = .horizontal
-        screenshotFolderRow.alignment = .centerY
-        screenshotFolderRow.spacing = 8
-
-        let screenshotSaveSection = NSStackView(views: [screenshotSaveSectionLabel, screenshotFolderRow])
-        screenshotSaveSection.orientation = .vertical
-        screenshotSaveSection.spacing = 6
-
-        let stack = NSStackView(views: [shortcutRecorder, divider(), saveSection, divider(), screenshotSaveSection, divider(), launchAtLoginCheckbox, NSView()])
+        let stack = NSStackView(views: [shortcutRecorder, divider(), saveSection, divider(), launchAtLoginCheckbox, NSView()])
         stack.orientation = .vertical
         stack.spacing = 14
 
@@ -92,7 +61,6 @@ final class SettingsViewController: NSViewController {
         ])
 
         refreshSaveFolderLabel()
-        refreshScreenshotSaveFolderLabel()
     }
 
     private func divider() -> NSBox {
@@ -128,23 +96,6 @@ final class SettingsViewController: NSViewController {
         }
     }
 
-    @objc private func chooseScreenshotFolderPressed() {
-        do {
-            if try ScreenshotSaveService.shared.chooseAndStoreScreenshotSaveFolder() != nil {
-                HUDService.shared.show(message: "Screenshot Save Folder Set", style: .success)
-                refreshScreenshotSaveFolderLabel()
-            }
-        } catch {
-            showError(title: "Unable to Set Folder", message: error.localizedDescription)
-        }
-    }
-
-    @objc private func clearScreenshotFolderPressed() {
-        SettingsStore.shared.clearScreenshotSavePath()
-        refreshScreenshotSaveFolderLabel()
-        HUDService.shared.show(message: "Save folder cleared", style: .info)
-    }
-
     @objc private func launchAtLoginToggled() {
         let enabled = (launchAtLoginCheckbox.state == .on)
         do {
@@ -166,7 +117,7 @@ final class SettingsViewController: NSViewController {
     private func showLaunchApprovalAlert() {
         let alert = NSAlert()
         alert.messageText = "Approval Required"
-        alert.informativeText = "To launch Vibe Capture at login, enable it in System Settings → General → Login Items."
+        alert.informativeText = "To launch VibeCap at login, enable it in System Settings → General → Login Items."
         alert.addButton(withTitle: "Open Login Items")
         alert.addButton(withTitle: "OK")
         let resp = alert.runModal()
@@ -176,24 +127,10 @@ final class SettingsViewController: NSViewController {
     }
 
     private func refreshSaveFolderLabel() {
-        if !SettingsStore.shared.saveEnabled {
-            saveFolderLabel.stringValue = "Saving disabled"
-            return
-        }
         if let url = ScreenshotSaveService.shared.currentFolderURL() {
             saveFolderLabel.stringValue = url.path
         } else {
             saveFolderLabel.stringValue = "No folder selected (you'll be asked on first save)"
-        }
-    }
-
-    private func refreshScreenshotSaveFolderLabel() {
-        if let url = ScreenshotSaveService.shared.currentScreenshotSaveFolderURL() {
-            screenshotSaveFolderLabel.stringValue = url.path
-            clearScreenshotFolderButton.isHidden = false
-        } else {
-            screenshotSaveFolderLabel.stringValue = "Not set (you'll be asked each time)"
-            clearScreenshotFolderButton.isHidden = true
         }
     }
 

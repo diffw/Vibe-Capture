@@ -2,7 +2,7 @@
 set -e
 
 # Build configuration
-APP_NAME="Vibe Capture"
+APP_NAME="VibeCap"
 DIST_DIR="dist"
 APP_BUNDLE="$DIST_DIR/$APP_NAME.app"
 

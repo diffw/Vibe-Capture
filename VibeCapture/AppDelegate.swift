@@ -23,7 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let key = "didShowLaunchHUD"
         if !UserDefaults.standard.bool(forKey: key) {
             UserDefaults.standard.set(true, forKey: key)
-            HUDService.shared.show(message: "Vibe Capture is running", style: .info, duration: 0.9)
+            HUDService.shared.show(message: "VibeCap is running", style: .info, duration: 0.9)
         }
     }
 
@@ -34,7 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // App menu (required)
         let appMenuItem = NSMenuItem()
         let appMenu = NSMenu()
-        appMenu.addItem(NSMenuItem(title: "Quit Vibe Capture", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        appMenu.addItem(NSMenuItem(title: "Quit VibeCap", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         appMenuItem.submenu = appMenu
         mainMenu.addItem(appMenuItem)
 
@@ -73,7 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 // 回退到 SF Symbol
                 let image = NSImage(
                     systemSymbolName: "camera.viewfinder",
-                    accessibilityDescription: "Vibe Capture"
+                    accessibilityDescription: "VibeCap"
                 )
                 image?.isTemplate = true
                 button.image = image
