@@ -49,50 +49,111 @@ final class AutoPasteService {
             return
         }
 
-        // Step 3: Wait for app to come to front, then paste image
+        // Step 3: Wait for app to come to front
         DispatchQueue.main.asyncAfter(deadline: .now() + timing.activationDelay) {
-            self.simulatePaste()
+            
+            // Step 3.5: Send focus shortcut if configured (e.g., ⌘+L for Cursor)
+            if let focusShortcut = timing.focusShortcut {
+                self.simulateKeyCombo(keyCode: focusShortcut.keyCode, modifiers: focusShortcut.modifiers)
+            }
+            
+            // Step 4: Wait for focus, then paste image
+            DispatchQueue.main.asyncAfter(deadline: .now() + timing.focusDelay) {
+                self.simulatePaste()
 
-            // Step 4: If there's text, wait and paste it too
-            if !trimmedText.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + timing.textPasteDelay) {
-                    // Put text in clipboard
-                    pb.clearContents()
-                    pb.writeObjects([trimmedText as NSString])
+                // Step 5: If there's text, wait and paste it too
+                if !trimmedText.isEmpty {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + timing.textPasteDelay) {
+                        // Put text in clipboard
+                        pb.clearContents()
+                        pb.writeObjects([trimmedText as NSString])
 
-                    // Paste text
-                    self.simulatePaste()
+                        // Paste text
+                        self.simulatePaste()
 
+                        completion(true, nil)
+                    }
+                } else {
                     completion(true, nil)
                 }
-            } else {
-                completion(true, nil)
             }
         }
     }
     
-    /// Timing configuration for different apps
+    /// Timing and focus configuration for different apps
     private struct PasteTiming {
-        let activationDelay: Double  // Delay after activating app before pasting image
+        let activationDelay: Double  // Delay after activating app before focus shortcut
+        let focusShortcut: FocusShortcut?  // Optional shortcut to focus input field
+        let focusDelay: Double       // Delay after focus shortcut before pasting
         let textPasteDelay: Double   // Delay after pasting image before pasting text
     }
     
-    /// Get appropriate timing for different apps
-    /// Some apps (like Figma, browsers) need longer delays due to their architecture
+    /// Focus shortcut configuration
+    private struct FocusShortcut {
+        let keyCode: CGKeyCode
+        let modifiers: CGEventFlags
+    }
+    
+    /// Common key codes
+    private enum KeyCode {
+        static let l: CGKeyCode = 37  // L key
+        static let i: CGKeyCode = 34  // I key
+        static let k: CGKeyCode = 40  // K key
+    }
+    
+    /// Get appropriate timing and focus shortcut for different apps
+    /// Electron apps (Cursor, VS Code, Claude) need focus shortcuts to ensure input field is active
     private func getTimingForApp(_ app: TargetApp) -> PasteTiming {
         switch app.bundleIdentifier {
-        case "com.figma.Desktop":
-            // Figma is an Electron app and needs longer delays
-            return PasteTiming(activationDelay: 0.3, textPasteDelay: 0.5)
+        case "com.todesktop.230313mzl4w4u92", "com.cursor.Cursor":
+            // Cursor: ⌘+L focuses Composer (verified by user)
+            return PasteTiming(
+                activationDelay: 0.15,
+                focusShortcut: FocusShortcut(keyCode: KeyCode.l, modifiers: .maskCommand),
+                focusDelay: 0.1,
+                textPasteDelay: 0.25
+            )
+        case "com.microsoft.VSCode":
+            // VS Code: ⌘+L focuses Copilot Chat (if installed)
+            // If user doesn't have Copilot, this might open "Go to Line" - acceptable fallback
+            return PasteTiming(
+                activationDelay: 0.15,
+                focusShortcut: FocusShortcut(keyCode: KeyCode.l, modifiers: .maskCommand),
+                focusDelay: 0.1,
+                textPasteDelay: 0.25
+            )
         case "com.anthropic.claudefordesktop":
-            // Claude desktop app might also need slightly longer delays
-            return PasteTiming(activationDelay: 0.2, textPasteDelay: 0.35)
+            // Claude: No known focus shortcut, rely on longer delays
+            return PasteTiming(
+                activationDelay: 0.2,
+                focusShortcut: nil,
+                focusDelay: 0.0,
+                textPasteDelay: 0.35
+            )
+        case "com.figma.Desktop":
+            // Figma: ⌘+L opens "Figma AI" / Make input (if available)
+            return PasteTiming(
+                activationDelay: 0.3,
+                focusShortcut: FocusShortcut(keyCode: KeyCode.l, modifiers: .maskCommand),
+                focusDelay: 0.15,
+                textPasteDelay: 0.5
+            )
         case "com.google.Chrome", "com.apple.Safari", "com.microsoft.edgemac", "company.thebrowser.Browser":
-            // Browsers need longer delays for web apps (ChatGPT, Gemini, etc.)
-            return PasteTiming(activationDelay: 0.25, textPasteDelay: 0.4)
+            // Browsers: No universal focus shortcut, rely on user pre-positioning
+            return PasteTiming(
+                activationDelay: 0.25,
+                focusShortcut: nil,
+                focusDelay: 0.0,
+                textPasteDelay: 0.4
+            )
         default:
-            // Default timing for most apps (Cursor, VS Code, Telegram)
-            return PasteTiming(activationDelay: 0.15, textPasteDelay: 0.25)
+            // Default: Native apps (Telegram, etc.) usually maintain focus well
+            return PasteTiming(
+                activationDelay: 0.15,
+                focusShortcut: nil,
+                focusDelay: 0.0,
+                textPasteDelay: 0.25
+            )
         }
     }
 
@@ -112,17 +173,22 @@ final class AutoPasteService {
 
     /// Simulate ⌘+V keystroke
     private func simulatePaste() {
-        // Key codes: V = 9, Command = 55
-        let vKeyCode: CGKeyCode = 9
-
-        // Create key down event for ⌘+V
-        guard let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: vKeyCode, keyDown: true) else { return }
-        keyDown.flags = .maskCommand
+        simulateKeyCombo(keyCode: 9, modifiers: .maskCommand)  // V = 9
+    }
+    
+    /// Simulate any key combination
+    /// - Parameters:
+    ///   - keyCode: The virtual key code
+    ///   - modifiers: The modifier flags (Command, Shift, etc.)
+    private func simulateKeyCombo(keyCode: CGKeyCode, modifiers: CGEventFlags) {
+        // Create key down event
+        guard let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true) else { return }
+        keyDown.flags = modifiers
         keyDown.post(tap: .cghidEventTap)
 
         // Create key up event
-        guard let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: vKeyCode, keyDown: false) else { return }
-        keyUp.flags = .maskCommand
+        guard let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: false) else { return }
+        keyUp.flags = modifiers
         keyUp.post(tap: .cghidEventTap)
     }
 }
