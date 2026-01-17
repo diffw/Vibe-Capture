@@ -55,8 +55,11 @@ echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
 
 echo "🔏 Signing app with Developer ID..."
 
-# Sign the app with Developer ID certificate (persistent permissions)
-codesign --force --deep --sign "Developer ID Application: Nan Wang (2257B2LRRF)" --entitlements VibeCapture/VibeCapture.entitlements "$APP_BUNDLE"
+# Sign the app with Developer ID certificate + Hardened Runtime (required for notarization)
+codesign --force --deep --sign "Developer ID Application: Nan Wang (2257B2LRRF)" \
+    --options runtime \
+    --entitlements VibeCapture/VibeCapture.entitlements \
+    "$APP_BUNDLE"
 
 echo "✅ Build complete!"
 echo "📍 App: $APP_BUNDLE"

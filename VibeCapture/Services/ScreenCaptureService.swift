@@ -60,7 +60,4 @@ final class ScreenCaptureService {
             height: rect.size.height
         )
     }
-
 }
-
-

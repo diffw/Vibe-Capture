@@ -28,12 +28,19 @@ final class CaptureManager {
     }
 
     private func presentModal(with image: NSImage) {
+        // Close any existing modal before creating a new one
+        if let existingModal = modal {
+            existingModal.close()
+        }
+        modal = nil
+        
         let session = CaptureSession(image: image, prompt: "", createdAt: Date())
         
         // Get the target app (previous frontmost app)
         let targetApp = AppDetectionService.shared.getTargetApp()
 
-        modal = CaptureModalWindowController(session: session, targetApp: targetApp) { result in
+        modal = CaptureModalWindowController(session: session, targetApp: targetApp) { [weak self] result in
+            self?.modal = nil  // Clear reference when modal closes
             switch result {
             case .cancelled:
                 break

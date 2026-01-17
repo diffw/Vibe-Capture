@@ -1,5 +1,11 @@
 import AppKit
 
+/// Custom NSWindow subclass that allows borderless windows to become key and accept input
+final class KeyableWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
 enum CaptureModalResult {
     case cancelled
     case pasted(toApp: String, didSave: Bool)
@@ -27,21 +33,28 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         // Calculate window size based on image aspect ratio (like macOS Screenshot preview)
         let windowSize = Self.calculateWindowSize(for: session.image.size)
 
-        let window = NSWindow(
+        let window = KeyableWindow(
             contentRect: NSRect(origin: .zero, size: windowSize),
-            styleMask: [.titled, .closable],
+            styleMask: [.borderless],
             backing: .buffered,
             defer: false
         )
 
-        window.titleVisibility = .hidden
-        window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true
-        window.standardWindowButton(.zoomButton)?.isHidden = true
-        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        window.backgroundColor = .clear
+        window.isOpaque = false
+        window.hasShadow = true
         window.level = .floating
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.contentViewController = viewController
+        
+        // Apply rounded corners to the window content view (match macOS system windows)
+        if let contentView = window.contentView {
+            contentView.wantsLayer = true
+            contentView.layer?.cornerRadius = 12  // macOS system window style
+            contentView.layer?.masksToBounds = true
+            contentView.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        }
 
         super.init(window: window)
 
@@ -83,6 +96,10 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         window.makeKeyAndOrderFront(nil)
         viewController.focusPrompt()
     }
+    
+    override func close() {
+        finish(.cancelled)
+    }
 
     /// Center window on the screen containing the mouse cursor
     private func centerWindowOnCurrentScreen(_ window: NSWindow) {
@@ -103,7 +120,11 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         window.setFrameOrigin(NSPoint(x: x, y: y))
 
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
-            guard let self else { return event }
+            guard let self, let window = self.window else { return event }
+            
+            // Only handle events if this window is the key window
+            guard window.isKeyWindow else { return event }
+            
             if event.keyCode == 53 { // Esc
                 self.finish(.cancelled)
                 return nil
@@ -188,7 +209,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     private static let buttonsRowHeight: CGFloat = 40
     private static let padding: CGFloat = 16
     private static let spacing: CGFloat = 12
-    private static let imageContainerPadding: CGFloat = 12
 
     private static func calculateWindowSize(for imageSize: NSSize) -> NSSize {
         guard imageSize.width > 0, imageSize.height > 0 else {
@@ -201,8 +221,8 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         var imageDisplayHeight = min(imageSize.height, maxImageHeight)
         var imageDisplayWidth = imageDisplayHeight * aspectRatio
 
-        // Clamp width to min/max window width (accounting for padding + container padding)
-        let totalHorizontalPadding = padding * 2 + imageContainerPadding * 2
+        // Clamp width to min/max window width (accounting for padding only)
+        let totalHorizontalPadding = padding * 2
         let windowWidth = imageDisplayWidth + totalHorizontalPadding
 
         if windowWidth > maxWindowWidth {
@@ -217,9 +237,9 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         }
 
         let finalWindowWidth = max(minWindowWidth, min(maxWindowWidth, imageDisplayWidth + totalHorizontalPadding))
-        // Add container padding to height as well
-        let imageContainerHeight = imageDisplayHeight + imageContainerPadding * 2
-        let finalWindowHeight = imageContainerHeight + promptAreaHeight + buttonsRowHeight + padding * 2 + spacing * 2
+        // Image container has 16px padding inside, no outer top padding
+        let imageContainerHeight = imageDisplayHeight + 32  // +16px top and bottom padding
+        let finalWindowHeight = imageContainerHeight + promptAreaHeight + buttonsRowHeight + padding + padding + spacing
 
         return NSSize(width: finalWindowWidth, height: finalWindowHeight)
     }
