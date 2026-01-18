@@ -126,8 +126,17 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
             guard window.isKeyWindow else { return event }
             
             if event.keyCode == 53 { // Esc
+                // First try to cancel annotation creation, otherwise close modal
+                self.viewController.cancelAnnotationCreation()
                 self.finish(.cancelled)
                 return nil
+            }
+            if event.keyCode == 51 || event.keyCode == 117 { // Delete/Backspace or Forward Delete
+                // Delete selected annotation (only if text view is not first responder)
+                if !(window.firstResponder is NSTextView) {
+                    self.viewController.deleteSelectedAnnotation()
+                    return nil
+                }
             }
             if event.modifierFlags.contains(.command), (event.keyCode == 36 || event.keyCode == 76) { // ⌘↩︎
                 // Trigger paste via the onCommandEnter callback (which checks whitelist)
@@ -145,14 +154,17 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     }
 
     private func pasteAndClose(prompt: String, targetApp: TargetApp) {
-        let image = session.image
         let appName = targetApp.displayName
+        
+        // Composite annotations onto the image
+        let annotations = viewController.annotations
+        let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
 
         // Close the modal immediately so it doesn't interfere with target app
         finish(.pasted(toApp: appName, didSave: false))
 
         // Use AutoPasteService to paste image + text to target app
-        AutoPasteService.shared.pasteToApp(image: image, text: prompt, targetApp: targetApp) { success, errorMessage in
+        AutoPasteService.shared.pasteToApp(image: finalImage, text: prompt, targetApp: targetApp) { success, errorMessage in
             if success {
                 HUDService.shared.show(message: "Pasted to \(appName)", style: .success)
             } else if let errorMessage {
@@ -162,7 +174,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
             // Attempt auto-save (if enabled)
             DispatchQueue.main.async {
                 do {
-                    let saved = try ScreenshotSaveService.shared.saveIfEnabled(image: image)
+                    let saved = try ScreenshotSaveService.shared.saveIfEnabled(image: finalImage)
                     if saved {
                         HUDService.shared.show(message: "Saved", style: .success)
                     }
@@ -174,10 +186,12 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     }
     
     private func saveScreenshot() {
-        let image = session.image
+        // Composite annotations onto the image
+        let annotations = viewController.annotations
+        let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
         
         do {
-            let saved = try ScreenshotSaveService.shared.saveScreenshot(image: image)
+            let saved = try ScreenshotSaveService.shared.saveScreenshot(image: finalImage)
             if saved {
                 HUDService.shared.show(message: "Screenshot Saved", style: .success)
             }
@@ -203,44 +217,112 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     // MARK: - Window Size Calculation (macOS Screenshot Preview style)
 
     private static let minWindowWidth: CGFloat = 400
-    private static let maxWindowWidth: CGFloat = 800
-    private static let maxImageHeight: CGFloat = 400
-    private static let promptAreaHeight: CGFloat = 140
+    private static let promptAreaHeight: CGFloat = 80  // ~4 lines
     private static let buttonsRowHeight: CGFloat = 40
+    private static let toolbarHeight: CGFloat = 36
     private static let padding: CGFloat = 16
     private static let spacing: CGFloat = 12
+    
+    /// Write debug log to desktop
+    private static func writeLog(_ message: String) {
+        let desktop = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop/vibecap_debug.log")
+        let timestamp = ISO8601DateFormatter().string(from: Date())
+        let line = "[\(timestamp)] \(message)\n"
+        if let data = line.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: desktop.path) {
+                if let handle = try? FileHandle(forWritingTo: desktop) {
+                    handle.seekToEndOfFile()
+                    handle.write(data)
+                    handle.closeFile()
+                }
+            } else {
+                try? data.write(to: desktop)
+            }
+        }
+    }
+    
+    /// Calculate max window dimensions based on screen size (similar to Mac Screenshot behavior)
+    private static func calculateMaxDimensions() -> (maxWidth: CGFloat, maxImageHeight: CGFloat) {
+        guard let screen = NSScreen.main else {
+            writeLog("WC: No main screen, using fallback (800, 400)")
+            return (800, 400)  // Fallback
+        }
+        
+        let screenFrame = screen.visibleFrame
+        
+        // Max window width: 90% of screen width
+        let maxWidth = screenFrame.width * 0.90
+        
+        // Max window height: 90% of screen height
+        // Subtract UI chrome to get max image height
+        let maxWindowHeight = screenFrame.height * 0.90
+        let uiChromeHeight = promptAreaHeight + buttonsRowHeight + toolbarHeight + padding * 2 + spacing * 2 + 36
+        let maxImageHeight = maxWindowHeight - uiChromeHeight
+        
+        writeLog("WC: Screen=\(screenFrame.width)x\(screenFrame.height), maxWidth=\(maxWidth), maxImageHeight=\(maxImageHeight)")
+        
+        return (max(maxWidth, 400), max(maxImageHeight, 300))
+    }
 
     private static func calculateWindowSize(for imageSize: NSSize) -> NSSize {
         guard imageSize.width > 0, imageSize.height > 0 else {
             return NSSize(width: 600, height: 500)
         }
-
+        
+        let (maxWindowWidth, maxImageHeight) = calculateMaxDimensions()
         let aspectRatio = imageSize.width / imageSize.height
-
-        // Start with max image height, calculate width from aspect ratio
-        var imageDisplayHeight = min(imageSize.height, maxImageHeight)
-        var imageDisplayWidth = imageDisplayHeight * aspectRatio
-
-        // Clamp width to min/max window width (accounting for padding only)
         let totalHorizontalPadding = padding * 2
-        let windowWidth = imageDisplayWidth + totalHorizontalPadding
+        let maxImageWidth = maxWindowWidth - totalHorizontalPadding
 
-        if windowWidth > maxWindowWidth {
-            // Too wide: constrain to max width
-            imageDisplayWidth = maxWindowWidth - totalHorizontalPadding
+        var imageDisplayWidth: CGFloat
+        var imageDisplayHeight: CGFloat
+        
+        // Calculate both possibilities and pick the one that fits best
+        // Option 1: Fill max width, calculate height
+        let widthFirstHeight = maxImageWidth / aspectRatio
+        // Option 2: Fill max height, calculate width  
+        let heightFirstWidth = maxImageHeight * aspectRatio
+        
+        if widthFirstHeight <= maxImageHeight {
+            // Width-first fits within height limit - use it (better for wide images)
+            imageDisplayWidth = maxImageWidth
+            imageDisplayHeight = widthFirstHeight
+        } else if heightFirstWidth <= maxImageWidth {
+            // Height-first fits within width limit - use it (better for tall images)
+            imageDisplayWidth = heightFirstWidth
+            imageDisplayHeight = maxImageHeight
+        } else {
+            // Both exceed limits - constrain by the tighter dimension
+            imageDisplayWidth = maxImageWidth
+            imageDisplayHeight = maxImageHeight
+        }
+        
+        // Don't exceed original image size
+        if imageDisplayWidth > imageSize.width {
+            imageDisplayWidth = imageSize.width
             imageDisplayHeight = imageDisplayWidth / aspectRatio
-        } else if windowWidth < minWindowWidth {
-            // Too narrow: expand to min width
+        }
+        if imageDisplayHeight > imageSize.height {
+            imageDisplayHeight = imageSize.height
+            imageDisplayWidth = imageDisplayHeight * aspectRatio
+        }
+        
+        // Ensure minimum width
+        let windowWidth = imageDisplayWidth + totalHorizontalPadding
+        if windowWidth < minWindowWidth {
             imageDisplayWidth = minWindowWidth - totalHorizontalPadding
-            // Keep original image height (don't stretch)
             imageDisplayHeight = min(imageDisplayWidth / aspectRatio, maxImageHeight)
         }
 
         let finalWindowWidth = max(minWindowWidth, min(maxWindowWidth, imageDisplayWidth + totalHorizontalPadding))
-        // Image container has 16px padding inside, no outer top padding
-        let imageContainerHeight = imageDisplayHeight + 32  // +16px top and bottom padding
-        let finalWindowHeight = imageContainerHeight + promptAreaHeight + buttonsRowHeight + padding + padding + spacing
+        // Image container includes: 16px top + image + 12px gap + 36px toolbar + 8px bottom
+        let imageContainerHeight = 16 + imageDisplayHeight + 12 + toolbarHeight + 8
+        // Total: image container + 12px spacing + prompt + buttons + padding
+        let finalWindowHeight = imageContainerHeight + spacing + promptAreaHeight + buttonsRowHeight + padding + spacing
 
+        writeLog("WC: imageSize=\(imageSize.width)x\(imageSize.height), maxImageWidth=\(maxImageWidth), maxImageHeight=\(maxImageHeight)")
+        writeLog("WC: imageDisplay=\(imageDisplayWidth)x\(imageDisplayHeight), finalWindow=\(finalWindowWidth)x\(finalWindowHeight)")
+        
         return NSSize(width: finalWindowWidth, height: finalWindowHeight)
     }
 }

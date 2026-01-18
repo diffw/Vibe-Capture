@@ -29,6 +29,10 @@
 		A1B2C3D4E5F60718293A4D14 /* PermissionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */; };
 		A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */; };
 		A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */; };
+		A1B2C3D4E5F60718293A4D20 /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C20 /* Annotation.swift */; };
+		A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */; };
+		A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */; };
+		A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */; };
 
 		A1B2C3D4E5F60718293A4B90 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */; };
 		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
@@ -46,6 +50,7 @@
 		A1B2C3D4E5F60718293A4C06 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
 
 		A1B2C3D4E5F60718293A4C07 /* CaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSession.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C20 /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
 
 		A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C09 /* HUDService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDService.swift; sourceTree = "<group>"; };
@@ -54,6 +59,7 @@
 		A1B2C3D4E5F60718293A4C0C /* ScreenshotSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSaveService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetectionService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPasteService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderService.swift; sourceTree = "<group>"; };
 
 		A1B2C3D4E5F60718293A4C0D /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 
@@ -63,6 +69,8 @@
 		A1B2C3D4E5F60718293A4C11 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C12 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C13 /* ShortcutRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationCanvasView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationToolbarView.swift; sourceTree = "<group>"; };
 
 		A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCombo.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PNG.swift"; sourceTree = "<group>"; };
@@ -132,6 +140,7 @@
 		A1B2C3D4E5F60718293A4B60 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4C20 /* Annotation.swift */,
 				A1B2C3D4E5F60718293A4C07 /* CaptureSession.swift */,
 			);
 			path = Models;
@@ -141,6 +150,7 @@
 		A1B2C3D4E5F60718293A4B61 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */,
 				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
 				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
@@ -165,6 +175,8 @@
 		A1B2C3D4E5F60718293A4B63 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */,
+				A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */,
 				A1B2C3D4E5F60718293A4C0E /* CaptureModalViewController.swift */,
 				A1B2C3D4E5F60718293A4C0F /* CaptureModalWindowController.swift */,
 				A1B2C3D4E5F60718293A4C10 /* PromptTextView.swift */,
@@ -264,6 +276,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D4E5F60718293A4D20 /* Annotation.swift in Sources */,
+				A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */,
+				A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */,
+				A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */,
 				A1B2C3D4E5F60718293A4D02 /* CaptureManager.swift in Sources */,
 				A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */,

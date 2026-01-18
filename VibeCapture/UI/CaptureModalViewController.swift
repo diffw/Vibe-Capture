@@ -1,6 +1,6 @@
 import AppKit
 
-final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
+final class CaptureModalViewController: NSViewController, NSTextViewDelegate, AnnotationToolbarViewDelegate, AnnotationCanvasViewDelegate {
     var onClose: (() -> Void)?
     var onPaste: ((String, TargetApp) -> Void)?
     var onSave: (() -> Void)?
@@ -12,6 +12,8 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
     private let imageContainerView = NSView()
     private let imageWrapper = NSView()  // Wrapper for rounded corners mask
     private let imageView = NSImageView()
+    private let annotationCanvasView = AnnotationCanvasView()
+    private let annotationToolbar = AnnotationToolbarView()
     private let promptScrollView = NSScrollView()
     private let promptTextView = PromptTextView()
     private let placeholderLabel = NSTextField(labelWithString: "")
@@ -45,26 +47,95 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
     private static func calculateImageHeight(for imageSize: NSSize) -> CGFloat {
         guard imageSize.width > 0, imageSize.height > 0 else { return 280 }
 
-        let maxHeight: CGFloat = 400
+        // Get dynamic max dimensions based on screen size
+        let (maxWindowWidth, maxHeight) = calculateMaxDimensions()
         let minWidth: CGFloat = 400 - 32 // minWindowWidth - padding
-        let maxWidth: CGFloat = 800 - 32 // maxWindowWidth - padding
+        let maxWidth: CGFloat = maxWindowWidth - 32 // maxWindowWidth - padding
 
         let aspectRatio = imageSize.width / imageSize.height
-
-        // Start with max height
-        var height = min(imageSize.height, maxHeight)
-        var width = height * aspectRatio
-
-        // Adjust if width is out of bounds
-        if width > maxWidth {
+        
+        var width: CGFloat
+        var height: CGFloat
+        
+        // Calculate both possibilities and pick the one that fits best
+        // Option 1: Fill max width, calculate height
+        let widthFirstHeight = maxWidth / aspectRatio
+        // Option 2: Fill max height, calculate width  
+        let heightFirstWidth = maxHeight * aspectRatio
+        
+        if widthFirstHeight <= maxHeight {
+            // Width-first fits within height limit - use it (better for wide images)
             width = maxWidth
+            height = widthFirstHeight
+        } else if heightFirstWidth <= maxWidth {
+            // Height-first fits within width limit - use it (better for tall images)
+            width = heightFirstWidth
+            height = maxHeight
+        } else {
+            // Both exceed limits - constrain by the tighter dimension
+            width = maxWidth
+            height = maxHeight
+        }
+        
+        // Don't exceed original image size
+        if width > imageSize.width {
+            width = imageSize.width
             height = width / aspectRatio
-        } else if width < minWidth {
+        }
+        if height > imageSize.height {
+            height = imageSize.height
+            width = height * aspectRatio
+        }
+        
+        // Ensure minimum width
+        if width < minWidth {
             width = minWidth
             height = min(width / aspectRatio, maxHeight)
         }
 
+        writeLog("VC: imageSize=\(imageSize.width)x\(imageSize.height), maxWidth=\(maxWidth), maxHeight=\(maxHeight), display=\(width)x\(height)")
         return height
+    }
+    
+    /// Write debug log to desktop
+    private static func writeLog(_ message: String) {
+        let desktop = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop/vibecap_debug.log")
+        let timestamp = ISO8601DateFormatter().string(from: Date())
+        let line = "[\(timestamp)] \(message)\n"
+        if let data = line.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: desktop.path) {
+                if let handle = try? FileHandle(forWritingTo: desktop) {
+                    handle.seekToEndOfFile()
+                    handle.write(data)
+                    handle.closeFile()
+                }
+            } else {
+                try? data.write(to: desktop)
+            }
+        }
+    }
+    
+    /// Calculate max dimensions based on screen size (mirrors WindowController logic)
+    private static func calculateMaxDimensions() -> (maxWidth: CGFloat, maxHeight: CGFloat) {
+        guard let screen = NSScreen.main else {
+            writeLog("VC: No main screen, using fallback (800, 400)")
+            return (800, 400)  // Fallback
+        }
+        
+        let screenFrame = screen.visibleFrame
+        
+        // Max window width: 90% of screen width
+        let maxWidth = screenFrame.width * 0.90
+        
+        // Max window height: 90% of screen height
+        // Subtract UI chrome to get max image height
+        let maxWindowHeight = screenFrame.height * 0.90
+        let uiChromeHeight: CGFloat = 80 + 40 + 36 + 32 + 24 + 36  // prompt(4 lines) + buttons + toolbar + padding + spacing
+        let maxHeight = maxWindowHeight - uiChromeHeight
+        
+        writeLog("VC: Screen=\(screenFrame.width)x\(screenFrame.height), maxWidth=\(maxWidth), maxHeight=\(maxHeight)")
+        
+        return (max(maxWidth, 400), max(maxHeight, 300))
     }
 
     required init?(coder: NSCoder) { nil }
@@ -118,10 +189,21 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
         imageView.isHidden = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageWrapper.addSubview(imageView)
+        
+        // Annotation canvas overlays the image
+        annotationCanvasView.translatesAutoresizingMaskIntoConstraints = false
+        annotationCanvasView.imageSize = session.image.size
+        annotationCanvasView.delegate = self
+        imageWrapper.addSubview(annotationCanvasView)
 
-        // Hierarchy: imageContainerView > shadowWrapper > imageWrapper > imageView
+        // Hierarchy: imageContainerView > shadowWrapper > imageWrapper > imageView + annotationCanvasView
         shadowWrapper.addSubview(imageWrapper)
         imageContainerView.addSubview(shadowWrapper)
+        
+        // Annotation toolbar setup (inside image container, transparent background)
+        annotationToolbar.translatesAutoresizingMaskIntoConstraints = false
+        annotationToolbar.delegate = self
+        annotationToolbar.layer?.backgroundColor = NSColor.clear.cgColor
 
         // Configure text view for editing
         promptTextView.isRichText = false
@@ -187,7 +269,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
         // Create a container for the split button
         let splitButtonContainer = NSStackView(views: [sendButton, dropdownButton])
         splitButtonContainer.orientation = .horizontal
-        splitButtonContainer.spacing = 1
+        splitButtonContainer.spacing = 8
         splitButtonContainer.distribution = .fill
 
         // Setup Close button
@@ -210,32 +292,33 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
         buttonsRow.alignment = .centerY
         buttonsRow.spacing = 10
 
-        // Stack for prompt and buttons only (image is separate)
-        let stack = NSStackView(views: [promptScrollView, buttonsRow])
-        stack.orientation = .vertical
-        stack.spacing = 16
-
-        // Add views directly to main view
+        // Add views directly to main view (no NSStackView wrapper for precise control)
         view.addSubview(imageContainerView)
-        view.addSubview(stack)
+        view.addSubview(promptScrollView)
+        view.addSubview(buttonsRow)
         view.addSubview(placeholderLabel)
+        
+        // Add toolbar inside image container (at the bottom)
+        imageContainerView.addSubview(annotationToolbar)
 
         imageContainerView.translatesAutoresizingMaskIntoConstraints = false
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        promptScrollView.translatesAutoresizingMaskIntoConstraints = false
+        buttonsRow.translatesAutoresizingMaskIntoConstraints = false
         placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             // Image area: no padding (top/left/right) - flush with Modal edges
+            // Height includes: 16px top padding + image + 12px gap + 36px toolbar + 8px bottom padding
             imageContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageContainerView.topAnchor.constraint(equalTo: view.topAnchor),
-            imageContainerView.heightAnchor.constraint(equalToConstant: imageDisplayHeight + 32), // +16px padding top and bottom
+            imageContainerView.heightAnchor.constraint(equalToConstant: imageDisplayHeight + 16 + 12 + 36 + 8),
             
-            // Shadow wrapper inside container with 16px padding
+            // Shadow wrapper inside container (above toolbar)
             shadowWrapper.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor, constant: 16),
             shadowWrapper.trailingAnchor.constraint(equalTo: imageContainerView.trailingAnchor, constant: -16),
             shadowWrapper.topAnchor.constraint(equalTo: imageContainerView.topAnchor, constant: 16),
-            shadowWrapper.bottomAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: -16),
+            shadowWrapper.heightAnchor.constraint(equalToConstant: imageDisplayHeight),
             
             // Image wrapper fills shadow wrapper
             imageWrapper.leadingAnchor.constraint(equalTo: shadowWrapper.leadingAnchor),
@@ -249,14 +332,31 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
             imageView.topAnchor.constraint(equalTo: imageWrapper.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: imageWrapper.bottomAnchor),
             
-            // Stack for prompt and buttons with padding
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stack.topAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: 16),
-            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+            // Annotation canvas fills image wrapper
+            annotationCanvasView.leadingAnchor.constraint(equalTo: imageWrapper.leadingAnchor),
+            annotationCanvasView.trailingAnchor.constraint(equalTo: imageWrapper.trailingAnchor),
+            annotationCanvasView.topAnchor.constraint(equalTo: imageWrapper.topAnchor),
+            annotationCanvasView.bottomAnchor.constraint(equalTo: imageWrapper.bottomAnchor),
+            
+            // Annotation toolbar at bottom of image container
+            annotationToolbar.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor, constant: 8),
+            annotationToolbar.trailingAnchor.constraint(equalTo: imageContainerView.trailingAnchor, constant: -8),
+            annotationToolbar.bottomAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: -8),
+            annotationToolbar.heightAnchor.constraint(equalToConstant: 36),
+            
+            // Prompt input area (direct constraints, no stack wrapper)
+            promptScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            promptScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            promptScrollView.topAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: 12),
+            promptScrollView.heightAnchor.constraint(equalToConstant: 80),  // ~4 lines
+            
+            // Buttons row (direct constraints)
+            buttonsRow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            buttonsRow.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            buttonsRow.topAnchor.constraint(equalTo: promptScrollView.bottomAnchor, constant: 16),
+            buttonsRow.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
 
-            promptScrollView.heightAnchor.constraint(equalToConstant: 140),
-
+            // Placeholder label inside prompt area
             // Match textContainerInset (8) + textContainer lineFragmentPadding (5) = 13
             placeholderLabel.leadingAnchor.constraint(equalTo: promptScrollView.leadingAnchor, constant: 13),
             placeholderLabel.topAnchor.constraint(equalTo: promptScrollView.topAnchor, constant: 8),
@@ -424,6 +524,43 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate {
     private func updatePlaceholderVisibility() {
         let trimmed = promptTextView.string.trimmingCharacters(in: .whitespacesAndNewlines)
         placeholderLabel.isHidden = !trimmed.isEmpty
+    }
+    
+    // MARK: - Annotation Access
+    
+    /// Get all annotations for rendering
+    var annotations: [any Annotation] {
+        annotationCanvasView.getAnnotations()
+    }
+    
+    /// Delete the currently selected annotation
+    func deleteSelectedAnnotation() {
+        annotationCanvasView.deleteSelected()
+    }
+    
+    /// Cancel in-progress annotation creation
+    func cancelAnnotationCreation() {
+        annotationCanvasView.cancelCreation()
+    }
+    
+    // MARK: - AnnotationToolbarViewDelegate
+    
+    func toolbarDidSelectTool(_ tool: AnnotationTool) {
+        annotationCanvasView.currentTool = tool
+    }
+    
+    func toolbarDidSelectColor(_ color: AnnotationColor) {
+        annotationCanvasView.currentColor = color
+    }
+    
+    func toolbarDidPressClearAll() {
+        annotationCanvasView.clearAll()
+    }
+    
+    // MARK: - AnnotationCanvasViewDelegate
+    
+    func annotationCanvasDidChangeAnnotations(_ canvas: AnnotationCanvasView) {
+        annotationToolbar.hasAnnotations = canvas.hasAnnotations
     }
 }
 
