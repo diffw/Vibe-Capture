@@ -248,6 +248,12 @@ final class OverlayView: NSView {
 
     /// Accept first mouse click even when window is not key - critical for multi-monitor support
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+    
+    /// Always return self for hit testing to prevent mouse events from passing through
+    /// to windows below the overlay (e.g., Dock icons)
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        return self
+    }
 
     override func becomeFirstResponder() -> Bool {
         NSCursor.crosshair.set()

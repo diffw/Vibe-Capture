@@ -16,8 +16,8 @@ struct TargetApp: Equatable {
 final class AppDetectionService {
     static let shared = AppDetectionService()
     
-    /// Whitelist of supported applications (Bundle ID -> Display Name)
-    /// Future: Add URL patterns for browser-based apps (ChatGPT, Gemini, etc.)
+    /// Whitelist of optimized applications (Bundle ID -> Display Name)
+    /// These apps have custom timing/focus configurations for best experience
     private let whitelistApps: [(bundleID: String, displayName: String)] = [
         // AI Code Editors
         ("com.todesktop.230313mzl4w4u92", "Cursor"),
@@ -37,6 +37,40 @@ final class AppDetectionService {
         ("com.apple.Safari", "Safari"),
         ("com.microsoft.edgemac", "Edge"),
         ("company.thebrowser.Browser", "Arc"),
+    ]
+    
+    /// Blacklist of apps that don't support image paste
+    /// These apps will show "Save Image" instead of "Send to [App]"
+    private let blacklistApps: [String] = [
+        // System core
+        "com.apple.finder",                    // Finder
+        "com.apple.systempreferences",         // System Preferences (older)
+        "com.apple.Preferences",               // System Settings (newer)
+        "com.apple.Preview",                   // Preview
+        "com.apple.ActivityMonitor",           // Activity Monitor
+        "com.apple.Terminal",                  // Terminal
+        "com.apple.dt.Xcode",                  // Xcode
+        // Utilities
+        "com.apple.AppStore",                  // App Store
+        "com.apple.Passwords",                 // Passwords
+        "com.apple.calculator",                // Calculator
+        "com.apple.clock",                     // Clock
+        "com.apple.findmy",                    // Find My
+        "com.apple.Home",                      // Home
+        "com.apple.Magnifier",                 // Magnifier
+        "com.apple.TestFlight",                // TestFlight
+        "com.apple.VoiceMemos",                // Voice Memos
+        "com.apple.Console",                   // Console
+        "com.apple.Dictionary",                // Dictionary
+        "com.apple.airport.airportutility",    // AirPort Utility
+        "com.apple.Automator",                 // Automator
+        "com.apple.BluetoothFileExchange",     // Bluetooth File Exchange
+        "com.apple.ColorSyncUtility",          // ColorSync Utility
+        "com.apple.DiskUtility",               // Disk Utility
+        "com.apple.grapher",                   // Grapher
+        "com.apple.print.PrinterProxy",        // Print Center
+        "com.apple.ScreenSharing",             // Screen Sharing
+        "com.apple.Screenshot",                // Screenshot
     ]
     
     /// Track the previous frontmost application (before our app became active)
@@ -68,7 +102,7 @@ final class AppDetectionService {
         return currentApp.flatMap { makeTargetApp(from: $0) }
     }
     
-    /// Check if the given app is in our whitelist
+    /// Check if the given app is in our whitelist (optimized apps)
     func isWhitelisted(_ app: TargetApp) -> Bool {
         return whitelistApps.contains { $0.bundleID == app.bundleIdentifier }
     }
@@ -76,6 +110,16 @@ final class AppDetectionService {
     /// Check if the given bundle identifier is in our whitelist
     func isWhitelisted(bundleID: String) -> Bool {
         return whitelistApps.contains { $0.bundleID == bundleID }
+    }
+    
+    /// Check if the given app is blacklisted (doesn't support image paste)
+    func isBlacklisted(_ app: TargetApp) -> Bool {
+        return blacklistApps.contains { $0.lowercased() == app.bundleIdentifier.lowercased() }
+    }
+    
+    /// Check if the given bundle identifier is blacklisted
+    func isBlacklisted(bundleID: String) -> Bool {
+        return blacklistApps.contains { $0.lowercased() == bundleID.lowercased() }
     }
     
     /// Get all running whitelisted apps

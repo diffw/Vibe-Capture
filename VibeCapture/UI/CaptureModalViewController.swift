@@ -27,10 +27,22 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     /// Currently selected target app
     private var selectedTargetApp: TargetApp?
     
-    /// Whether the send button should be enabled
-    private var isSendEnabled: Bool {
+    /// Whether the current app is optimized (in whitelist)
+    private var isAppOptimized: Bool {
         guard let app = selectedTargetApp else { return false }
         return AppDetectionService.shared.isWhitelisted(app)
+    }
+    
+    /// Whether the current app is blacklisted (doesn't support paste)
+    private var isAppBlacklisted: Bool {
+        guard let app = selectedTargetApp else { return false }
+        return AppDetectionService.shared.isBlacklisted(app)
+    }
+    
+    /// Whether we have a valid target app to send to (not blacklisted)
+    private var canSendToApp: Bool {
+        guard let _ = selectedTargetApp else { return false }
+        return !isAppBlacklisted
     }
     
     /// Brand color for active send button
@@ -406,11 +418,11 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     // MARK: - Button Actions
 
     @objc private func sendPressed() {
-        if isSendEnabled, let targetApp = selectedTargetApp {
-            // Send to whitelisted app
+        if canSendToApp, let targetApp = selectedTargetApp {
+            // Send to target app (optimized or generic)
             onPaste?(promptTextView.string, targetApp)
         } else {
-            // Fallback to save when target app is not whitelisted
+            // Fallback to save when no target app or app is blacklisted
             onSave?()
         }
     }
@@ -497,10 +509,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
     private func updateSendButtonTitle() {
         let title: String
-        if isSendEnabled, let app = selectedTargetApp {
+        if canSendToApp, let app = selectedTargetApp {
             title = "Send to \(app.displayName)"
         } else {
-            // Show "Save Image" when target app is not whitelisted or no app detected
+            // Show "Save Image" when no target app or app is blacklisted
             title = "Save Image"
         }
         sendButton.title = title

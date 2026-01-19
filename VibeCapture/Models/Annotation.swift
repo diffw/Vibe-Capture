@@ -556,12 +556,14 @@ final class NumberAnnotation: Annotation {
     func draw(in context: CGContext, scale: CGFloat, state: AnnotationState, imageSize: CGSize) {
         let scaledCenter = CGPoint(x: center.x * scale, y: center.y * scale)
         
-        // Fixed diameter in screen pixels
-        var currentDiameter = Self.diameter
+        // Scale diameter proportionally with coordinates
+        // This ensures the number annotation looks the same relative to the image
+        // whether displayed in Modal (scale < 1) or rendered to original (scale >= 1)
+        var currentDiameter = Self.diameter * scale
         
         // Slightly larger on hover
         if state == .hover {
-            currentDiameter += 4
+            currentDiameter += 4 * scale
         }
         
         let currentRadius = currentDiameter / 2
@@ -607,18 +609,18 @@ final class NumberAnnotation: Annotation {
         
         // Draw selection ring for selected state
         if state == .selected || state == .dragging {
-            drawSelectionRing(context: context, center: scaledCenter, radius: currentRadius)
+            drawSelectionRing(context: context, center: scaledCenter, radius: currentRadius, scale: scale)
         }
     }
     
-    private func drawSelectionRing(context: CGContext, center: CGPoint, radius: CGFloat) {
-        let ringRadius = radius + 4
+    private func drawSelectionRing(context: CGContext, center: CGPoint, radius: CGFloat, scale: CGFloat) {
+        let ringRadius = radius + 4 * scale
         let handleColor = NSColor.systemBlue
         
         context.saveGState()
         
         context.setStrokeColor(handleColor.cgColor)
-        context.setLineWidth(2)
+        context.setLineWidth(2 * scale)
         context.strokeEllipse(in: CGRect(
             x: center.x - ringRadius,
             y: center.y - ringRadius,
@@ -699,12 +701,15 @@ final class NumberedArrowAnnotation: Annotation {
         let scaledEnd = CGPoint(x: endPoint.x * scale, y: endPoint.y * scale)
         
         let baseColor = color.nsColor
-        var strokeWidth = Self.strokeWidth
-        var numberDiameter = Self.numberDiameter
+        
+        // Scale dimensions proportionally with coordinates
+        var strokeWidth = Self.strokeWidth * scale
+        var numberDiameter = Self.numberDiameter * scale
+        let arrowHeadLength = Self.arrowHeadLength * scale
         
         if state == .hover {
-            strokeWidth += 2
-            numberDiameter += 4
+            strokeWidth += 2 * scale
+            numberDiameter += 4 * scale
         }
         
         let numberRadius = numberDiameter / 2
@@ -722,12 +727,12 @@ final class NumberedArrowAnnotation: Annotation {
         
         // Arrow head points
         let arrowPoint1 = CGPoint(
-            x: scaledEnd.x - Self.arrowHeadLength * cos(angle - Self.arrowHeadAngle),
-            y: scaledEnd.y - Self.arrowHeadLength * sin(angle - Self.arrowHeadAngle)
+            x: scaledEnd.x - arrowHeadLength * cos(angle - Self.arrowHeadAngle),
+            y: scaledEnd.y - arrowHeadLength * sin(angle - Self.arrowHeadAngle)
         )
         let arrowPoint2 = CGPoint(
-            x: scaledEnd.x - Self.arrowHeadLength * cos(angle + Self.arrowHeadAngle),
-            y: scaledEnd.y - Self.arrowHeadLength * sin(angle + Self.arrowHeadAngle)
+            x: scaledEnd.x - arrowHeadLength * cos(angle + Self.arrowHeadAngle),
+            y: scaledEnd.y - arrowHeadLength * sin(angle + Self.arrowHeadAngle)
         )
         
         // Line end point (at base of arrow head)
@@ -788,12 +793,12 @@ final class NumberedArrowAnnotation: Annotation {
         
         // Draw selection handles
         if state == .selected || state == .dragging {
-            drawSelectionHandles(context: context, start: scaledStart, end: scaledEnd, numberRadius: numberRadius)
+            drawSelectionHandles(context: context, start: scaledStart, end: scaledEnd, numberRadius: numberRadius, scale: scale)
         }
     }
     
-    private func drawSelectionHandles(context: CGContext, start: CGPoint, end: CGPoint, numberRadius: CGFloat) {
-        let handleRadius: CGFloat = 5
+    private func drawSelectionHandles(context: CGContext, start: CGPoint, end: CGPoint, numberRadius: CGFloat, scale: CGFloat) {
+        let handleRadius: CGFloat = 5 * scale
         let handleColor = NSColor.systemBlue
         let handleBorderColor = NSColor.white
         
@@ -805,10 +810,10 @@ final class NumberedArrowAnnotation: Annotation {
         for handle in handles {
             context.setFillColor(handleBorderColor.cgColor)
             context.fillEllipse(in: CGRect(
-                x: handle.x - handleRadius - 1,
-                y: handle.y - handleRadius - 1,
-                width: (handleRadius + 1) * 2,
-                height: (handleRadius + 1) * 2
+                x: handle.x - handleRadius - 1 * scale,
+                y: handle.y - handleRadius - 1 * scale,
+                width: (handleRadius + 1 * scale) * 2,
+                height: (handleRadius + 1 * scale) * 2
             ))
             
             context.setFillColor(handleColor.cgColor)
@@ -821,9 +826,9 @@ final class NumberedArrowAnnotation: Annotation {
         }
         
         // Draw selection ring around number
-        let ringRadius = numberRadius + 4
+        let ringRadius = numberRadius + 4 * scale
         context.setStrokeColor(handleColor.cgColor)
-        context.setLineWidth(2)
+        context.setLineWidth(2 * scale)
         context.strokeEllipse(in: CGRect(
             x: start.x - ringRadius,
             y: start.y - ringRadius,
