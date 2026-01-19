@@ -51,6 +51,10 @@ final class AnnotationCanvasView: NSView {
         case resizingArrow(arrow: ArrowAnnotation, handle: ArrowHandle, otherEnd: CGPoint)
         case resizingCircle(circle: CircleAnnotation, handle: CircleHandle, originalRect: CGRect)
         case resizingRectangle(rectangle: RectangleAnnotation, handle: RectHandle, originalRect: CGRect)
+        case resizingNumberedArrow(numberedArrow: NumberedArrowAnnotation, handle: NumberedArrowHandle, otherEnd: CGPoint)
+        // For number tool: pending click vs drag detection
+        case pendingNumberCreation(startPoint: CGPoint, startViewPoint: CGPoint)
+        case creatingNumberedArrow(startPoint: CGPoint, currentPoint: CGPoint)
     }
     
     /// Which end of an arrow is being dragged
@@ -82,7 +86,16 @@ final class AnnotationCanvasView: NSView {
         case top, bottom, left, right
     }
     
+    /// Which end of a numbered arrow is being dragged
+    enum NumberedArrowHandle {
+        case start  // Number end
+        case end    // Arrow head end
+    }
+    
     private var interactionState: InteractionState = .idle
+    
+    /// Threshold for distinguishing click from drag (in view pixels)
+    private let dragThreshold: CGFloat = 5.0
     
     /// Hit area tolerance in display coordinates
     private let hitTolerance: CGFloat = 8.0
@@ -145,9 +158,31 @@ final class AnnotationCanvasView: NSView {
         addTrackingArea(trackingArea)
     }
     
+    // MARK: - Debug Logging
+    
+    private func log(_ message: String) {
+        let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        print("[AnnotationCanvas \(timestamp)] \(message)")
+    }
+    
     // MARK: - Keyboard Events
     
-    override var acceptsFirstResponder: Bool { true }
+    override var acceptsFirstResponder: Bool {
+        log("acceptsFirstResponder called, returning: true")
+        return true
+    }
+    
+    override func becomeFirstResponder() -> Bool {
+        let result = super.becomeFirstResponder()
+        log("becomeFirstResponder called, result: \(result)")
+        return result
+    }
+    
+    override func resignFirstResponder() -> Bool {
+        let result = super.resignFirstResponder()
+        log("resignFirstResponder called, result: \(result)")
+        return result
+    }
     
     override func keyDown(with event: NSEvent) {
         // Delete or Backspace to delete selected annotation
@@ -189,8 +224,29 @@ final class AnnotationCanvasView: NSView {
         guard let selectedId = selectedAnnotationId else { return }
         annotations.removeAll { $0.id == selectedId }
         selectedAnnotationId = nil
+        renumberAnnotations()  // Renumber after deletion
         needsDisplay = true
         delegate?.annotationCanvasDidChangeAnnotations(self)
+    }
+    
+    /// Renumber all number-based annotations sequentially (1, 2, 3...)
+    private func renumberAnnotations() {
+        var nextNumber = 1
+        for annotation in annotations {
+            if let numberAnnotation = annotation as? NumberAnnotation {
+                numberAnnotation.number = nextNumber
+                nextNumber += 1
+            } else if let numberedArrow = annotation as? NumberedArrowAnnotation {
+                numberedArrow.number = nextNumber
+                nextNumber += 1
+            }
+        }
+    }
+    
+    /// Get the next number value for a new number-based annotation
+    private var nextNumberValue: Int {
+        let count = annotations.filter { $0 is NumberAnnotation || $0 is NumberedArrowAnnotation }.count
+        return count + 1
     }
     
     /// Cancel current creation in progress
@@ -333,11 +389,38 @@ final class AnnotationCanvasView: NSView {
         return nil
     }
     
+    /// Check if view point hits a handle of the selected numbered arrow annotation
+    private func numberedArrowHandleAt(viewPoint: CGPoint) -> (NumberedArrowAnnotation, NumberedArrowHandle)? {
+        guard let selectedId = selectedAnnotationId,
+              let numberedArrow = annotations.first(where: { $0.id == selectedId }) as? NumberedArrowAnnotation else {
+            return nil
+        }
+        
+        let startInView = imageToView(numberedArrow.startPoint)
+        let endInView = imageToView(numberedArrow.endPoint)
+        
+        // Check if clicking on start handle (number)
+        if hypot(viewPoint.x - startInView.x, viewPoint.y - startInView.y) <= handleHitRadius + NumberedArrowAnnotation.numberDiameter / 2 {
+            return (numberedArrow, .start)
+        }
+        
+        // Check if clicking on end handle (arrow head)
+        if hypot(viewPoint.x - endInView.x, viewPoint.y - endInView.y) <= handleHitRadius {
+            return (numberedArrow, .end)
+        }
+        
+        return nil
+    }
+    
     // MARK: - Mouse Events
     
     override func mouseDown(with event: NSEvent) {
+        log("mouseDown - before makeFirstResponder, window.firstResponder: \(String(describing: window?.firstResponder))")
+        
         // Become first responder to receive keyboard events
         window?.makeFirstResponder(self)
+        
+        log("mouseDown - after makeFirstResponder, window.firstResponder: \(String(describing: window?.firstResponder))")
         
         let viewPoint = convert(event.locationInWindow, from: nil)
         let imagePoint = viewToImage(viewPoint)
@@ -364,6 +447,14 @@ final class AnnotationCanvasView: NSView {
             return
         }
         
+        // Check if clicking on a handle of a selected numbered arrow (for resizing)
+        if let (numberedArrow, handle) = numberedArrowHandleAt(viewPoint: viewPoint) {
+            let otherEnd = (handle == .start) ? numberedArrow.endPoint : numberedArrow.startPoint
+            interactionState = .resizingNumberedArrow(numberedArrow: numberedArrow, handle: handle, otherEnd: otherEnd)
+            needsDisplay = true
+            return
+        }
+        
         // Next, check if clicking on an existing annotation (prioritize selection/drag over creation)
         if let hitAnnotation = annotationAt(viewPoint: viewPoint) {
             if hitAnnotation.id == selectedAnnotationId {
@@ -383,6 +474,30 @@ final class AnnotationCanvasView: NSView {
         // Clicked on empty area
         // If we have a tool selected, start creating
         if currentTool != .none {
+            // Number tool: double-click creates number, drag creates numbered arrow
+            if currentTool == .number {
+                if event.clickCount == 2 {
+                    // Double-click: create number annotation immediately
+                    let numberAnnotation = NumberAnnotation(
+                        center: imagePoint,
+                        number: nextNumberValue,
+                        color: currentColor
+                    )
+                    annotations.append(numberAnnotation)
+                    selectedAnnotationId = numberAnnotation.id
+                    interactionState = .idle
+                    delegate?.annotationCanvasDidChangeAnnotations(self)
+                    needsDisplay = true
+                    return
+                }
+                // Single click: start pending state for potential drag
+                interactionState = .pendingNumberCreation(startPoint: imagePoint, startViewPoint: viewPoint)
+                selectedAnnotationId = nil
+                needsDisplay = true
+                return
+            }
+            
+            // Other tools use drag to create
             interactionState = .creating(startPoint: imagePoint, currentPoint: imagePoint)
             selectedAnnotationId = nil
             needsDisplay = true
@@ -417,6 +532,10 @@ final class AnnotationCanvasView: NSView {
                     annotations[index] = circle.translated(by: delta)
                 } else if let rectangle = annotation as? RectangleAnnotation {
                     annotations[index] = rectangle.translated(by: delta)
+                } else if let number = annotation as? NumberAnnotation {
+                    annotations[index] = number.translated(by: delta)
+                } else if let numberedArrow = annotation as? NumberedArrowAnnotation {
+                    annotations[index] = numberedArrow.translated(by: delta)
                 }
                 // Update drag state with new start point
                 interactionState = .dragging(
@@ -463,6 +582,35 @@ final class AnnotationCanvasView: NSView {
             }
             needsDisplay = true
             
+        case .resizingNumberedArrow(let numberedArrow, let handle, let otherEnd):
+            // Update the numbered arrow by moving the dragged handle
+            if let index = annotations.firstIndex(where: { $0.id == numberedArrow.id }) {
+                let newNumberedArrow: NumberedArrowAnnotation
+                switch handle {
+                case .start:
+                    newNumberedArrow = NumberedArrowAnnotation(id: numberedArrow.id, startPoint: imagePoint, endPoint: otherEnd, number: numberedArrow.number, color: numberedArrow.color)
+                case .end:
+                    newNumberedArrow = NumberedArrowAnnotation(id: numberedArrow.id, startPoint: otherEnd, endPoint: imagePoint, number: numberedArrow.number, color: numberedArrow.color)
+                }
+                annotations[index] = newNumberedArrow
+                interactionState = .resizingNumberedArrow(numberedArrow: newNumberedArrow, handle: handle, otherEnd: otherEnd)
+            }
+            needsDisplay = true
+            
+        case .pendingNumberCreation(let startPoint, let startViewPoint):
+            // Check if dragged past threshold
+            let distance = hypot(viewPoint.x - startViewPoint.x, viewPoint.y - startViewPoint.y)
+            if distance >= dragThreshold {
+                // Switch to creating numbered arrow
+                interactionState = .creatingNumberedArrow(startPoint: startPoint, currentPoint: imagePoint)
+            }
+            needsDisplay = true
+            
+        case .creatingNumberedArrow(let startPoint, _):
+            // Update current point for preview
+            interactionState = .creatingNumberedArrow(startPoint: startPoint, currentPoint: imagePoint)
+            needsDisplay = true
+            
         case .idle:
             break
         }
@@ -500,6 +648,33 @@ final class AnnotationCanvasView: NSView {
             delegate?.annotationCanvasDidChangeAnnotations(self)
             needsDisplay = true
             
+        case .resizingNumberedArrow:
+            interactionState = .idle
+            delegate?.annotationCanvasDidChangeAnnotations(self)
+            needsDisplay = true
+            
+        case .pendingNumberCreation:
+            // Single click without drag - do nothing (double-click creates number)
+            interactionState = .idle
+            needsDisplay = true
+            
+        case .creatingNumberedArrow(let startPoint, let currentPoint):
+            // Finalize numbered arrow if long enough
+            let length = hypot(currentPoint.x - startPoint.x, currentPoint.y - startPoint.y)
+            if length >= 20 {  // Minimum length for arrow
+                let numberedArrow = NumberedArrowAnnotation(
+                    startPoint: startPoint,
+                    endPoint: currentPoint,
+                    number: nextNumberValue,
+                    color: currentColor
+                )
+                annotations.append(numberedArrow)
+                selectedAnnotationId = numberedArrow.id
+                delegate?.annotationCanvasDidChangeAnnotations(self)
+            }
+            interactionState = .idle
+            needsDisplay = true
+            
         case .idle:
             break
         }
@@ -509,7 +684,7 @@ final class AnnotationCanvasView: NSView {
         let viewPoint = convert(event.locationInWindow, from: nil)
         
         // Check if hovering over any handle (for cursor change)
-        let isOverHandle = arrowHandleAt(viewPoint: viewPoint) != nil || circleHandleAt(viewPoint: viewPoint) != nil || rectangleHandleAt(viewPoint: viewPoint) != nil
+        let isOverHandle = arrowHandleAt(viewPoint: viewPoint) != nil || circleHandleAt(viewPoint: viewPoint) != nil || rectangleHandleAt(viewPoint: viewPoint) != nil || numberedArrowHandleAt(viewPoint: viewPoint) != nil
         
         // Update hover state
         let hitAnnotation = annotationAt(viewPoint: viewPoint)
@@ -554,7 +729,7 @@ final class AnnotationCanvasView: NSView {
         
         // If a tool is selected, show crosshair for drawing
         switch currentTool {
-        case .arrow, .circle, .rectangle:
+        case .arrow, .circle, .rectangle, .number:
             return .crosshair
         case .none:
             return .arrow
@@ -716,6 +891,10 @@ final class AnnotationCanvasView: NSView {
             guard width >= 8 || height >= 8 else { return nil }  // Minimum 8px
             return RectangleAnnotation(from: startPoint, to: endPoint, color: currentColor)
             
+        case .number:
+            // Numbers are created on single click, not drag
+            return nil
+            
         case .none:
             return nil
         }
@@ -747,6 +926,12 @@ final class AnnotationCanvasView: NSView {
         if case .creating(let startPoint, let currentPoint) = interactionState {
             drawCreatingAnnotation(context: context, from: startPoint, to: currentPoint)
         }
+        
+        // Draw in-progress numbered arrow
+        if case .creatingNumberedArrow(let startPoint, let currentPoint) = interactionState {
+            let temp = NumberedArrowAnnotation(startPoint: startPoint, endPoint: currentPoint, number: nextNumberValue, color: currentColor)
+            temp.draw(in: context, scale: scale, state: .creating, imageSize: imageSize)
+        }
     }
     
     private func stateFor(annotation: any Annotation) -> AnnotationState {
@@ -764,6 +949,10 @@ final class AnnotationCanvasView: NSView {
         }
         if case .resizingRectangle(let resizingRectangle, _, _) = interactionState,
            resizingRectangle.id == annotation.id {
+            return .selected  // Keep showing selected state while resizing
+        }
+        if case .resizingNumberedArrow(let resizingNumberedArrow, _, _) = interactionState,
+           resizingNumberedArrow.id == annotation.id {
             return .selected  // Keep showing selected state while resizing
         }
         if annotation.id == selectedAnnotationId {
@@ -789,6 +978,10 @@ final class AnnotationCanvasView: NSView {
         case .rectangle:
             let temp = RectangleAnnotation(from: startPoint, to: currentPoint, color: currentColor)
             temp.draw(in: context, scale: scale, state: .creating, imageSize: imageSize)
+            
+        case .number:
+            // Numbers are created on single click, no drag preview needed
+            break
             
         case .none:
             break

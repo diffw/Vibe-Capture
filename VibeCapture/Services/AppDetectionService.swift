@@ -30,6 +30,8 @@ final class AppDetectionService {
         ("ru.keepcoder.Telegram", "Telegram"),
         ("org.telegram.desktop", "Telegram"),
         ("com.anthropic.claudefordesktop", "Claude"),
+        // Notes
+        ("md.obsidian", "Obsidian"),
         // Browsers (for web apps like ChatGPT, Gemini, Claude Web)
         ("com.google.Chrome", "Chrome"),
         ("com.apple.Safari", "Safari"),

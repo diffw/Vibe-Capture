@@ -14,7 +14,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private let imageView = NSImageView()
     private let annotationCanvasView = AnnotationCanvasView()
     private let annotationToolbar = AnnotationToolbarView()
-    private let promptScrollView = NSScrollView()
+    private let promptScrollView = FocusableScrollView()
     private let promptTextView = PromptTextView()
     private let placeholderLabel = NSTextField(labelWithString: "")
     
@@ -130,7 +130,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         // Max window height: 90% of screen height
         // Subtract UI chrome to get max image height
         let maxWindowHeight = screenFrame.height * 0.90
-        let uiChromeHeight: CGFloat = 80 + 40 + 36 + 32 + 24 + 36  // prompt(4 lines) + buttons + toolbar + padding + spacing
+        let uiChromeHeight: CGFloat = 60 + 40 + 36 + 32 + 24 + 36  // prompt(3 lines) + buttons + toolbar + padding + spacing
         let maxHeight = maxWindowHeight - uiChromeHeight
         
         writeLog("VC: Screen=\(screenFrame.width)x\(screenFrame.height), maxWidth=\(maxWidth), maxHeight=\(maxHeight)")
@@ -248,6 +248,11 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         placeholderLabel.textColor = .placeholderTextColor
         placeholderLabel.font = NSFont.systemFont(ofSize: 13)
         placeholderLabel.maximumNumberOfLines = 1
+        
+        // Make placeholder click-through so clicks reach the text view behind it
+        // Add click gesture to focus text view when placeholder is clicked
+        let clickGesture = NSClickGestureRecognizer(target: self, action: #selector(placeholderClicked))
+        placeholderLabel.addGestureRecognizer(clickGesture)
 
         // Setup Send button (main button) with brand color styling
         sendButton.bezelStyle = .rounded
@@ -348,7 +353,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             promptScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             promptScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             promptScrollView.topAnchor.constraint(equalTo: imageContainerView.bottomAnchor, constant: 12),
-            promptScrollView.heightAnchor.constraint(equalToConstant: 80),  // ~4 lines
+            promptScrollView.heightAnchor.constraint(equalToConstant: 60),  // ~3 lines
             
             // Buttons row (direct constraints)
             buttonsRow.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -376,14 +381,38 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     }
 
     func focusPrompt() {
+        let beforeResponder = view.window?.firstResponder
         view.window?.makeFirstResponder(promptTextView)
+        let afterResponder = view.window?.firstResponder
+        print("[CaptureModalVC] focusPrompt - before: \(String(describing: beforeResponder)), after: \(String(describing: afterResponder))")
+        print("[CaptureModalVC] focusPrompt - promptScrollView.frame: \(promptScrollView.frame), contentSize: \(promptScrollView.contentSize)")
+        print("[CaptureModalVC] focusPrompt - promptTextView.frame: \(promptTextView.frame), isEditable: \(promptTextView.isEditable)")
+        print("[CaptureModalVC] focusPrompt - promptTextView.acceptsFirstResponder: \(promptTextView.acceptsFirstResponder)")
+    }
+    
+    override func viewDidLayout() {
+        super.viewDidLayout()
+        print("[CaptureModalVC] viewDidLayout - promptScrollView.frame: \(promptScrollView.frame), contentSize: \(promptScrollView.contentSize)")
+        print("[CaptureModalVC] viewDidLayout - promptTextView.frame: \(promptTextView.frame)")
+        
+        // Ensure text view frame matches scroll view content size after layout
+        let contentSize = promptScrollView.contentSize
+        if promptTextView.frame.width != contentSize.width {
+            promptTextView.frame = NSRect(x: 0, y: 0, width: contentSize.width, height: max(contentSize.height, promptTextView.frame.height))
+            print("[CaptureModalVC] viewDidLayout - updated promptTextView.frame to: \(promptTextView.frame)")
+        }
     }
 
     // MARK: - Button Actions
 
     @objc private func sendPressed() {
-        guard let targetApp = selectedTargetApp, isSendEnabled else { return }
-        onPaste?(promptTextView.string, targetApp)
+        if isSendEnabled, let targetApp = selectedTargetApp {
+            // Send to whitelisted app
+            onPaste?(promptTextView.string, targetApp)
+        } else {
+            // Fallback to save when target app is not whitelisted
+            onSave?()
+        }
     }
     
     @objc private func closePressed() {
@@ -394,6 +423,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     
     @objc private func dropdownClicked() {
         showAppSelectionMenu()
+    }
+    
+    @objc private func placeholderClicked() {
+        view.window?.makeFirstResponder(promptTextView)
     }
 
     // MARK: - App Selection Menu
@@ -464,53 +497,38 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
     private func updateSendButtonTitle() {
         let title: String
-        if let app = selectedTargetApp {
+        if isSendEnabled, let app = selectedTargetApp {
             title = "Send to \(app.displayName)"
         } else {
-            title = "Send"
+            // Show "Save Image" when target app is not whitelisted or no app detected
+            title = "Save Image"
         }
         sendButton.title = title
         
-        // Re-apply styling after title change
-        if isSendEnabled {
-            let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: NSColor.white,
-                .font: NSFont.systemFont(ofSize: 13, weight: .medium)
-            ]
-            sendButton.attributedTitle = NSAttributedString(string: title, attributes: attributes)
-        }
+        // Re-apply styling after title change (button is always enabled now)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.white,
+            .font: NSFont.systemFont(ofSize: 13, weight: .medium)
+        ]
+        sendButton.attributedTitle = NSAttributedString(string: title, attributes: attributes)
     }
     
     private func updateSendButtonState() {
-        sendButton.isEnabled = isSendEnabled
+        // Button is always enabled - either sends to app or saves image
+        sendButton.isEnabled = true
         
-        // Apply brand color styling when enabled
-        if isSendEnabled {
-            // Use a custom colored button appearance
-            sendButton.bezelStyle = .rounded
-            sendButton.isBordered = true
-            sendButton.bezelColor = brandColor
-            // Set white text using attributed title
-            let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: NSColor.white,
-                .font: NSFont.systemFont(ofSize: 13, weight: .medium)
-            ]
-            sendButton.attributedTitle = NSAttributedString(string: sendButton.title, attributes: attributes)
-            sendButton.toolTip = nil
-        } else {
-            // Reset to default styling
-            sendButton.bezelStyle = .rounded
-            sendButton.isBordered = true
-            sendButton.bezelColor = nil
-            sendButton.attributedTitle = NSAttributedString(string: sendButton.title)
-            
-            // Update tooltip for disabled state
-            if let app = selectedTargetApp {
-                sendButton.toolTip = "\(app.displayName) is not a supported app"
-            } else {
-                sendButton.toolTip = "No target app detected"
-            }
-        }
+        // Apply brand color styling
+        sendButton.bezelStyle = .rounded
+        sendButton.isBordered = true
+        sendButton.bezelColor = brandColor
+        
+        // Set white text using attributed title
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.white,
+            .font: NSFont.systemFont(ofSize: 13, weight: .medium)
+        ]
+        sendButton.attributedTitle = NSAttributedString(string: sendButton.title, attributes: attributes)
+        sendButton.toolTip = nil
     }
     
     private func updatePlaceholderText() {

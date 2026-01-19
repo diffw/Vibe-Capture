@@ -217,7 +217,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     // MARK: - Window Size Calculation (macOS Screenshot Preview style)
 
     private static let minWindowWidth: CGFloat = 400
-    private static let promptAreaHeight: CGFloat = 80  // ~4 lines
+    private static let promptAreaHeight: CGFloat = 60  // ~3 lines
     private static let buttonsRowHeight: CGFloat = 40
     private static let toolbarHeight: CGFloat = 36
     private static let padding: CGFloat = 16

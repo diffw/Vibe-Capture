@@ -129,7 +129,7 @@ private final class HUDView: NSView {
 
     private func colorForStyle() -> NSColor {
         switch style {
-        case .success: return NSColor.systemGreen
+        case .success: return NSColor(red: 1.0, green: 0.553, blue: 0.463, alpha: 1.0) // Brand color #FF8D76
         case .error: return NSColor.systemRed
         case .info: return NSColor.labelColor
         }

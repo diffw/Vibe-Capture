@@ -50,6 +50,7 @@ enum AnnotationTool: Equatable {
     case arrow
     case circle
     case rectangle
+    case number
 }
 
 // MARK: - Annotation Protocol
@@ -508,6 +509,327 @@ final class RectangleAnnotation: Annotation {
                 height: handleRadius * 2
             ))
         }
+        
+        context.restoreGState()
+    }
+}
+
+// MARK: - Number Annotation
+
+final class NumberAnnotation: Annotation {
+    let id: UUID
+    let center: CGPoint  // Center point in original image coordinates
+    var number: Int      // Mutable for renumbering
+    let color: AnnotationColor
+    
+    // Fixed diameter (24px in screen pixels)
+    static let diameter: CGFloat = 24.0
+    
+    /// Fixed stroke width (not used, but required by protocol)
+    static func adaptiveStrokeWidth(for imageSize: CGSize) -> CGFloat {
+        return 0
+    }
+    
+    init(id: UUID = UUID(), center: CGPoint, number: Int, color: AnnotationColor) {
+        self.id = id
+        self.center = center
+        self.number = number
+        self.color = color
+    }
+    
+    func contains(point: CGPoint, tolerance: CGFloat) -> Bool {
+        // Simple circle hit test
+        let distance = hypot(point.x - center.x, point.y - center.y)
+        // Use half diameter + tolerance for hit area
+        return distance <= (Self.diameter / 2 + tolerance)
+    }
+    
+    func translated(by delta: CGPoint) -> NumberAnnotation {
+        NumberAnnotation(
+            id: id,
+            center: CGPoint(x: center.x + delta.x, y: center.y + delta.y),
+            number: number,
+            color: color
+        )
+    }
+    
+    func draw(in context: CGContext, scale: CGFloat, state: AnnotationState, imageSize: CGSize) {
+        let scaledCenter = CGPoint(x: center.x * scale, y: center.y * scale)
+        
+        // Fixed diameter in screen pixels
+        var currentDiameter = Self.diameter
+        
+        // Slightly larger on hover
+        if state == .hover {
+            currentDiameter += 4
+        }
+        
+        let currentRadius = currentDiameter / 2
+        
+        context.saveGState()
+        
+        let baseColor = color.nsColor
+        
+        // Draw filled circle background
+        context.setFillColor(baseColor.cgColor)
+        context.fillEllipse(in: CGRect(
+            x: scaledCenter.x - currentRadius,
+            y: scaledCenter.y - currentRadius,
+            width: currentDiameter,
+            height: currentDiameter
+        ))
+        
+        // Draw white number text
+        let text = "\(number)" as NSString
+        let fontSize: CGFloat = currentDiameter * 0.6  // 60% of diameter
+        let font = NSFont.systemFont(ofSize: fontSize, weight: .bold)
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: NSColor.white
+        ]
+        
+        let textSize = text.size(withAttributes: attributes)
+        let textRect = CGRect(
+            x: scaledCenter.x - textSize.width / 2,
+            y: scaledCenter.y - textSize.height / 2,
+            width: textSize.width,
+            height: textSize.height
+        )
+        
+        // Draw text using NSString (need to flip context for text)
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+        text.draw(in: textRect, withAttributes: attributes)
+        NSGraphicsContext.restoreGraphicsState()
+        
+        context.restoreGState()
+        
+        // Draw selection ring for selected state
+        if state == .selected || state == .dragging {
+            drawSelectionRing(context: context, center: scaledCenter, radius: currentRadius)
+        }
+    }
+    
+    private func drawSelectionRing(context: CGContext, center: CGPoint, radius: CGFloat) {
+        let ringRadius = radius + 4
+        let handleColor = NSColor.systemBlue
+        
+        context.saveGState()
+        
+        context.setStrokeColor(handleColor.cgColor)
+        context.setLineWidth(2)
+        context.strokeEllipse(in: CGRect(
+            x: center.x - ringRadius,
+            y: center.y - ringRadius,
+            width: ringRadius * 2,
+            height: ringRadius * 2
+        ))
+        
+        context.restoreGState()
+    }
+}
+
+// MARK: - Numbered Arrow Annotation
+
+final class NumberedArrowAnnotation: Annotation {
+    let id: UUID
+    let startPoint: CGPoint  // Where the number is (tail of arrow)
+    let endPoint: CGPoint    // Where the arrow points to (head)
+    var number: Int          // Mutable for renumbering
+    let color: AnnotationColor
+    
+    // Fixed dimensions
+    static let numberDiameter: CGFloat = 24.0
+    private static let strokeWidth: CGFloat = 4.0
+    private static let arrowHeadLength: CGFloat = 14.0
+    private static let arrowHeadAngle: CGFloat = .pi / 6
+    
+    static func adaptiveStrokeWidth(for imageSize: CGSize) -> CGFloat {
+        return strokeWidth
+    }
+    
+    init(id: UUID = UUID(), startPoint: CGPoint, endPoint: CGPoint, number: Int, color: AnnotationColor) {
+        self.id = id
+        self.startPoint = startPoint
+        self.endPoint = endPoint
+        self.number = number
+        self.color = color
+    }
+    
+    var length: CGFloat {
+        hypot(endPoint.x - startPoint.x, endPoint.y - startPoint.y)
+    }
+    
+    func contains(point: CGPoint, tolerance: CGFloat) -> Bool {
+        // Check if point hits the number circle
+        let distanceToNumber = hypot(point.x - startPoint.x, point.y - startPoint.y)
+        if distanceToNumber <= (Self.numberDiameter / 2 + tolerance) {
+            return true
+        }
+        
+        // Check if point hits the arrow line
+        let lineLength = length
+        guard lineLength > 0 else { return false }
+        
+        let dx = endPoint.x - startPoint.x
+        let dy = endPoint.y - startPoint.y
+        
+        let t = max(0, min(1, ((point.x - startPoint.x) * dx + (point.y - startPoint.y) * dy) / (lineLength * lineLength)))
+        
+        let closestX = startPoint.x + t * dx
+        let closestY = startPoint.y + t * dy
+        
+        let distance = hypot(point.x - closestX, point.y - closestY)
+        return distance <= (Self.strokeWidth / 2 + tolerance)
+    }
+    
+    func translated(by delta: CGPoint) -> NumberedArrowAnnotation {
+        NumberedArrowAnnotation(
+            id: id,
+            startPoint: CGPoint(x: startPoint.x + delta.x, y: startPoint.y + delta.y),
+            endPoint: CGPoint(x: endPoint.x + delta.x, y: endPoint.y + delta.y),
+            number: number,
+            color: color
+        )
+    }
+    
+    func draw(in context: CGContext, scale: CGFloat, state: AnnotationState, imageSize: CGSize) {
+        let scaledStart = CGPoint(x: startPoint.x * scale, y: startPoint.y * scale)
+        let scaledEnd = CGPoint(x: endPoint.x * scale, y: endPoint.y * scale)
+        
+        let baseColor = color.nsColor
+        var strokeWidth = Self.strokeWidth
+        var numberDiameter = Self.numberDiameter
+        
+        if state == .hover {
+            strokeWidth += 2
+            numberDiameter += 4
+        }
+        
+        let numberRadius = numberDiameter / 2
+        
+        context.saveGState()
+        
+        // Calculate arrow direction
+        let angle = atan2(scaledEnd.y - scaledStart.y, scaledEnd.x - scaledStart.x)
+        
+        // Arrow line starts from the edge of the number circle
+        let lineStart = CGPoint(
+            x: scaledStart.x + numberRadius * cos(angle),
+            y: scaledStart.y + numberRadius * sin(angle)
+        )
+        
+        // Arrow head points
+        let arrowPoint1 = CGPoint(
+            x: scaledEnd.x - Self.arrowHeadLength * cos(angle - Self.arrowHeadAngle),
+            y: scaledEnd.y - Self.arrowHeadLength * sin(angle - Self.arrowHeadAngle)
+        )
+        let arrowPoint2 = CGPoint(
+            x: scaledEnd.x - Self.arrowHeadLength * cos(angle + Self.arrowHeadAngle),
+            y: scaledEnd.y - Self.arrowHeadLength * sin(angle + Self.arrowHeadAngle)
+        )
+        
+        // Line end point (at base of arrow head)
+        let lineEnd = CGPoint(
+            x: (arrowPoint1.x + arrowPoint2.x) / 2,
+            y: (arrowPoint1.y + arrowPoint2.y) / 2
+        )
+        
+        // Draw arrow line
+        context.setStrokeColor(baseColor.cgColor)
+        context.setLineWidth(strokeWidth)
+        context.setLineCap(.round)
+        context.move(to: lineStart)
+        context.addLine(to: lineEnd)
+        context.strokePath()
+        
+        // Draw arrow head
+        context.setFillColor(baseColor.cgColor)
+        context.move(to: scaledEnd)
+        context.addLine(to: arrowPoint1)
+        context.addLine(to: arrowPoint2)
+        context.closePath()
+        context.fillPath()
+        
+        // Draw number circle
+        context.setFillColor(baseColor.cgColor)
+        context.fillEllipse(in: CGRect(
+            x: scaledStart.x - numberRadius,
+            y: scaledStart.y - numberRadius,
+            width: numberDiameter,
+            height: numberDiameter
+        ))
+        
+        // Draw white number text
+        let text = "\(number)" as NSString
+        let fontSize: CGFloat = numberDiameter * 0.6
+        let font = NSFont.systemFont(ofSize: fontSize, weight: .bold)
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: NSColor.white
+        ]
+        
+        let textSize = text.size(withAttributes: attributes)
+        let textRect = CGRect(
+            x: scaledStart.x - textSize.width / 2,
+            y: scaledStart.y - textSize.height / 2,
+            width: textSize.width,
+            height: textSize.height
+        )
+        
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+        text.draw(in: textRect, withAttributes: attributes)
+        NSGraphicsContext.restoreGraphicsState()
+        
+        context.restoreGState()
+        
+        // Draw selection handles
+        if state == .selected || state == .dragging {
+            drawSelectionHandles(context: context, start: scaledStart, end: scaledEnd, numberRadius: numberRadius)
+        }
+    }
+    
+    private func drawSelectionHandles(context: CGContext, start: CGPoint, end: CGPoint, numberRadius: CGFloat) {
+        let handleRadius: CGFloat = 5
+        let handleColor = NSColor.systemBlue
+        let handleBorderColor = NSColor.white
+        
+        context.saveGState()
+        
+        // Handle at arrow end only (start has the number circle as visual indicator)
+        let handles = [end]
+        
+        for handle in handles {
+            context.setFillColor(handleBorderColor.cgColor)
+            context.fillEllipse(in: CGRect(
+                x: handle.x - handleRadius - 1,
+                y: handle.y - handleRadius - 1,
+                width: (handleRadius + 1) * 2,
+                height: (handleRadius + 1) * 2
+            ))
+            
+            context.setFillColor(handleColor.cgColor)
+            context.fillEllipse(in: CGRect(
+                x: handle.x - handleRadius,
+                y: handle.y - handleRadius,
+                width: handleRadius * 2,
+                height: handleRadius * 2
+            ))
+        }
+        
+        // Draw selection ring around number
+        let ringRadius = numberRadius + 4
+        context.setStrokeColor(handleColor.cgColor)
+        context.setLineWidth(2)
+        context.strokeEllipse(in: CGRect(
+            x: start.x - ringRadius,
+            y: start.y - ringRadius,
+            width: ringRadius * 2,
+            height: ringRadius * 2
+        ))
         
         context.restoreGState()
     }

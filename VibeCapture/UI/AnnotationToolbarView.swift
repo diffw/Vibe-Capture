@@ -18,6 +18,7 @@ final class AnnotationToolbarView: NSView {
     private let arrowButton = NSButton()
     private let circleButton = NSButton()
     private let rectangleButton = NSButton()
+    private let numberButton = NSButton()
     private let colorButton = NSButton()
     private let clearAllButton = NSButton()
     
@@ -89,6 +90,11 @@ final class AnnotationToolbarView: NSView {
         configureToolButton(rectangleButton, symbolName: "rectangle", tooltip: "Rectangle Tool")
         rectangleButton.target = self
         rectangleButton.action = #selector(rectangleButtonPressed)
+        
+        // Number button
+        configureToolButton(numberButton, symbolName: "1.circle", tooltip: "Number Tool")
+        numberButton.target = self
+        numberButton.action = #selector(numberButtonPressed)
     }
     
     private func configureToolButton(_ button: NSButton, symbolName: String, tooltip: String) {
@@ -131,7 +137,7 @@ final class AnnotationToolbarView: NSView {
     
     private func setupLayout() {
         // Tool buttons stack
-        let toolStack = NSStackView(views: [arrowButton, circleButton, rectangleButton])
+        let toolStack = NSStackView(views: [arrowButton, circleButton, rectangleButton, numberButton])
         toolStack.orientation = .horizontal
         toolStack.spacing = 4
         toolStack.translatesAutoresizingMaskIntoConstraints = false
@@ -172,6 +178,8 @@ final class AnnotationToolbarView: NSView {
             circleButton.heightAnchor.constraint(equalToConstant: buttonSize),
             rectangleButton.widthAnchor.constraint(equalToConstant: buttonSize),
             rectangleButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            numberButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            numberButton.heightAnchor.constraint(equalToConstant: buttonSize),
             
             colorButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 44),
             colorButton.heightAnchor.constraint(equalToConstant: buttonSize),
@@ -216,6 +224,15 @@ final class AnnotationToolbarView: NSView {
             selectedTool = .none
         } else {
             selectedTool = .rectangle
+        }
+        delegate?.toolbarDidSelectTool(selectedTool)
+    }
+    
+    @objc private func numberButtonPressed() {
+        if selectedTool == .number {
+            selectedTool = .none
+        } else {
+            selectedTool = .number
         }
         delegate?.toolbarDidSelectTool(selectedTool)
     }
@@ -293,6 +310,15 @@ final class AnnotationToolbarView: NSView {
         rectangleButton.image = NSImage(systemSymbolName: "rectangle", accessibilityDescription: "Rectangle Tool")?
             .withSymbolConfiguration(rectangleConfig)
         rectangleButton.contentTintColor = rectangleColor
+        
+        // Update number button
+        let numberSelected = selectedTool == .number
+        let numberColor = numberSelected ? brandColor : defaultIconColor
+        let numberConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+            .applying(.init(paletteColors: [numberColor]))
+        numberButton.image = NSImage(systemSymbolName: "1.circle", accessibilityDescription: "Number Tool")?
+            .withSymbolConfiguration(numberConfig)
+        numberButton.contentTintColor = numberColor
     }
     
     private func updateColorButton() {
