@@ -478,10 +478,50 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         }
         menu.addItem(saveItem)
         
-        // Position the menu below the dropdown button
+        // Add separator and "Add to Send List..." option
+        menu.addItem(.separator())
+        
+        let addAppItem = NSMenuItem(title: "Add to Send List...", action: #selector(addToSendListClicked), keyEquivalent: "")
+        addAppItem.target = self
+        if let addIcon = NSImage(systemSymbolName: "plus.circle", accessibilityDescription: "Add") {
+            addIcon.size = NSSize(width: 16, height: 16)
+            addAppItem.image = addIcon
+        }
+        menu.addItem(addAppItem)
+        
+        // Manual boundary detection for floating/borderless windows
+        guard let window = dropdownButton.window,
+              let screen = window.screen ?? NSScreen.main else {
+            menu.popUp(positioning: nil, at: .zero, in: dropdownButton)
+            return
+        }
+        
         let buttonFrame = dropdownButton.convert(dropdownButton.bounds, to: nil)
-        let windowFrame = view.window?.convertToScreen(buttonFrame) ?? .zero
-        menu.popUp(positioning: nil, at: NSPoint(x: windowFrame.origin.x, y: windowFrame.origin.y), in: nil)
+        let screenFrame = window.convertToScreen(buttonFrame)
+        
+        // Calculate available space below button
+        let spaceBelow = screenFrame.minY - screen.visibleFrame.minY
+        
+        // Estimate menu height (~22pt per item, ~11pt per separator)
+        let separatorCount = menu.items.filter { $0.isSeparatorItem }.count
+        let regularItemCount = menu.items.count - separatorCount
+        let estimatedMenuHeight = CGFloat(regularItemCount) * 22 + CGFloat(separatorCount) * 11
+        
+        if spaceBelow < estimatedMenuHeight {
+            // Not enough space below → pop up above button
+            menu.popUp(positioning: menu.items.last,
+                       at: NSPoint(x: 0, y: dropdownButton.bounds.height),
+                       in: dropdownButton)
+        } else {
+            // Normal: pop up below button
+            menu.popUp(positioning: nil, at: .zero, in: dropdownButton)
+        }
+    }
+    
+    @objc private func addToSendListClicked() {
+        guard let window = view.window else { return }
+        let panelController = AddAppPanelController(onAppAdded: nil)
+        panelController.showAsSheet(relativeTo: window)
     }
     
     @objc private func saveMenuItemClicked() {

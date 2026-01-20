@@ -9,6 +9,14 @@ final class SettingsViewController: NSViewController {
     private let chooseFolderButton = NSButton(title: "Choose Folder…", target: nil, action: nil)
 
     private let launchAtLoginCheckbox = NSButton(checkboxWithTitle: "Launch at Login", target: nil, action: nil)
+    
+    // Send List section
+    private let sendListLabel = NSTextField(labelWithString: "Added Apps")
+    private let sendListScrollView = NSScrollView()
+    private let sendListTableView = NSTableView()
+    private let addAppButton = NSButton(title: "+", target: nil, action: nil)
+    private let removeAppButton = NSButton(title: "−", target: nil, action: nil)
+    private var userApps: [UserWhitelistApp] = []
 
     override func loadView() {
         view = NSView()
@@ -46,8 +54,53 @@ final class SettingsViewController: NSViewController {
         let saveSection = NSStackView(views: [saveCheckbox, saveRow])
         saveSection.orientation = .vertical
         saveSection.spacing = 6
+        
+        // Send List section
+        sendListLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
+        
+        sendListTableView.delegate = self
+        sendListTableView.dataSource = self
+        sendListTableView.rowHeight = 28
+        sendListTableView.headerView = nil
+        sendListTableView.backgroundColor = .clear
+        
+        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("AppColumn"))
+        column.width = 200
+        sendListTableView.addTableColumn(column)
+        
+        sendListScrollView.documentView = sendListTableView
+        sendListScrollView.hasVerticalScroller = true
+        sendListScrollView.borderType = .bezelBorder
+        sendListScrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        addAppButton.bezelStyle = .smallSquare
+        addAppButton.target = self
+        addAppButton.action = #selector(addAppPressed)
+        addAppButton.setContentHuggingPriority(.required, for: .horizontal)
+        
+        removeAppButton.bezelStyle = .smallSquare
+        removeAppButton.target = self
+        removeAppButton.action = #selector(removeAppPressed)
+        removeAppButton.setContentHuggingPriority(.required, for: .horizontal)
+        
+        let buttonStack = NSStackView(views: [addAppButton, removeAppButton])
+        buttonStack.orientation = .horizontal
+        buttonStack.spacing = 0
+        
+        let sendListSection = NSStackView(views: [sendListLabel, sendListScrollView, buttonStack])
+        sendListSection.orientation = .vertical
+        sendListSection.alignment = .leading
+        sendListSection.spacing = 6
+        
+        // Set constraints for scroll view
+        NSLayoutConstraint.activate([
+            sendListScrollView.heightAnchor.constraint(equalToConstant: 100),
+            sendListScrollView.widthAnchor.constraint(equalToConstant: 250),
+        ])
+        
+        loadUserApps()
 
-        let stack = NSStackView(views: [shortcutRecorder, divider(), saveSection, divider(), launchAtLoginCheckbox, NSView()])
+        let stack = NSStackView(views: [shortcutRecorder, divider(), saveSection, divider(), sendListSection, divider(), launchAtLoginCheckbox, NSView()])
         stack.orientation = .vertical
         stack.spacing = 14
 
@@ -141,6 +194,82 @@ final class SettingsViewController: NSViewController {
         alert.informativeText = message
         alert.addButton(withTitle: "OK")
         alert.runModal()
+    }
+    
+    // MARK: - Send List Management
+    
+    private func loadUserApps() {
+        userApps = SettingsStore.shared.userWhitelistApps
+        sendListTableView.reloadData()
+        updateRemoveButtonState()
+    }
+    
+    private func updateRemoveButtonState() {
+        removeAppButton.isEnabled = sendListTableView.selectedRow >= 0
+    }
+    
+    @objc private func addAppPressed() {
+        guard let window = view.window else { return }
+        let panelController = AddAppPanelController { [weak self] in
+            self?.loadUserApps()
+        }
+        panelController.showAsSheet(relativeTo: window)
+    }
+    
+    @objc private func removeAppPressed() {
+        let row = sendListTableView.selectedRow
+        guard row >= 0 && row < userApps.count else { return }
+        
+        let app = userApps[row]
+        SettingsStore.shared.removeUserWhitelistApp(bundleID: app.bundleID)
+        loadUserApps()
+    }
+}
+
+// MARK: - NSTableViewDelegate & NSTableViewDataSource
+
+extension SettingsViewController: NSTableViewDelegate, NSTableViewDataSource {
+    
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return userApps.count
+    }
+    
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let app = userApps[row]
+        
+        let cellView = NSTableCellView()
+        
+        // Icon
+        let icon = NSWorkspace.shared.icon(forFile: app.appPath)
+        let imageView = NSImageView(image: icon)
+        imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Name label
+        let nameLabel = NSTextField(labelWithString: app.displayName)
+        nameLabel.font = NSFont.systemFont(ofSize: 12)
+        nameLabel.lineBreakMode = .byTruncatingTail
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        cellView.addSubview(imageView)
+        cellView.addSubview(nameLabel)
+        
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 4),
+            imageView.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 20),
+            imageView.heightAnchor.constraint(equalToConstant: 20),
+            
+            nameLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 6),
+            nameLabel.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
+            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: cellView.trailingAnchor, constant: -4),
+        ])
+        
+        return cellView
+    }
+    
+    func tableViewSelectionDidChange(_ notification: Notification) {
+        updateRemoveButtonState()
     }
 }
 

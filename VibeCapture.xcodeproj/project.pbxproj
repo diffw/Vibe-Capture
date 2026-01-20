@@ -34,6 +34,7 @@
 		A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */; };
 		A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */; };
 		A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */; };
+		A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */; };
 
 		A1B2C3D4E5F60718293A4B90 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */; };
 		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
@@ -73,6 +74,7 @@
 		A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationCanvasView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationToolbarView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusableScrollView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAppPanelController.swift; sourceTree = "<group>"; };
 
 		A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCombo.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PNG.swift"; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 		A1B2C3D4E5F60718293A4B63 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */,
 				A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */,
 				A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */,
 				A1B2C3D4E5F60718293A4C0E /* CaptureModalViewController.swift */,
@@ -283,6 +286,7 @@
 				A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */,
+				A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */,
 				A1B2C3D4E5F60718293A4D02 /* CaptureManager.swift in Sources */,

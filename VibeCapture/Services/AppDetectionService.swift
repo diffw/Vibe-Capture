@@ -102,13 +102,19 @@ final class AppDetectionService {
         return currentApp.flatMap { makeTargetApp(from: $0) }
     }
     
-    /// Check if the given app is in our whitelist (optimized apps)
+    /// Check if the given app is in our whitelist (official or user-added)
     func isWhitelisted(_ app: TargetApp) -> Bool {
-        return whitelistApps.contains { $0.bundleID == app.bundleIdentifier }
+        return isWhitelisted(bundleID: app.bundleIdentifier)
     }
     
-    /// Check if the given bundle identifier is in our whitelist
+    /// Check if the given bundle identifier is in our whitelist (official or user-added)
     func isWhitelisted(bundleID: String) -> Bool {
+        return isOfficialWhitelisted(bundleID: bundleID) || 
+               SettingsStore.shared.isInUserWhitelist(bundleID: bundleID)
+    }
+    
+    /// Check if the given bundle identifier is in the official whitelist only
+    func isOfficialWhitelisted(bundleID: String) -> Bool {
         return whitelistApps.contains { $0.bundleID == bundleID }
     }
     
@@ -122,14 +128,14 @@ final class AppDetectionService {
         return blacklistApps.contains { $0.lowercased() == bundleID.lowercased() }
     }
     
-    /// Get all running whitelisted apps
+    /// Get all running whitelisted apps (official + user-added)
     func getRunningWhitelistedApps() -> [TargetApp] {
         var result: [TargetApp] = []
-        var seenNames: Set<String> = []
+        var seenBundleIDs: Set<String> = []
         
+        // 1. Add official whitelist apps
         for (bundleID, displayName) in whitelistApps {
-            // Skip if we already have an app with this display name
-            guard !seenNames.contains(displayName) else { continue }
+            guard !seenBundleIDs.contains(bundleID) else { continue }
             
             if let runningApp = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).first {
                 let icon = runningApp.icon ?? NSWorkspace.shared.icon(forFile: runningApp.bundleURL?.path ?? "")
@@ -139,9 +145,52 @@ final class AppDetectionService {
                     icon: icon,
                     runningApp: runningApp
                 ))
-                seenNames.insert(displayName)
+                seenBundleIDs.insert(bundleID)
             }
         }
+        
+        // 2. Add user whitelist apps
+        for userApp in SettingsStore.shared.userWhitelistApps {
+            guard !seenBundleIDs.contains(userApp.bundleID) else { continue }
+            
+            if let runningApp = NSRunningApplication.runningApplications(withBundleIdentifier: userApp.bundleID).first {
+                let icon = runningApp.icon ?? NSWorkspace.shared.icon(forFile: userApp.appPath)
+                result.append(TargetApp(
+                    bundleIdentifier: userApp.bundleID,
+                    displayName: userApp.displayName,
+                    icon: icon,
+                    runningApp: runningApp
+                ))
+                seenBundleIDs.insert(userApp.bundleID)
+            }
+        }
+        
+        return result
+    }
+    
+    /// Get all running regular apps (for the Add to Send List panel)
+    /// Excludes our own app and background processes
+    func getAllRunningApps() -> [TargetApp] {
+        var result: [TargetApp] = []
+        var seenBundleIDs: Set<String> = []
+        let ownBundleID = Bundle.main.bundleIdentifier ?? ""
+        
+        let runningApps = NSWorkspace.shared.runningApplications.filter { app in
+            app.activationPolicy == .regular &&
+            app.bundleIdentifier != nil &&
+            app.bundleIdentifier != ownBundleID
+        }
+        
+        for runningApp in runningApps {
+            guard let bundleID = runningApp.bundleIdentifier else { continue }
+            guard !seenBundleIDs.contains(bundleID) else { continue }
+            seenBundleIDs.insert(bundleID)
+            
+            result.append(makeTargetApp(from: runningApp))
+        }
+        
+        // Sort alphabetically
+        result.sort { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
         
         return result
     }
@@ -189,7 +238,11 @@ final class AppDetectionService {
         // Check if it's a whitelisted app to get the proper display name
         let displayName: String
         if let whitelistEntry = whitelistApps.first(where: { $0.bundleID == bundleID }) {
+            // Official whitelist
             displayName = whitelistEntry.displayName
+        } else if let userEntry = SettingsStore.shared.userWhitelistApps.first(where: { $0.bundleID == bundleID }) {
+            // User whitelist
+            displayName = userEntry.displayName
         } else {
             displayName = runningApp.localizedName ?? "Unknown"
         }
