@@ -72,7 +72,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         viewController.onCommandEnter = { [weak self] in
             guard let self,
                   let targetApp = self.viewController.currentTargetApp,
-                  AppDetectionService.shared.isWhitelisted(targetApp) else {
+                  self.viewController.canSendToCurrentTargetApp else {
                 return
             }
             self.pasteAndClose(prompt: self.viewController.promptText, targetApp: targetApp)
@@ -189,6 +189,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         // Composite annotations onto the image
         let annotations = viewController.annotations
         let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
+        defer { finish(.saved) }
         
         do {
             let saved = try ScreenshotSaveService.shared.saveScreenshot(image: finalImage)

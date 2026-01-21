@@ -26,6 +26,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     
     /// Currently selected target app
     private var selectedTargetApp: TargetApp?
+    private var appActivationObserver: NSObjectProtocol?
     
     /// Whether the current app is optimized (in whitelist)
     private var isAppOptimized: Bool {
@@ -39,10 +40,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         return AppDetectionService.shared.isBlacklisted(app)
     }
     
-    /// Whether we have a valid target app to send to (not blacklisted)
+    /// Whether we have a valid target app to send to (whitelisted + not blacklisted)
     private var canSendToApp: Bool {
-        guard let _ = selectedTargetApp else { return false }
-        return !isAppBlacklisted
+        guard let app = selectedTargetApp else { return false }
+        return AppDetectionService.shared.isWhitelisted(app) && !isAppBlacklisted
     }
     
     /// Brand color for active send button
@@ -381,6 +382,11 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         ])
 
         updatePlaceholderVisibility()
+        startAppActivationObserver()
+    }
+
+    deinit {
+        stopAppActivationObserver()
     }
 
     var promptText: String {
@@ -390,6 +396,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     /// Get the currently selected target app
     var currentTargetApp: TargetApp? {
         selectedTargetApp
+    }
+    
+    var canSendToCurrentTargetApp: Bool {
+        canSendToApp
     }
 
     func focusPrompt() {
@@ -413,6 +423,33 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             promptTextView.frame = NSRect(x: 0, y: 0, width: contentSize.width, height: max(contentSize.height, promptTextView.frame.height))
             print("[CaptureModalVC] viewDidLayout - updated promptTextView.frame to: \(promptTextView.frame)")
         }
+    }
+
+    private func startAppActivationObserver() {
+        guard appActivationObserver == nil else { return }
+        appActivationObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateTargetAppFromFrontmost()
+        }
+        updateTargetAppFromFrontmost()
+    }
+
+    private func stopAppActivationObserver() {
+        if let observer = appActivationObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(observer)
+            appActivationObserver = nil
+        }
+    }
+
+    private func updateTargetAppFromFrontmost() {
+        let targetApp = AppDetectionService.shared.getTargetApp()
+        guard targetApp != selectedTargetApp else { return }
+        selectedTargetApp = targetApp
+        updateSendButtonTitle()
+        updateSendButtonState()
     }
 
     // MARK: - Button Actions
