@@ -15,7 +15,7 @@ final class AddAppPanelController: NSWindowController {
             backing: .buffered,
             defer: false
         )
-        window.title = "Add to Send List"
+        window.title = L("add_app.window_title")
         window.contentViewController = viewController
         window.isMovableByWindowBackground = true
         window.center()
@@ -42,8 +42,8 @@ final class AddAppViewController: NSViewController {
     
     private let scrollView = NSScrollView()
     private let tableView = NSTableView()
-    private let chooseButton = NSButton(title: "Choose from Applications...", target: nil, action: nil)
-    private let doneButton = NSButton(title: "Done", target: nil, action: nil)
+    private let chooseButton = NSButton(title: "", target: nil, action: nil)
+    private let doneButton = NSButton(title: "", target: nil, action: nil)
     
     private var runningApps: [AppInfo] = []
     
@@ -69,7 +69,7 @@ final class AddAppViewController: NSViewController {
     
     private func setupUI() {
         // Header label
-        let headerLabel = NSTextField(labelWithString: "Running Apps:")
+        let headerLabel = NSTextField(labelWithString: L("add_app.header"))
         headerLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
         
         // Table view setup
@@ -88,11 +88,13 @@ final class AddAppViewController: NSViewController {
         scrollView.borderType = .bezelBorder
         
         // Choose button
+        chooseButton.title = L("add_app.choose_from_apps")
         chooseButton.bezelStyle = .rounded
         chooseButton.target = self
         chooseButton.action = #selector(chooseFromApplications)
         
         // Done button (changes save immediately, so only need Done)
+        doneButton.title = L("add_app.done")
         doneButton.bezelStyle = .rounded
         doneButton.target = self
         doneButton.action = #selector(donePressed)
@@ -156,7 +158,7 @@ final class AddAppViewController: NSViewController {
         panel.allowsMultipleSelection = false
         panel.allowedContentTypes = [.application]
         panel.directoryURL = URL(fileURLWithPath: "/Applications")
-        panel.message = "Select an application to add to the Send List"
+        panel.message = L("add_app.panel_message")
         
         panel.beginSheetModal(for: view.window!) { [weak self] response in
             guard response == .OK, let url = panel.url else { return }
@@ -167,19 +169,19 @@ final class AddAppViewController: NSViewController {
     private func addAppFromURL(_ url: URL) {
         guard let bundle = Bundle(url: url),
               let bundleID = bundle.bundleIdentifier else {
-            showAlert(title: "Invalid Application", message: "Could not read application bundle.")
+            showAlert(title: L("error.invalid_application"), message: L("error.could_not_read_bundle"))
             return
         }
         
         // Check if blacklisted
         if AppDetectionService.shared.isBlacklisted(bundleID: bundleID) {
-            showAlert(title: "Cannot Add App", message: "This app doesn't support image paste.")
+            showAlert(title: L("error.cannot_add_app"), message: L("error.app_no_paste_support"))
             return
         }
         
         // Check if already added
         if AppDetectionService.shared.isWhitelisted(bundleID: bundleID) {
-            showAlert(title: "Already Added", message: "This app is already in the Send List.")
+            showAlert(title: L("error.already_added"), message: L("error.app_already_in_list"))
             return
         }
         
@@ -201,7 +203,7 @@ final class AddAppViewController: NSViewController {
     private func addApp(_ appInfo: AppInfo) {
         // Check if blacklisted
         if appInfo.isBlacklisted {
-            showAlert(title: "Cannot Add App", message: "This app doesn't support image paste.")
+            showAlert(title: L("error.cannot_add_app"), message: L("error.app_no_paste_support"))
             return
         }
         
@@ -234,7 +236,7 @@ final class AddAppViewController: NSViewController {
         alert.messageText = title
         alert.informativeText = message
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: L("button.ok"))
         alert.beginSheetModal(for: view.window!, completionHandler: nil)
     }
     
@@ -282,7 +284,7 @@ extension AddAppViewController: NSTableViewDelegate, NSTableViewDataSource {
             statusLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         } else if app.isAdded {
             // Official whitelist: built-in indicator
-            statusLabel.stringValue = "Built-in"
+            statusLabel.stringValue = L("add_app.status.builtin")
             statusLabel.textColor = .tertiaryLabelColor
         } else if app.isBlacklisted {
             statusLabel.stringValue = "—"

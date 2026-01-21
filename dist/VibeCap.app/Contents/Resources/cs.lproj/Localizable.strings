@@ -1,0 +1,144 @@
+/* ===== Řádek nabídek ===== */
+
+"menu.capture_area" = "Pořídit snímek oblasti";
+"menu.settings" = "Nastavení…";
+"menu.quit" = "Ukončit";
+"menu.language" = "Jazyk";
+"menu.language.system_default" = "Výchozí systémový";
+
+/* ===== Nabídka aplikace ===== */
+
+"menu.app.quit_vibecap" = "Ukončit VibeCap";
+"menu.edit" = "Úpravy";
+"menu.edit.undo" = "Odvolat";
+"menu.edit.redo" = "Opakovat";
+"menu.edit.cut" = "Vyjmout";
+"menu.edit.copy" = "Kopírovat";
+"menu.edit.paste" = "Vložit";
+"menu.edit.select_all" = "Vybrat vše";
+
+/* ===== Náhled snímku ===== */
+
+"modal.button.send_to_app" = "Odeslat do %@";
+"modal.button.save_image" = "Uložit obrázek";
+"modal.button.close" = "Zavřít";
+"modal.hint.esc_to_close" = "ESC – zavřít";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ – odeslat";
+"modal.placeholder.add_instructions" = "Přidat pokyny (volitelné)";
+"modal.menu.no_supported_apps" = "Nejsou spuštěné žádné podporované aplikace";
+"modal.menu.send_to_app" = "Odeslat do %@";
+"modal.menu.save_image" = "Uložit obrázek";
+"modal.menu.add_to_send_list" = "Přidat do seznamu odesílání…";
+
+/* ===== Nastavení ===== */
+
+"settings.window_title" = "Nastavení";
+"settings.shortcut.title" = "Klávesová zkratka pro snímek";
+"settings.shortcut.recording" = "Zadejte zkratku…";
+"settings.shortcut.help" = "Klikněte pro nahrání. Esc pro zrušení.";
+"settings.save.checkbox" = "Automaticky uložit po vložení";
+"settings.save.choose_folder" = "Vybrat složku…";
+"settings.save.no_folder" = "Složka není vybrána (budete dotázáni při prvním uložení)";
+"settings.login.checkbox" = "Otevřít při přihlášení";
+"settings.send_list.title" = "Přidané aplikace";
+
+/* ===== Přidání aplikace ===== */
+
+"add_app.window_title" = "Přidat do seznamu odesílání";
+"add_app.header" = "Spuštěné aplikace:";
+"add_app.choose_from_apps" = "Vybrat z Aplikací…";
+"add_app.done" = "Hotovo";
+"add_app.panel_message" = "Vyberte aplikaci pro přidání do seznamu odesílání";
+"add_app.status.builtin" = "Vestavěná";
+
+/* ===== Nástroje pro poznámky ===== */
+
+"annotation.tool.arrow" = "Nástroj šipka";
+"annotation.tool.circle" = "Nástroj kruh";
+"annotation.tool.rectangle" = "Nástroj obdélník";
+"annotation.tool.number" = "Nástroj číslo";
+"annotation.color.tooltip" = "Barva poznámky";
+"annotation.clear_all" = "Vymazat vše";
+"annotation.clear_all.tooltip" = "Vymazat všechny poznámky";
+
+/* ===== Barvy ===== */
+
+"color.red" = "Červená";
+"color.orange" = "Oranžová";
+"color.yellow" = "Žlutá";
+"color.green" = "Zelená";
+"color.blue" = "Modrá";
+"color.purple" = "Fialová";
+
+/* ===== HUD zprávy ===== */
+
+"hud.app_running" = "VibeCap běží";
+"hud.pasted_to_app" = "Vloženo do %@";
+"hud.saved" = "Uloženo";
+"hud.screenshot_saved" = "Snímek obrazovky uložen";
+"hud.folder_selected" = "Složka vybrána";
+
+/* ===== Chyby ===== */
+
+"error.shortcut_unavailable" = "Zkratka není k dispozici";
+"error.shortcut_registration_failed" = "Nelze zaregistrovat tuto zkratku (OSStatus %d). Může být používána jinou aplikací nebo rezervována systémem.";
+"error.unable_to_set_folder" = "Nelze nastavit složku";
+"error.launch_login_failed" = "Otevření při přihlášení se nezdařilo";
+"error.launch_login_requires_approval" = "Otevření při přihlášení vyžaduje schválení v Nastavení systému → Obecné → Položky přihlášení.";
+"error.invalid_application" = "Neplatná aplikace";
+"error.could_not_read_bundle" = "Nelze přečíst balíček aplikace.";
+"error.cannot_add_app" = "Nelze přidat aplikaci";
+"error.app_no_paste_support" = "Tato aplikace nepodporuje vkládání obrázků.";
+"error.already_added" = "Již přidáno";
+"error.app_already_in_list" = "Tato aplikace je již v seznamu odesílání.";
+"error.app_not_found" = "Nelze najít %@. Je aplikace spuštěná?";
+"error.no_folder_selected" = "Není vybrána složka pro ukládání.";
+"error.folder_access_failed" = "Nelze získat přístup ke složce pro ukládání.";
+"error.image_encoding_failed" = "Kódování obrázku se nezdařilo.";
+"error.save_failed" = "Uložení snímku se nezdařilo: %@";
+"error.clipboard_write_failed" = "Zápis do schránky se nezdařil.";
+"error.capture_failed" = "Nelze pořídit snímek vybrané oblasti.";
+"error.modifier_required" = "Použijte alespoň jednu modifikační klávesu (⌘⇧⌥⌃).";
+
+/* ===== Oprávnění ===== */
+
+"permission.screen_recording.title" = "Vyžadováno oprávnění k nahrávání obrazovky";
+"permission.screen_recording.message" = "VibeCap potřebuje oprávnění k nahrávání obrazovky pro pořizování snímků.\n\nOtevřete Nastavení systému → Soukromí a zabezpečení → Nahrávání obrazovky, povolte VibeCap a restartujte aplikaci.";
+"permission.screen_recording.error" = "Pro pořizování snímků obrazovky je vyžadováno oprávnění k nahrávání.";
+"permission.accessibility.message" = "Vyžadováno oprávnění pro usnadnění. Udělte ho v Nastavení systému → Soukromí a zabezpečení → Usnadnění a zkuste to znovu.";
+"permission.login.approval_required" = "Vyžadováno schválení";
+"permission.login.message" = "Pro otevření VibeCapu při přihlášení ho povolte v Nastavení systému → Obecné → Položky přihlášení.";
+
+/* ===== Běžná tlačítka ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Zrušit";
+"button.open_system_settings" = "Otevřít Nastavení systému";
+"button.open_login_items" = "Otevřít Položky přihlášení";
+"button.choose" = "Vybrat";
+"button.restart_now" = "Restartovat nyní";
+"button.later" = "Později";
+
+/* ===== Výstrahy ===== */
+
+"alert.restart.title" = "Vyžadován restart";
+"alert.restart.message" = "Restartujte VibeCap, aby se změna jazyka projevila.";
+
+/* ===== Panely souborů ===== */
+
+"panel.choose_folder.title" = "Vyberte složku pro ukládání";
+"panel.choose_folder.message" = "Vyberte složku, kam bude VibeCap ukládat snímky obrazovky.";
+
+/* ===== Usnadnění ===== */
+
+"a11y.dropdown_select_app" = "Vybrat aplikaci";
+"a11y.save_icon" = "Uložit";
+"a11y.add_icon" = "Přidat";
+
+/* ===== Názvy kláves ===== */
+
+"key.space" = "Mezerník";
+
+/* ===== Ostatní ===== */
+
+"app.unknown" = "Neznámá";

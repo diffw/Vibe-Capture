@@ -7,5 +7,9 @@ build/
 xcuserdata/
 *.xcworkspace/xcuserdata/
 
+# Build cache
+dist/.clang-module-cache/
+dist/.swift-module-cache/
+
 
 

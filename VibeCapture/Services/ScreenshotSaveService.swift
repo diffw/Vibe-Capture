@@ -9,13 +9,13 @@ enum SaveError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noFolderSelected:
-            return "No save folder selected."
+            return L("error.no_folder_selected")
         case .bookmarkResolveFailed:
-            return "Unable to access the save folder."
+            return L("error.folder_access_failed")
         case .imageEncodingFailed:
-            return "Failed to encode image."
+            return L("error.image_encoding_failed")
         case .writeFailed(let err):
-            return "Failed to save screenshot: \(err.localizedDescription)"
+            return L("error.save_failed", err.localizedDescription)
         }
     }
 }
@@ -83,9 +83,9 @@ final class ScreenshotSaveService {
 
     private func chooseFolder() -> URL? {
         let panel = NSOpenPanel()
-        panel.title = "Choose Save Folder"
-        panel.message = "Select a folder where VibeCap will save screenshots."
-        panel.prompt = "Choose"
+        panel.title = L("panel.choose_folder.title")
+        panel.message = L("panel.choose_folder.message")
+        panel.prompt = L("button.choose")
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false

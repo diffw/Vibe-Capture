@@ -77,22 +77,22 @@ final class AnnotationToolbarView: NSView {
     
     private func setupToolButtons() {
         // Arrow button
-        configureToolButton(arrowButton, symbolName: "arrow.up.right", tooltip: "Arrow Tool")
+        configureToolButton(arrowButton, symbolName: "arrow.up.right", tooltip: L("annotation.tool.arrow"))
         arrowButton.target = self
         arrowButton.action = #selector(arrowButtonPressed)
         
         // Circle button
-        configureToolButton(circleButton, symbolName: "circle", tooltip: "Circle Tool")
+        configureToolButton(circleButton, symbolName: "circle", tooltip: L("annotation.tool.circle"))
         circleButton.target = self
         circleButton.action = #selector(circleButtonPressed)
         
         // Rectangle button
-        configureToolButton(rectangleButton, symbolName: "rectangle", tooltip: "Rectangle Tool")
+        configureToolButton(rectangleButton, symbolName: "rectangle", tooltip: L("annotation.tool.rectangle"))
         rectangleButton.target = self
         rectangleButton.action = #selector(rectangleButtonPressed)
         
         // Number button
-        configureToolButton(numberButton, symbolName: "1.circle", tooltip: "Number Tool")
+        configureToolButton(numberButton, symbolName: "1.circle", tooltip: L("annotation.tool.number"))
         numberButton.target = self
         numberButton.action = #selector(numberButtonPressed)
     }
@@ -117,7 +117,7 @@ final class AnnotationToolbarView: NSView {
         colorButton.isBordered = true
         colorButton.setButtonType(.momentaryPushIn)
         colorButton.imagePosition = .imageOnly
-        colorButton.toolTip = "Annotation Color"
+        colorButton.toolTip = L("annotation.color.tooltip")
         colorButton.target = self
         colorButton.action = #selector(colorButtonPressed)
         colorButton.translatesAutoresizingMaskIntoConstraints = false
@@ -128,8 +128,8 @@ final class AnnotationToolbarView: NSView {
     private func setupClearAllButton() {
         clearAllButton.bezelStyle = .toolbar
         clearAllButton.isBordered = true
-        clearAllButton.title = "Clear All"
-        clearAllButton.toolTip = "Clear All Annotations"
+        clearAllButton.title = L("annotation.clear_all")
+        clearAllButton.toolTip = L("annotation.clear_all.tooltip")
         clearAllButton.target = self
         clearAllButton.action = #selector(clearAllButtonPressed)
         clearAllButton.translatesAutoresizingMaskIntoConstraints = false
@@ -289,7 +289,7 @@ final class AnnotationToolbarView: NSView {
         let arrowColor = arrowSelected ? brandColor : defaultIconColor
         let arrowConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
             .applying(.init(paletteColors: [arrowColor]))
-        arrowButton.image = NSImage(systemSymbolName: "arrow.up.right", accessibilityDescription: "Arrow Tool")?
+        arrowButton.image = NSImage(systemSymbolName: "arrow.up.right", accessibilityDescription: L("annotation.tool.arrow"))?
             .withSymbolConfiguration(arrowConfig)
         arrowButton.contentTintColor = arrowColor
         
@@ -298,7 +298,7 @@ final class AnnotationToolbarView: NSView {
         let circleColor = circleSelected ? brandColor : defaultIconColor
         let circleConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
             .applying(.init(paletteColors: [circleColor]))
-        circleButton.image = NSImage(systemSymbolName: "circle", accessibilityDescription: "Circle Tool")?
+        circleButton.image = NSImage(systemSymbolName: "circle", accessibilityDescription: L("annotation.tool.circle"))?
             .withSymbolConfiguration(circleConfig)
         circleButton.contentTintColor = circleColor
         
@@ -307,7 +307,7 @@ final class AnnotationToolbarView: NSView {
         let rectangleColor = rectangleSelected ? brandColor : defaultIconColor
         let rectangleConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
             .applying(.init(paletteColors: [rectangleColor]))
-        rectangleButton.image = NSImage(systemSymbolName: "rectangle", accessibilityDescription: "Rectangle Tool")?
+        rectangleButton.image = NSImage(systemSymbolName: "rectangle", accessibilityDescription: L("annotation.tool.rectangle"))?
             .withSymbolConfiguration(rectangleConfig)
         rectangleButton.contentTintColor = rectangleColor
         
@@ -316,7 +316,7 @@ final class AnnotationToolbarView: NSView {
         let numberColor = numberSelected ? brandColor : defaultIconColor
         let numberConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
             .applying(.init(paletteColors: [numberColor]))
-        numberButton.image = NSImage(systemSymbolName: "1.circle", accessibilityDescription: "Number Tool")?
+        numberButton.image = NSImage(systemSymbolName: "1.circle", accessibilityDescription: L("annotation.tool.number"))?
             .withSymbolConfiguration(numberConfig)
         numberButton.contentTintColor = numberColor
     }

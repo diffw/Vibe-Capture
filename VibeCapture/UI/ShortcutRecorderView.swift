@@ -11,9 +11,9 @@ final class ShortcutRecorderView: NSView {
         didSet { updateUI() }
     }
 
-    private let titleLabel = NSTextField(labelWithString: "Capture Shortcut")
+    private let titleLabel = NSTextField(labelWithString: "")
     private let recordButton = NSButton(title: "", target: nil, action: nil)
-    private let helpLabel = NSTextField(labelWithString: "Click to record. Press Esc to cancel.")
+    private let helpLabel = NSTextField(labelWithString: "")
 
     override var acceptsFirstResponder: Bool { true }
 
@@ -29,6 +29,7 @@ final class ShortcutRecorderView: NSView {
     }
 
     private func setup() {
+        titleLabel.stringValue = L("settings.shortcut.title")
         titleLabel.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
         titleLabel.textColor = .secondaryLabelColor
 
@@ -37,6 +38,7 @@ final class ShortcutRecorderView: NSView {
         recordButton.target = self
         recordButton.action = #selector(toggleRecording)
 
+        helpLabel.stringValue = L("settings.shortcut.help")
         helpLabel.font = NSFont.systemFont(ofSize: 11)
         helpLabel.textColor = .tertiaryLabelColor
 
@@ -64,7 +66,7 @@ final class ShortcutRecorderView: NSView {
 
     private func updateUI() {
         if isRecording {
-            recordButton.title = "Type shortcut…"
+            recordButton.title = L("settings.shortcut.recording")
             recordButton.contentTintColor = .systemBlue
             helpLabel.isHidden = false
         } else {
@@ -95,7 +97,7 @@ final class ShortcutRecorderView: NSView {
         let modifiers = event.modifierFlags.intersection(KeyCombo.allowedModifierFlags)
         guard !modifiers.isEmpty else {
             NSSound.beep()
-            HUDService.shared.show(message: "Use at least one modifier key (⌘⇧⌥⌃).", style: .error, duration: 1.0)
+            HUDService.shared.show(message: L("error.modifier_required"), style: .error, duration: 1.0)
             return
         }
 

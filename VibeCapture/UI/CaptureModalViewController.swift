@@ -19,10 +19,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private let placeholderLabel = NSTextField(labelWithString: "")
     
     // Split button for Send
-    private let sendButton = NSButton(title: "Send to App", target: nil, action: nil)
+    private let sendButton = NSButton(title: "", target: nil, action: nil)
     private let dropdownButton = NSButton(title: "", target: nil, action: nil)
-    private let closeButton = NSButton(title: "Close", target: nil, action: nil)
-    private let escHintLabel = NSTextField(labelWithString: "ESC to close")
+    private let closeButton = NSButton(title: "", target: nil, action: nil)
+    private let escHintLabel = NSTextField(labelWithString: "")
     
     /// Currently selected target app
     private var selectedTargetApp: TargetApp?
@@ -277,7 +277,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         // Setup Dropdown button (arrow) - hover to show menu, click as fallback
         dropdownButton.bezelStyle = .rounded
         dropdownButton.controlSize = .large
-        dropdownButton.image = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: "Select app")
+        dropdownButton.image = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: L("a11y.dropdown_select_app"))
         dropdownButton.imagePosition = .imageOnly
         dropdownButton.setContentHuggingPriority(.required, for: .horizontal)
         dropdownButton.target = self
@@ -290,16 +290,18 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         splitButtonContainer.distribution = .fill
 
         // Setup Close button
+        closeButton.title = L("modal.button.close")
         closeButton.bezelStyle = .rounded
         closeButton.controlSize = .large
         closeButton.target = self
         closeButton.action = #selector(closePressed)
         
         // ESC hint label (next to Close button)
+        escHintLabel.stringValue = L("modal.hint.esc_to_close")
         escHintLabel.textColor = .tertiaryLabelColor
         escHintLabel.font = NSFont.systemFont(ofSize: 11)
 
-        let sendHint = NSTextField(labelWithString: "⌘↩︎ to Send")
+        let sendHint = NSTextField(labelWithString: L("modal.hint.cmd_enter_to_send"))
         sendHint.textColor = .tertiaryLabelColor
         sendHint.font = NSFont.systemFont(ofSize: 11)
 
@@ -450,13 +452,13 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         let runningApps = AppDetectionService.shared.getRunningWhitelistedApps()
         
         if runningApps.isEmpty {
-            let noAppsItem = NSMenuItem(title: "No supported apps running", action: nil, keyEquivalent: "")
+            let noAppsItem = NSMenuItem(title: L("modal.menu.no_supported_apps"), action: nil, keyEquivalent: "")
             noAppsItem.isEnabled = false
             menu.addItem(noAppsItem)
         } else {
             for app in runningApps {
                 // Use "Send to AppName" format and send directly on click
-                let item = NSMenuItem(title: "Send to \(app.displayName)", action: #selector(appMenuItemClicked(_:)), keyEquivalent: "")
+                let item = NSMenuItem(title: L("modal.menu.send_to_app", app.displayName), action: #selector(appMenuItemClicked(_:)), keyEquivalent: "")
                 item.target = self
                 item.representedObject = app
                 if let icon = app.icon {
@@ -470,9 +472,9 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         // Add separator and Save option
         menu.addItem(.separator())
         
-        let saveItem = NSMenuItem(title: "Save Image", action: #selector(saveMenuItemClicked), keyEquivalent: "")
+        let saveItem = NSMenuItem(title: L("modal.menu.save_image"), action: #selector(saveMenuItemClicked), keyEquivalent: "")
         saveItem.target = self
-        if let saveIcon = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: "Save") {
+        if let saveIcon = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: L("a11y.save_icon")) {
             saveIcon.size = NSSize(width: 16, height: 16)
             saveItem.image = saveIcon
         }
@@ -481,9 +483,9 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         // Add separator and "Add to Send List..." option
         menu.addItem(.separator())
         
-        let addAppItem = NSMenuItem(title: "Add to Send List...", action: #selector(addToSendListClicked), keyEquivalent: "")
+        let addAppItem = NSMenuItem(title: L("modal.menu.add_to_send_list"), action: #selector(addToSendListClicked), keyEquivalent: "")
         addAppItem.target = self
-        if let addIcon = NSImage(systemSymbolName: "plus.circle", accessibilityDescription: "Add") {
+        if let addIcon = NSImage(systemSymbolName: "plus.circle", accessibilityDescription: L("a11y.add_icon")) {
             addIcon.size = NSSize(width: 16, height: 16)
             addAppItem.image = addIcon
         }
@@ -550,10 +552,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private func updateSendButtonTitle() {
         let title: String
         if canSendToApp, let app = selectedTargetApp {
-            title = "Send to \(app.displayName)"
+            title = L("modal.button.send_to_app", app.displayName)
         } else {
             // Show "Save Image" when no target app or app is blacklisted
-            title = "Save Image"
+            title = L("modal.button.save_image")
         }
         sendButton.title = title
         
@@ -584,7 +586,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     }
     
     private func updatePlaceholderText() {
-        placeholderLabel.stringValue = "Add instructions (optional)"
+        placeholderLabel.stringValue = L("modal.placeholder.add_instructions")
     }
 
     func textDidChange(_ notification: Notification) {

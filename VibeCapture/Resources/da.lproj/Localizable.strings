@@ -1,0 +1,144 @@
+/* ===== Menulinje ===== */
+
+"menu.capture_area" = "Optag område";
+"menu.settings" = "Indstillinger…";
+"menu.quit" = "Slut";
+"menu.language" = "Sprog";
+"menu.language.system_default" = "Systemstandard";
+
+/* ===== App-menu ===== */
+
+"menu.app.quit_vibecap" = "Slut VibeCap";
+"menu.edit" = "Rediger";
+"menu.edit.undo" = "Fortryd";
+"menu.edit.redo" = "Gentag";
+"menu.edit.cut" = "Klip";
+"menu.edit.copy" = "Kopier";
+"menu.edit.paste" = "Sæt ind";
+"menu.edit.select_all" = "Vælg alt";
+
+/* ===== Forhåndsvisning ===== */
+
+"modal.button.send_to_app" = "Send til %@";
+"modal.button.save_image" = "Gem billede";
+"modal.button.close" = "Luk";
+"modal.hint.esc_to_close" = "ESC for at lukke";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ for at sende";
+"modal.placeholder.add_instructions" = "Tilføj instruktioner (valgfrit)";
+"modal.menu.no_supported_apps" = "Ingen understøttede apps kører";
+"modal.menu.send_to_app" = "Send til %@";
+"modal.menu.save_image" = "Gem billede";
+"modal.menu.add_to_send_list" = "Føj til sendeliste…";
+
+/* ===== Indstillinger ===== */
+
+"settings.window_title" = "Indstillinger";
+"settings.shortcut.title" = "Genvej til skærmoptagelse";
+"settings.shortcut.recording" = "Indtast genvej…";
+"settings.shortcut.help" = "Klik for at optage. Esc for at annullere.";
+"settings.save.checkbox" = "Gem automatisk efter indsætning";
+"settings.save.choose_folder" = "Vælg mappe…";
+"settings.save.no_folder" = "Ingen mappe valgt (du bliver spurgt ved første gemning)";
+"settings.login.checkbox" = "Åbn ved login";
+"settings.send_list.title" = "Tilføjede apps";
+
+/* ===== Tilføj app ===== */
+
+"add_app.window_title" = "Føj til sendeliste";
+"add_app.header" = "Kørende apps:";
+"add_app.choose_from_apps" = "Vælg fra Programmer…";
+"add_app.done" = "OK";
+"add_app.panel_message" = "Vælg en app at føje til sendelisten";
+"add_app.status.builtin" = "Indbygget";
+
+/* ===== Annoteringsværktøjer ===== */
+
+"annotation.tool.arrow" = "Pileværktøj";
+"annotation.tool.circle" = "Cirkelværktøj";
+"annotation.tool.rectangle" = "Rektangelværktøj";
+"annotation.tool.number" = "Nummerværktøj";
+"annotation.color.tooltip" = "Annoteringsfarve";
+"annotation.clear_all" = "Ryd alt";
+"annotation.clear_all.tooltip" = "Ryd alle annoteringer";
+
+/* ===== Farver ===== */
+
+"color.red" = "Rød";
+"color.orange" = "Orange";
+"color.yellow" = "Gul";
+"color.green" = "Grøn";
+"color.blue" = "Blå";
+"color.purple" = "Lilla";
+
+/* ===== HUD-beskeder ===== */
+
+"hud.app_running" = "VibeCap kører";
+"hud.pasted_to_app" = "Indsat i %@";
+"hud.saved" = "Gemt";
+"hud.screenshot_saved" = "Skærmbillede gemt";
+"hud.folder_selected" = "Mappe valgt";
+
+/* ===== Fejl ===== */
+
+"error.shortcut_unavailable" = "Genvej ikke tilgængelig";
+"error.shortcut_registration_failed" = "Kan ikke registrere denne genvej (OSStatus %d). Den bruges muligvis af en anden app eller er reserveret af systemet.";
+"error.unable_to_set_folder" = "Kan ikke indstille mappe";
+"error.launch_login_failed" = "Åbning ved login mislykkedes";
+"error.launch_login_requires_approval" = "Åbning ved login kræver godkendelse i Systemindstillinger → Generelt → Loginemner.";
+"error.invalid_application" = "Ugyldig app";
+"error.could_not_read_bundle" = "Kunne ikke læse app-pakken.";
+"error.cannot_add_app" = "Kan ikke tilføje app";
+"error.app_no_paste_support" = "Denne app understøtter ikke indsætning af billeder.";
+"error.already_added" = "Allerede tilføjet";
+"error.app_already_in_list" = "Denne app er allerede i sendelisten.";
+"error.app_not_found" = "Kunne ikke finde %@. Kører appen?";
+"error.no_folder_selected" = "Ingen lagringsmappe valgt.";
+"error.folder_access_failed" = "Kan ikke få adgang til lagringsmappen.";
+"error.image_encoding_failed" = "Kunne ikke kode billedet.";
+"error.save_failed" = "Kunne ikke gemme skærmbillede: %@";
+"error.clipboard_write_failed" = "Kunne ikke skrive til udklipsholder.";
+"error.capture_failed" = "Kunne ikke optage det valgte område.";
+"error.modifier_required" = "Brug mindst én specialtast (⌘⇧⌥⌃).";
+
+/* ===== Tilladelser ===== */
+
+"permission.screen_recording.title" = "Skærmoptagelsestilladelse påkrævet";
+"permission.screen_recording.message" = "VibeCap har brug for skærmoptagelsestilladelse for at optage din skærm.\n\nÅbn Systemindstillinger → Anonymitet og sikkerhed → Skærmoptagelse, aktiver VibeCap, og genstart appen.";
+"permission.screen_recording.error" = "Skærmoptagelsestilladelse er påkrævet for at optage skærmen.";
+"permission.accessibility.message" = "Tilgængelighedstilladelse påkrævet. Giv den i Systemindstillinger → Anonymitet og sikkerhed → Tilgængelighed, og prøv igen.";
+"permission.login.approval_required" = "Godkendelse påkrævet";
+"permission.login.message" = "For at åbne VibeCap ved login, aktiver det i Systemindstillinger → Generelt → Loginemner.";
+
+/* ===== Almindelige knapper ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Annuller";
+"button.open_system_settings" = "Åbn Systemindstillinger";
+"button.open_login_items" = "Åbn Loginemner";
+"button.choose" = "Vælg";
+"button.restart_now" = "Genstart nu";
+"button.later" = "Senere";
+
+/* ===== Advarsler ===== */
+
+"alert.restart.title" = "Genstart påkrævet";
+"alert.restart.message" = "Genstart VibeCap for at anvende sprogændringen.";
+
+/* ===== Filpaneler ===== */
+
+"panel.choose_folder.title" = "Vælg lagringsmappe";
+"panel.choose_folder.message" = "Vælg en mappe, hvor VibeCap skal gemme skærmbilleder.";
+
+/* ===== Tilgængelighed ===== */
+
+"a11y.dropdown_select_app" = "Vælg app";
+"a11y.save_icon" = "Gem";
+"a11y.add_icon" = "Tilføj";
+
+/* ===== Tastnavne ===== */
+
+"key.space" = "Mellemrum";
+
+/* ===== Andet ===== */
+
+"app.unknown" = "Ukendt";

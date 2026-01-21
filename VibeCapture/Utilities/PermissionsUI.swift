@@ -3,10 +3,10 @@ import AppKit
 enum PermissionsUI {
     static func showScreenRecordingPermissionAlert() {
         let alert = NSAlert()
-        alert.messageText = "Screen Recording Permission Required"
-        alert.informativeText = "VibeCap needs Screen Recording permission to capture your screen.\n\nOpen System Settings → Privacy & Security → Screen Recording, enable VibeCap, then quit and reopen the app."
-        alert.addButton(withTitle: "Open System Settings")
-        alert.addButton(withTitle: "Cancel")
+        alert.messageText = L("permission.screen_recording.title")
+        alert.informativeText = L("permission.screen_recording.message")
+        alert.addButton(withTitle: L("button.open_system_settings"))
+        alert.addButton(withTitle: L("button.cancel"))
 
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {

@@ -244,7 +244,7 @@ final class AppDetectionService {
             // User whitelist
             displayName = userEntry.displayName
         } else {
-            displayName = runningApp.localizedName ?? "Unknown"
+            displayName = runningApp.localizedName ?? L("app.unknown")
         }
         
         let icon = runningApp.icon ?? NSWorkspace.shared.icon(forFile: runningApp.bundleURL?.path ?? "")

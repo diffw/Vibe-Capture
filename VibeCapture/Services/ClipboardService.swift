@@ -7,9 +7,9 @@ enum ClipboardError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .imageEncodingFailed:
-            return "Failed to encode image."
+            return L("error.image_encoding_failed")
         case .writeFailed:
-            return "Failed to write to clipboard."
+            return L("error.clipboard_write_failed")
         }
     }
 }

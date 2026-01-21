@@ -23,12 +23,12 @@ enum AnnotationColor: Int, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .red:    return "Red"
-        case .orange: return "Orange"
-        case .yellow: return "Yellow"
-        case .green:  return "Green"
-        case .blue:   return "Blue"
-        case .purple: return "Purple"
+        case .red:    return L("color.red")
+        case .orange: return L("color.orange")
+        case .yellow: return L("color.yellow")
+        case .green:  return L("color.green")
+        case .blue:   return L("color.blue")
+        case .purple: return L("color.purple")
         }
     }
 }

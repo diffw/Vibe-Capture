@@ -7,7 +7,7 @@ enum LaunchAtLoginError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .requiresApproval:
-            return "Launch at Login requires approval in System Settings → General → Login Items."
+            return L("error.launch_login_requires_approval")
         }
     }
 }

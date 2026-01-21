@@ -1,0 +1,144 @@
+/* ===== 選單列 ===== */
+
+"menu.capture_area" = "擷取區域";
+"menu.settings" = "設定⋯";
+"menu.quit" = "結束";
+"menu.language" = "語言";
+"menu.language.system_default" = "系統預設";
+
+/* ===== 應用程式選單 ===== */
+
+"menu.app.quit_vibecap" = "結束 VibeCap";
+"menu.edit" = "編輯";
+"menu.edit.undo" = "還原";
+"menu.edit.redo" = "重做";
+"menu.edit.cut" = "剪下";
+"menu.edit.copy" = "拷貝";
+"menu.edit.paste" = "貼上";
+"menu.edit.select_all" = "全選";
+
+/* ===== 截圖預覽 ===== */
+
+"modal.button.send_to_app" = "傳送至 %@";
+"modal.button.save_image" = "儲存圖片";
+"modal.button.close" = "關閉";
+"modal.hint.esc_to_close" = "ESC 關閉";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ 傳送";
+"modal.placeholder.add_instructions" = "加入說明（選填）";
+"modal.menu.no_supported_apps" = "沒有支援的 App 正在執行";
+"modal.menu.send_to_app" = "傳送至 %@";
+"modal.menu.save_image" = "儲存圖片";
+"modal.menu.add_to_send_list" = "加入傳送列表⋯";
+
+/* ===== 設定 ===== */
+
+"settings.window_title" = "設定";
+"settings.shortcut.title" = "截圖快捷鍵";
+"settings.shortcut.recording" = "輸入快捷鍵⋯";
+"settings.shortcut.help" = "點一下來錄製，按 Esc 取消。";
+"settings.save.checkbox" = "貼上後自動儲存截圖";
+"settings.save.choose_folder" = "選擇檔案夾⋯";
+"settings.save.no_folder" = "尚未選擇檔案夾（首次儲存時會詢問）";
+"settings.login.checkbox" = "登入時啟動";
+"settings.send_list.title" = "已加入的 App";
+
+/* ===== 加入 App ===== */
+
+"add_app.window_title" = "加入傳送列表";
+"add_app.header" = "執行中的 App：";
+"add_app.choose_from_apps" = "從應用程式選擇⋯";
+"add_app.done" = "完成";
+"add_app.panel_message" = "選擇要加入傳送列表的 App";
+"add_app.status.builtin" = "內建";
+
+/* ===== 標註工具 ===== */
+
+"annotation.tool.arrow" = "箭頭工具";
+"annotation.tool.circle" = "圓形工具";
+"annotation.tool.rectangle" = "矩形工具";
+"annotation.tool.number" = "數字工具";
+"annotation.color.tooltip" = "標註顏色";
+"annotation.clear_all" = "清除全部";
+"annotation.clear_all.tooltip" = "清除所有標註";
+
+/* ===== 顏色 ===== */
+
+"color.red" = "紅色";
+"color.orange" = "橘色";
+"color.yellow" = "黃色";
+"color.green" = "綠色";
+"color.blue" = "藍色";
+"color.purple" = "紫色";
+
+/* ===== 提示訊息 ===== */
+
+"hud.app_running" = "VibeCap 執行中";
+"hud.pasted_to_app" = "已貼上至 %@";
+"hud.saved" = "已儲存";
+"hud.screenshot_saved" = "截圖已儲存";
+"hud.folder_selected" = "已選擇檔案夾";
+
+/* ===== 錯誤 ===== */
+
+"error.shortcut_unavailable" = "快捷鍵無法使用";
+"error.shortcut_registration_failed" = "無法註冊此快捷鍵（OSStatus %d）。可能已被其他 App 使用或被系統保留。";
+"error.unable_to_set_folder" = "無法設定檔案夾";
+"error.launch_login_failed" = "登入時啟動失敗";
+"error.launch_login_requires_approval" = "登入時啟動需要在系統設定 → 一般 → 登入項目中核准。";
+"error.invalid_application" = "無效的 App";
+"error.could_not_read_bundle" = "無法讀取應用程式套件。";
+"error.cannot_add_app" = "無法加入 App";
+"error.app_no_paste_support" = "此 App 不支援圖片貼上。";
+"error.already_added" = "已加入";
+"error.app_already_in_list" = "此 App 已在傳送列表中。";
+"error.app_not_found" = "找不到 %@。App 是否正在執行？";
+"error.no_folder_selected" = "尚未選擇儲存檔案夾。";
+"error.folder_access_failed" = "無法存取儲存檔案夾。";
+"error.image_encoding_failed" = "圖片編碼失敗。";
+"error.save_failed" = "截圖儲存失敗：%@";
+"error.clipboard_write_failed" = "寫入剪貼簿失敗。";
+"error.capture_failed" = "無法擷取所選區域。";
+"error.modifier_required" = "請至少使用一個修飾鍵（⌘⇧⌥⌃）。";
+
+/* ===== 權限 ===== */
+
+"permission.screen_recording.title" = "需要螢幕錄製權限";
+"permission.screen_recording.message" = "VibeCap 需要螢幕錄製權限才能擷取螢幕。\n\n請打開系統設定 → 隱私權與安全性 → 螢幕錄製，啟用 VibeCap，然後結束並重新打開 App。";
+"permission.screen_recording.error" = "需要螢幕錄製權限才能擷取螢幕。";
+"permission.accessibility.message" = "需要輔助使用權限。請在系統設定 → 隱私權與安全性 → 輔助使用中授權，然後重試。";
+"permission.login.approval_required" = "需要核准";
+"permission.login.message" = "若要在登入時啟動 VibeCap，請在系統設定 → 一般 → 登入項目中啟用。";
+
+/* ===== 通用按鈕 ===== */
+
+"button.ok" = "好";
+"button.cancel" = "取消";
+"button.open_system_settings" = "打開系統設定";
+"button.open_login_items" = "打開登入項目";
+"button.choose" = "選擇";
+"button.restart_now" = "立即重新啟動";
+"button.later" = "稍後";
+
+/* ===== 彈窗 ===== */
+
+"alert.restart.title" = "需要重新啟動";
+"alert.restart.message" = "請重新啟動 VibeCap 以套用語言變更。";
+
+/* ===== 檔案面板 ===== */
+
+"panel.choose_folder.title" = "選擇儲存檔案夾";
+"panel.choose_folder.message" = "選擇 VibeCap 儲存截圖的檔案夾。";
+
+/* ===== 輔助使用 ===== */
+
+"a11y.dropdown_select_app" = "選擇 App";
+"a11y.save_icon" = "儲存";
+"a11y.add_icon" = "加入";
+
+/* ===== 按鍵名稱 ===== */
+
+"key.space" = "空白鍵";
+
+/* ===== 其他 ===== */
+
+"app.unknown" = "未知";
