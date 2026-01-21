@@ -19,10 +19,14 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private let placeholderLabel = NSTextField(labelWithString: "")
     
     // Split button for Send
-    private let sendButton = NSButton(title: "Send to App", target: nil, action: nil)
-    private let dropdownButton = NSButton(title: "", target: nil, action: nil)
-    private let closeButton = NSButton(title: "Close", target: nil, action: nil)
+    private let sendButton = RoundedHoverButton(title: "Send to App", target: nil, action: nil)
+    private let dropdownButton = RoundedHoverButton(title: "", target: nil, action: nil)
+    private let saveButton = RoundedHoverButton(title: "Save Image", target: nil, action: nil)
+    private let closeButton = RoundedHoverButton(title: "Close", target: nil, action: nil)
     private let escHintLabel = NSTextField(labelWithString: "ESC to close")
+    private let saveHintLabel = NSTextField(labelWithString: "⌘S to save")
+    private let sendHintLabel = NSTextField(labelWithString: "⌘↩︎ to send")
+    private let saveStack = NSStackView()
     
     /// Currently selected target app
     private var selectedTargetApp: TargetApp?
@@ -267,48 +271,83 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         let clickGesture = NSClickGestureRecognizer(target: self, action: #selector(placeholderClicked))
         placeholderLabel.addGestureRecognizer(clickGesture)
 
-        // Setup Send button (main button) with brand color styling
-        sendButton.bezelStyle = .rounded
-        sendButton.controlSize = .large
+        // Setup Send button (main button)
         sendButton.target = self
         sendButton.action = #selector(sendPressed)
+        sendButton.imagePosition = .imageLeading
+        sendButton.imageScaling = .scaleProportionallyDown
+        sendButton.imageHugsTitle = true
+        sendButton.fixedHeight = 32
+        sendButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        sendButton.layer?.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         updateSendButtonTitle()
-        updateSendButtonState()
+        updateButtonStyles()
 
-        // Setup Dropdown button (arrow) - hover to show menu, click as fallback
-        dropdownButton.bezelStyle = .rounded
-        dropdownButton.controlSize = .large
-        dropdownButton.image = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: "Select app")
+        // Setup Dropdown button (arrow)
+        let chevronConfig = NSImage.SymbolConfiguration(pointSize: 11, weight: .medium)
+        dropdownButton.image = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: "Select app")?
+            .withSymbolConfiguration(chevronConfig)
         dropdownButton.imagePosition = .imageOnly
+        dropdownButton.fixedHeight = 32
+        dropdownButton.contentInsets = NSEdgeInsets(top: 6, left: 10, bottom: 6, right: 10)
         dropdownButton.setContentHuggingPriority(.required, for: .horizontal)
         dropdownButton.target = self
         dropdownButton.action = #selector(dropdownClicked)
-        
-        // Create a container for the split button
+        dropdownButton.layer?.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+
+        // Setup Save button
+        saveButton.target = self
+        saveButton.action = #selector(saveMenuItemClicked)
+        saveButton.imagePosition = .imageLeading
+        saveButton.imageScaling = .scaleProportionallyDown
+        saveButton.imageHugsTitle = true
+        saveButton.fixedHeight = 32
+        saveButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+
+        // Create a container for the split button (Send + Dropdown)
         let splitButtonContainer = NSStackView(views: [sendButton, dropdownButton])
         splitButtonContainer.orientation = .horizontal
-        splitButtonContainer.spacing = 8
+        splitButtonContainer.spacing = 1
         splitButtonContainer.distribution = .fill
 
         // Setup Close button
-        closeButton.bezelStyle = .rounded
-        closeButton.controlSize = .large
         closeButton.target = self
         closeButton.action = #selector(closePressed)
-        
-        // ESC hint label (next to Close button)
+        closeButton.imagePosition = .imageLeading
+        closeButton.imageScaling = .scaleProportionallyDown
+        closeButton.imageHugsTitle = true
+        closeButton.fixedHeight = 32
+        closeButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+
+        // Shortcut hint labels (above buttons)
         escHintLabel.textColor = .tertiaryLabelColor
         escHintLabel.font = NSFont.systemFont(ofSize: 11)
+        saveHintLabel.textColor = .tertiaryLabelColor
+        saveHintLabel.font = NSFont.systemFont(ofSize: 11)
+        sendHintLabel.textColor = .tertiaryLabelColor
+        sendHintLabel.font = NSFont.systemFont(ofSize: 11)
 
-        let sendHint = NSTextField(labelWithString: "⌘↩︎ to Send")
-        sendHint.textColor = .tertiaryLabelColor
-        sendHint.font = NSFont.systemFont(ofSize: 11)
+        let closeStack = NSStackView(views: [escHintLabel, closeButton])
+        closeStack.orientation = .vertical
+        closeStack.alignment = .leading
+        closeStack.spacing = 4
 
-        // Layout: [Close] [ESC hint] [spacer] [send hint] [Split Button]
-        let buttonsRow = NSStackView(views: [closeButton, escHintLabel, NSView(), sendHint, splitButtonContainer])
+        saveStack.orientation = .vertical
+        saveStack.alignment = .centerX
+        saveStack.spacing = 4
+        saveStack.addArrangedSubview(saveHintLabel)
+        saveStack.addArrangedSubview(saveButton)
+
+        let sendStack = NSStackView(views: [sendHintLabel, splitButtonContainer])
+        sendStack.orientation = .vertical
+        sendStack.alignment = .centerX
+        sendStack.spacing = 4
+
+        // Layout: [Close stack] [spacer] [Save stack] [Send stack]
+        let buttonsRow = NSStackView(views: [closeStack, NSView(), saveStack, sendStack])
         buttonsRow.orientation = .horizontal
-        buttonsRow.alignment = .centerY
-        buttonsRow.spacing = 10
+        buttonsRow.alignment = .bottom
+        buttonsRow.spacing = 12
 
         // Add views directly to main view (no NSStackView wrapper for precise control)
         view.addSubview(imageContainerView)
@@ -373,6 +412,9 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             buttonsRow.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             buttonsRow.topAnchor.constraint(equalTo: promptScrollView.bottomAnchor, constant: 16),
             buttonsRow.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+
+            dropdownButton.widthAnchor.constraint(equalToConstant: 32),
+            dropdownButton.heightAnchor.constraint(equalTo: sendButton.heightAnchor),
 
             // Placeholder label inside prompt area
             // Match textContainerInset (8) + textContainer lineFragmentPadding (5) = 13
@@ -449,7 +491,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         guard targetApp != selectedTargetApp else { return }
         selectedTargetApp = targetApp
         updateSendButtonTitle()
-        updateSendButtonState()
+        updateButtonStyles()
     }
 
     // MARK: - Button Actions
@@ -582,42 +624,84 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         return newImage
     }
 
+    private func makeTemplateIcon(named name: String, size: CGFloat, fallbackSystemName: String? = nil) -> NSImage? {
+        if let url = Bundle.main.url(forResource: name, withExtension: "svg"),
+           let image = NSImage(contentsOf: url) {
+            image.size = NSSize(width: size, height: size)
+            image.isTemplate = true
+            return image
+        }
+        if let fallbackSystemName {
+            let config = NSImage.SymbolConfiguration(pointSize: size, weight: .medium)
+            return NSImage(systemSymbolName: fallbackSystemName, accessibilityDescription: name)?
+                .withSymbolConfiguration(config)
+        }
+        return nil
+    }
+
     // MARK: - UI Updates
 
     private func updateSendButtonTitle() {
-        let title: String
+        closeButton.image = makeTemplateIcon(named: "close-line", size: 12, fallbackSystemName: "xmark")
+        saveButton.image = makeTemplateIcon(named: "download-line", size: 14, fallbackSystemName: "square.and.arrow.down")
+
         if canSendToApp, let app = selectedTargetApp {
-            title = "Send to \(app.displayName)"
+            sendButton.title = "Send to \(app.displayName)"
+            if let icon = app.icon {
+                sendButton.image = resizeImage(icon, to: NSSize(width: 16, height: 16))
+            } else {
+                sendButton.image = nil
+            }
+            saveStack.isHidden = false
+            sendHintLabel.stringValue = "⌘↩︎ to send"
         } else {
-            // Show "Save Image" when no target app or app is blacklisted
-            title = "Save Image"
+            // When no valid target app, primary action is Save Image
+            sendButton.title = "Save Image"
+            sendButton.image = makeTemplateIcon(named: "download-line", size: 14, fallbackSystemName: "square.and.arrow.down")
+            saveStack.isHidden = true
+            sendHintLabel.stringValue = "⌘S to save"
         }
-        sendButton.title = title
-        
-        // Re-apply styling after title change (button is always enabled now)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: NSColor.white,
-            .font: NSFont.systemFont(ofSize: 13, weight: .medium)
-        ]
-        sendButton.attributedTitle = NSAttributedString(string: title, attributes: attributes)
     }
     
-    private func updateSendButtonState() {
-        // Button is always enabled - either sends to app or saves image
+    private func updateButtonStyles() {
+        let primary = RoundedHoverButton.Style(
+            background: brandColor,
+            hoverBackground: brandColor.blended(withFraction: 0.12, of: .white) ?? brandColor,
+            pressedBackground: brandColor.blended(withFraction: 0.12, of: .black) ?? brandColor,
+            borderColor: nil,
+            borderWidth: 0,
+            titleColor: .white
+        )
+        let secondary = RoundedHoverButton.Style(
+            background: .white,
+            hoverBackground: NSColor(white: 0.97, alpha: 1.0),
+            pressedBackground: NSColor(white: 0.93, alpha: 1.0),
+            borderColor: NSColor(calibratedWhite: 0.87, alpha: 1.0),
+            borderWidth: 1,
+            titleColor: .labelColor
+        )
+        let closeStyle = RoundedHoverButton.Style(
+            background: NSColor(white: 0.93, alpha: 1.0),
+            hoverBackground: NSColor(white: 0.88, alpha: 1.0),
+            pressedBackground: NSColor(white: 0.84, alpha: 1.0),
+            borderColor: nil,
+            borderWidth: 0,
+            titleColor: .labelColor
+        )
+
+        sendButton.style = primary
+        dropdownButton.style = primary
+        closeButton.style = closeStyle
+
+        if canSendToApp {
+            saveButton.style = secondary
+        } else {
+            saveButton.style = primary
+        }
         sendButton.isEnabled = true
-        
-        // Apply brand color styling
-        sendButton.bezelStyle = .rounded
-        sendButton.isBordered = true
-        sendButton.bezelColor = brandColor
-        
-        // Set white text using attributed title
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: NSColor.white,
-            .font: NSFont.systemFont(ofSize: 13, weight: .medium)
-        ]
-        sendButton.attributedTitle = NSAttributedString(string: sendButton.title, attributes: attributes)
-        sendButton.toolTip = nil
+        dropdownButton.isEnabled = true
+        saveButton.isEnabled = true
+        closeButton.isEnabled = true
     }
     
     private func updatePlaceholderText() {

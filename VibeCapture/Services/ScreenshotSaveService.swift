@@ -28,26 +28,30 @@ final class ScreenshotSaveService {
     /// Returns true if saved, false if saving is disabled or user cancelled folder selection.
     func saveIfEnabled(image: NSImage) throws -> Bool {
         guard SettingsStore.shared.saveEnabled else { return false }
-        return try saveToFolder(image: image)
+        return try saveToFolderAndReturnURL(image: image) != nil
     }
 
     /// Save screenshot to configured path, or prompt user to choose if not configured.
     /// Uses the same folder as auto-save. If no folder is set, prompts user to choose one.
     func saveScreenshot(image: NSImage) throws -> Bool {
-        return try saveToFolder(image: image)
+        return try saveToFolderAndReturnURL(image: image) != nil
+    }
+
+    /// Save screenshot and return the file URL if successful.
+    /// Returns nil if the user cancels folder selection.
+    func saveScreenshotAndReturnURL(image: NSImage) throws -> URL? {
+        return try saveToFolderAndReturnURL(image: image)
     }
 
     /// Core save logic: save to configured folder, or prompt user to choose
-    private func saveToFolder(image: NSImage) throws -> Bool {
+    private func saveToFolderAndReturnURL(image: NSImage) throws -> URL? {
         guard let data = image.pngData() else { throw SaveError.imageEncodingFailed }
 
         let folderURL: URL
         if let existing = try resolveFolderURLFromBookmark() {
             folderURL = existing
         } else {
-            guard let chosen = chooseFolder() else {
-                return false
-            }
+            guard let chosen = chooseFolder() else { return nil }
             folderURL = chosen
             try storeBookmark(for: folderURL)
         }
@@ -63,7 +67,7 @@ final class ScreenshotSaveService {
 
         do {
             try data.write(to: url, options: [.atomic])
-            return true
+            return url
         } catch {
             throw SaveError.writeFailed(error)
         }

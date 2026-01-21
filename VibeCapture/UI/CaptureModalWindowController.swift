@@ -143,6 +143,10 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
                 self.viewController.onCommandEnter?()
                 return nil
             }
+            if event.modifierFlags.contains(.command), event.keyCode == 1 { // ⌘S
+                self.saveScreenshot()
+                return nil
+            }
             return event
         }
     }
@@ -189,15 +193,19 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         // Composite annotations onto the image
         let annotations = viewController.annotations
         let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
-        defer { finish(.saved) }
-        
+        finish(.saved)
+        ScreenshotPreviewService.shared.showPreview(image: finalImage, fileURL: nil)
+
         do {
-            let saved = try ScreenshotSaveService.shared.saveScreenshot(image: finalImage)
-            if saved {
+            if let savedURL = try ScreenshotSaveService.shared.saveScreenshotAndReturnURL(image: finalImage) {
+                ScreenshotPreviewService.shared.updatePreviewFileURL(savedURL)
                 HUDService.shared.show(message: "Screenshot Saved", style: .success)
+            } else {
+                ScreenshotPreviewService.shared.dismissPreview()
             }
             // If user cancelled, don't show anything
         } catch {
+            ScreenshotPreviewService.shared.dismissPreview()
             HUDService.shared.show(message: error.localizedDescription, style: .error)
         }
     }

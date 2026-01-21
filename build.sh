@@ -50,6 +50,12 @@ if [ -f "VibeCapture/Resources/MenuBarIcon.png" ]; then
     echo "🎨 Menu bar icon copied"
 fi
 
+# Copy UI SVG icons
+if ls VibeCapture/Resources/*.svg >/dev/null 2>&1; then
+    cp VibeCapture/Resources/*.svg "$APP_BUNDLE/Contents/Resources/"
+    echo "🎨 UI icons copied"
+fi
+
 # Create PkgInfo
 echo -n "APPL????" > "$APP_BUNDLE/Contents/PkgInfo"
 
