@@ -12,6 +12,7 @@ final class ScreenshotOverlayController {
 
     private var cursorWasSet = false
     private var isFinishing = false
+    private var globalKeyMonitor: Any?
 
     func start(completion: @escaping Completion) {
         stop()
@@ -21,7 +22,7 @@ final class ScreenshotOverlayController {
 
         // Create one overlay window per screen (macOS can't render a single window across multiple displays)
         for screen in NSScreen.screens {
-            let win = OverlayWindow(contentRect: screen.frame, styleMask: [.borderless], backing: .buffered, defer: false)
+            let win = OverlayWindow(contentRect: screen.frame, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
             win.setFrame(screen.frame, display: true)
             win.controller = self
             windows.append(win)
@@ -30,16 +31,14 @@ final class ScreenshotOverlayController {
         NSCursor.crosshair.push()
         cursorWasSet = true
 
-        NSApp.activate(ignoringOtherApps: true)
+        // Show all windows without activating the app
+        for win in windows {
+            win.orderFrontRegardless()
+            win.overlayView.window?.makeFirstResponder(win.overlayView)
+        }
 
-        // Show all windows and make the first one key
-        for (i, win) in windows.enumerated() {
-            if i == 0 {
-                win.makeKeyAndOrderFront(nil)
-                win.overlayView.window?.makeFirstResponder(win.overlayView)
-            } else {
-                win.orderFront(nil)
-            }
+        globalKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
+            self?.handleKeyDown(event)
         }
 
         // Initialize cursor position display
@@ -63,6 +62,11 @@ final class ScreenshotOverlayController {
         if cursorWasSet {
             NSCursor.pop()
             cursorWasSet = false
+        }
+
+        if let globalKeyMonitor {
+            NSEvent.removeMonitor(globalKeyMonitor)
+            self.globalKeyMonitor = nil
         }
     }
 
@@ -176,7 +180,7 @@ final class ScreenshotOverlayController {
     }
 }
 
-final class OverlayWindow: NSWindow {
+final class OverlayWindow: NSPanel {
     let overlayView: OverlayView
     weak var controller: ScreenshotOverlayController?
 
@@ -205,6 +209,9 @@ final class OverlayWindow: NSWindow {
         isOpaque = false
         backgroundColor = .clear
         hasShadow = false
+        isFloatingPanel = true
+        becomesKeyOnlyIfNeeded = true
+        hidesOnDeactivate = false
         ignoresMouseEvents = false
         acceptsMouseMovedEvents = true  // Enable mouse moved events for coordinate display
         level = .screenSaver
