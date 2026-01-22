@@ -142,3 +142,5 @@
 /* ===== Overig ===== */
 
 "app.unknown" = "Onbekend";
+
+"preview.button.show_in_finder" = "Toon in Finder";

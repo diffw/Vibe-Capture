@@ -142,3 +142,5 @@
 /* ===== Övrigt ===== */
 
 "app.unknown" = "Okänd";
+
+"preview.button.show_in_finder" = "Visa i Finder";

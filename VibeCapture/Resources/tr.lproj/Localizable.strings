@@ -142,3 +142,5 @@
 /* ===== Diğer ===== */
 
 "app.unknown" = "Bilinmiyor";
+
+"preview.button.show_in_finder" = "Finder'da Göster";

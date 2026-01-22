@@ -320,3 +320,8 @@
 
 /* [Context: Fallback] Unknown app name */
 "app.unknown" = "Unknown";
+
+/* ===== Preview ===== */
+
+/* [Context: Preview] Show saved file in Finder */
+"preview.button.show_in_finder" = "Show in Finder";

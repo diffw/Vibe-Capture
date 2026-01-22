@@ -142,3 +142,5 @@
 /* ===== Diversos ===== */
 
 "app.unknown" = "Desconhecido";
+
+"preview.button.show_in_finder" = "Mostrar no Finder";

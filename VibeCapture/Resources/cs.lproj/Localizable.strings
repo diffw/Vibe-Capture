@@ -142,3 +142,5 @@
 /* ===== Ostatní ===== */
 
 "app.unknown" = "Neznámá";
+
+"preview.button.show_in_finder" = "Zobrazit ve Finderu";

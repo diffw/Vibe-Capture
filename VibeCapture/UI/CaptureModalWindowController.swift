@@ -170,7 +170,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         // Use AutoPasteService to paste image + text to target app
         AutoPasteService.shared.pasteToApp(image: finalImage, text: prompt, targetApp: targetApp) { success, errorMessage in
             if success {
-                HUDService.shared.show(message: "Pasted to \(appName)", style: .success)
+                HUDService.shared.show(message: L("hud.pasted_to_app", appName), style: .success)
             } else if let errorMessage {
                 HUDService.shared.show(message: errorMessage, style: .error)
             }
@@ -180,7 +180,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
                 do {
                     let saved = try ScreenshotSaveService.shared.saveIfEnabled(image: finalImage)
                     if saved {
-                        HUDService.shared.show(message: "Saved", style: .success)
+                        HUDService.shared.show(message: L("hud.saved"), style: .success)
                     }
                 } catch {
                     HUDService.shared.show(message: error.localizedDescription, style: .error)
@@ -199,7 +199,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         do {
             if let savedURL = try ScreenshotSaveService.shared.saveScreenshotAndReturnURL(image: finalImage) {
                 ScreenshotPreviewService.shared.updatePreviewFileURL(savedURL)
-                HUDService.shared.show(message: "Screenshot Saved", style: .success)
+                HUDService.shared.show(message: L("hud.screenshot_saved"), style: .success)
             } else {
                 ScreenshotPreviewService.shared.dismissPreview()
             }

@@ -142,3 +142,5 @@
 /* ===== Άλλα ===== */
 
 "app.unknown" = "Άγνωστο";
+
+"preview.button.show_in_finder" = "Εμφάνιση στο Finder";

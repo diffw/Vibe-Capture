@@ -142,3 +142,5 @@
 /* ===== 기타 ===== */
 
 "app.unknown" = "알 수 없음";
+
+"preview.button.show_in_finder" = "Finder에서 보기";

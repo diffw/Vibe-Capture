@@ -142,3 +142,5 @@
 /* ===== Прочее ===== */
 
 "app.unknown" = "Неизвестно";
+
+"preview.button.show_in_finder" = "Показать в Finder";

@@ -3,7 +3,7 @@ import AppKit
 final class ScreenshotPreviewPanelController: NSWindowController {
     private let imageView = DraggableImageView()
     private let closeButton = CountdownCloseButton()
-    private let showInFinderButton = NSButton(title: "Show in Finder", target: nil, action: nil)
+    private let showInFinderButton = NSButton(title: L("preview.button.show_in_finder"), target: nil, action: nil)
     private let thumbnailSize: NSSize
     private var fileURL: URL?
     private let autoCloseDuration: TimeInterval = 5.0

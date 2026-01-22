@@ -142,3 +142,7 @@
 /* ===== 其他 ===== */
 
 "app.unknown" = "未知";
+
+/* ===== 预览 ===== */
+
+"preview.button.show_in_finder" = "在 Finder 中显示";
