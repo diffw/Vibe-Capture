@@ -1,0 +1,144 @@
+/* ===== Menyrad ===== */
+
+"menu.capture_area" = "Ta skärmbild av område";
+"menu.settings" = "Inställningar…";
+"menu.quit" = "Avsluta";
+"menu.language" = "Språk";
+"menu.language.system_default" = "Systemstandard";
+
+/* ===== Appmeny ===== */
+
+"menu.app.quit_vibecap" = "Avsluta VibeCap";
+"menu.edit" = "Redigera";
+"menu.edit.undo" = "Ångra";
+"menu.edit.redo" = "Gör om";
+"menu.edit.cut" = "Klipp ut";
+"menu.edit.copy" = "Kopiera";
+"menu.edit.paste" = "Klistra in";
+"menu.edit.select_all" = "Markera allt";
+
+/* ===== Förhandsgranskning ===== */
+
+"modal.button.send_to_app" = "Skicka till %@";
+"modal.button.save_image" = "Spara bild";
+"modal.button.close" = "Stäng";
+"modal.hint.esc_to_close" = "ESC för att stänga";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ för att skicka";
+"modal.placeholder.add_instructions" = "Lägg till instruktioner (valfritt)";
+"modal.menu.no_supported_apps" = "Inga appar som stöds körs";
+"modal.menu.send_to_app" = "Skicka till %@";
+"modal.menu.save_image" = "Spara bild";
+"modal.menu.add_to_send_list" = "Lägg till i skickalista…";
+
+/* ===== Inställningar ===== */
+
+"settings.window_title" = "Inställningar";
+"settings.shortcut.title" = "Kortkommando för skärmbild";
+"settings.shortcut.recording" = "Skriv kortkommando…";
+"settings.shortcut.help" = "Klicka för att spela in. Esc för att avbryta.";
+"settings.save.checkbox" = "Spara automatiskt efter inklistring";
+"settings.save.choose_folder" = "Välj mapp…";
+"settings.save.no_folder" = "Ingen mapp vald (du tillfrågas vid första sparandet)";
+"settings.login.checkbox" = "Öppna vid inloggning";
+"settings.send_list.title" = "Tillagda appar";
+
+/* ===== Lägg till app ===== */
+
+"add_app.window_title" = "Lägg till i skickalista";
+"add_app.header" = "Appar som körs:";
+"add_app.choose_from_apps" = "Välj från Program…";
+"add_app.done" = "Klar";
+"add_app.panel_message" = "Välj en app att lägga till i skickalistan";
+"add_app.status.builtin" = "Inbyggd";
+
+/* ===== Anteckningsverktyg ===== */
+
+"annotation.tool.arrow" = "Pilverktyg";
+"annotation.tool.circle" = "Cirkelverktyg";
+"annotation.tool.rectangle" = "Rektangelverktyg";
+"annotation.tool.number" = "Nummerverktyg";
+"annotation.color.tooltip" = "Anteckningsfärg";
+"annotation.clear_all" = "Rensa allt";
+"annotation.clear_all.tooltip" = "Rensa alla anteckningar";
+
+/* ===== Färger ===== */
+
+"color.red" = "Röd";
+"color.orange" = "Orange";
+"color.yellow" = "Gul";
+"color.green" = "Grön";
+"color.blue" = "Blå";
+"color.purple" = "Lila";
+
+/* ===== HUD-meddelanden ===== */
+
+"hud.app_running" = "VibeCap körs";
+"hud.pasted_to_app" = "Inklistrat i %@";
+"hud.saved" = "Sparat";
+"hud.screenshot_saved" = "Skärmbild sparad";
+"hud.folder_selected" = "Mapp vald";
+
+/* ===== Fel ===== */
+
+"error.shortcut_unavailable" = "Kortkommando ej tillgängligt";
+"error.shortcut_registration_failed" = "Kan inte registrera detta kortkommando (OSStatus %d). Det kanske används av en annan app eller är reserverat av systemet.";
+"error.unable_to_set_folder" = "Kan inte ställa in mapp";
+"error.launch_login_failed" = "Kunde inte öppna vid inloggning";
+"error.launch_login_requires_approval" = "Öppna vid inloggning kräver godkännande i Systeminställningar → Allmänt → Inloggningsobjekt.";
+"error.invalid_application" = "Ogiltig app";
+"error.could_not_read_bundle" = "Kunde inte läsa appens paket.";
+"error.cannot_add_app" = "Kan inte lägga till app";
+"error.app_no_paste_support" = "Denna app stöder inte inklistring av bilder.";
+"error.already_added" = "Redan tillagd";
+"error.app_already_in_list" = "Denna app finns redan i skickalistan.";
+"error.app_not_found" = "Kunde inte hitta %@. Körs appen?";
+"error.no_folder_selected" = "Ingen lagringsmapp vald.";
+"error.folder_access_failed" = "Kan inte komma åt lagringsmappen.";
+"error.image_encoding_failed" = "Kunde inte koda bilden.";
+"error.save_failed" = "Kunde inte spara skärmbild: %@";
+"error.clipboard_write_failed" = "Kunde inte skriva till urklipp.";
+"error.capture_failed" = "Kunde inte ta skärmbild av det valda området.";
+"error.modifier_required" = "Använd minst en modifieringstangent (⌘⇧⌥⌃).";
+
+/* ===== Behörigheter ===== */
+
+"permission.screen_recording.title" = "Skärminspelningsbehörighet krävs";
+"permission.screen_recording.message" = "VibeCap behöver skärminspelningsbehörighet för att ta skärmbilder.\n\nÖppna Systeminställningar → Integritet och säkerhet → Skärminspelning, aktivera VibeCap och starta om appen.";
+"permission.screen_recording.error" = "Skärminspelningsbehörighet krävs för att ta skärmbilder.";
+"permission.accessibility.message" = "Hjälpmedelsbehörighet krävs. Bevilja den i Systeminställningar → Integritet och säkerhet → Hjälpmedel och försök igen.";
+"permission.login.approval_required" = "Godkännande krävs";
+"permission.login.message" = "För att öppna VibeCap vid inloggning, aktivera det i Systeminställningar → Allmänt → Inloggningsobjekt.";
+
+/* ===== Vanliga knappar ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Avbryt";
+"button.open_system_settings" = "Öppna Systeminställningar";
+"button.open_login_items" = "Öppna Inloggningsobjekt";
+"button.choose" = "Välj";
+"button.restart_now" = "Starta om nu";
+"button.later" = "Senare";
+
+/* ===== Varningar ===== */
+
+"alert.restart.title" = "Omstart krävs";
+"alert.restart.message" = "Starta om VibeCap för att språkändringen ska börja gälla.";
+
+/* ===== Filpaneler ===== */
+
+"panel.choose_folder.title" = "Välj lagringsmapp";
+"panel.choose_folder.message" = "Välj en mapp där VibeCap ska spara skärmbilder.";
+
+/* ===== Hjälpmedel ===== */
+
+"a11y.dropdown_select_app" = "Välj app";
+"a11y.save_icon" = "Spara";
+"a11y.add_icon" = "Lägg till";
+
+/* ===== Tangentnamn ===== */
+
+"key.space" = "Blanksteg";
+
+/* ===== Övrigt ===== */
+
+"app.unknown" = "Okänd";

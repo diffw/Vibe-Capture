@@ -1,0 +1,144 @@
+/* ===== Menubalk ===== */
+
+"menu.capture_area" = "Gebied vastleggen";
+"menu.settings" = "Instellingen…";
+"menu.quit" = "Stop";
+"menu.language" = "Taal";
+"menu.language.system_default" = "Systeemstandaard";
+
+/* ===== App-menu ===== */
+
+"menu.app.quit_vibecap" = "Stop VibeCap";
+"menu.edit" = "Wijzig";
+"menu.edit.undo" = "Herstel";
+"menu.edit.redo" = "Opnieuw";
+"menu.edit.cut" = "Knip";
+"menu.edit.copy" = "Kopieer";
+"menu.edit.paste" = "Plak";
+"menu.edit.select_all" = "Selecteer alles";
+
+/* ===== Opname-voorvertoning ===== */
+
+"modal.button.send_to_app" = "Verstuur naar %@";
+"modal.button.save_image" = "Bewaar afbeelding";
+"modal.button.close" = "Sluit";
+"modal.hint.esc_to_close" = "ESC om te sluiten";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ om te versturen";
+"modal.placeholder.add_instructions" = "Instructies toevoegen (optioneel)";
+"modal.menu.no_supported_apps" = "Geen ondersteunde apps actief";
+"modal.menu.send_to_app" = "Verstuur naar %@";
+"modal.menu.save_image" = "Bewaar afbeelding";
+"modal.menu.add_to_send_list" = "Voeg toe aan verzendlijst…";
+
+/* ===== Instellingen ===== */
+
+"settings.window_title" = "Instellingen";
+"settings.shortcut.title" = "Sneltoets voor opname";
+"settings.shortcut.recording" = "Typ sneltoets…";
+"settings.shortcut.help" = "Klik om op te nemen. Esc om te annuleren.";
+"settings.save.checkbox" = "Automatisch bewaren na plakken";
+"settings.save.choose_folder" = "Kies map…";
+"settings.save.no_folder" = "Geen map geselecteerd (wordt gevraagd bij eerste opslag)";
+"settings.login.checkbox" = "Open bij inloggen";
+"settings.send_list.title" = "Toegevoegde apps";
+
+/* ===== App toevoegen ===== */
+
+"add_app.window_title" = "Voeg toe aan verzendlijst";
+"add_app.header" = "Actieve apps:";
+"add_app.choose_from_apps" = "Kies uit Programma's…";
+"add_app.done" = "Gereed";
+"add_app.panel_message" = "Selecteer een app om toe te voegen aan de verzendlijst";
+"add_app.status.builtin" = "Ingebouwd";
+
+/* ===== Annotatiegereedschappen ===== */
+
+"annotation.tool.arrow" = "Pijlgereedschap";
+"annotation.tool.circle" = "Cirkelgereedschap";
+"annotation.tool.rectangle" = "Rechthoekgereedschap";
+"annotation.tool.number" = "Nummergereedschap";
+"annotation.color.tooltip" = "Annotatiekleur";
+"annotation.clear_all" = "Wis alles";
+"annotation.clear_all.tooltip" = "Wis alle annotaties";
+
+/* ===== Kleuren ===== */
+
+"color.red" = "Rood";
+"color.orange" = "Oranje";
+"color.yellow" = "Geel";
+"color.green" = "Groen";
+"color.blue" = "Blauw";
+"color.purple" = "Paars";
+
+/* ===== HUD-berichten ===== */
+
+"hud.app_running" = "VibeCap is actief";
+"hud.pasted_to_app" = "Geplakt in %@";
+"hud.saved" = "Bewaard";
+"hud.screenshot_saved" = "Schermafbeelding bewaard";
+"hud.folder_selected" = "Map geselecteerd";
+
+/* ===== Fouten ===== */
+
+"error.shortcut_unavailable" = "Sneltoets niet beschikbaar";
+"error.shortcut_registration_failed" = "Kan deze sneltoets niet registreren (OSStatus %d). Mogelijk wordt deze gebruikt door een andere app of is deze gereserveerd door het systeem.";
+"error.unable_to_set_folder" = "Kan map niet instellen";
+"error.launch_login_failed" = "Openen bij inloggen mislukt";
+"error.launch_login_requires_approval" = "Openen bij inloggen vereist goedkeuring in Systeeminstellingen → Algemeen → Inlogonderdelen.";
+"error.invalid_application" = "Ongeldige app";
+"error.could_not_read_bundle" = "Kan app-bundel niet lezen.";
+"error.cannot_add_app" = "Kan app niet toevoegen";
+"error.app_no_paste_support" = "Deze app ondersteunt geen afbeeldingen plakken.";
+"error.already_added" = "Al toegevoegd";
+"error.app_already_in_list" = "Deze app staat al in de verzendlijst.";
+"error.app_not_found" = "Kan %@ niet vinden. Is de app actief?";
+"error.no_folder_selected" = "Geen opslagmap geselecteerd.";
+"error.folder_access_failed" = "Kan geen toegang krijgen tot de opslagmap.";
+"error.image_encoding_failed" = "Kan afbeelding niet coderen.";
+"error.save_failed" = "Kan schermafbeelding niet bewaren: %@";
+"error.clipboard_write_failed" = "Kan niet naar klembord schrijven.";
+"error.capture_failed" = "Kan het geselecteerde gebied niet vastleggen.";
+"error.modifier_required" = "Gebruik minimaal één speciale toets (⌘⇧⌥⌃).";
+
+/* ===== Machtigingen ===== */
+
+"permission.screen_recording.title" = "Schermopnamemachtiging vereist";
+"permission.screen_recording.message" = "VibeCap heeft schermopnamemachtiging nodig om je scherm vast te leggen.\n\nOpen Systeeminstellingen → Privacy en beveiliging → Schermopname, schakel VibeCap in en herstart de app.";
+"permission.screen_recording.error" = "Schermopnamemachtiging is vereist om het scherm vast te leggen.";
+"permission.accessibility.message" = "Toegankelijkheidsmachtiging vereist. Verleen deze in Systeeminstellingen → Privacy en beveiliging → Toegankelijkheid en probeer opnieuw.";
+"permission.login.approval_required" = "Goedkeuring vereist";
+"permission.login.message" = "Om VibeCap te openen bij inloggen, schakel het in via Systeeminstellingen → Algemeen → Inlogonderdelen.";
+
+/* ===== Algemene knoppen ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Annuleer";
+"button.open_system_settings" = "Open Systeeminstellingen";
+"button.open_login_items" = "Open Inlogonderdelen";
+"button.choose" = "Kies";
+"button.restart_now" = "Nu herstarten";
+"button.later" = "Later";
+
+/* ===== Waarschuwingen ===== */
+
+"alert.restart.title" = "Herstart vereist";
+"alert.restart.message" = "Start VibeCap opnieuw om de taalwijziging toe te passen.";
+
+/* ===== Bestandspanelen ===== */
+
+"panel.choose_folder.title" = "Kies opslagmap";
+"panel.choose_folder.message" = "Selecteer een map waar VibeCap schermafbeeldingen zal bewaren.";
+
+/* ===== Toegankelijkheid ===== */
+
+"a11y.dropdown_select_app" = "Selecteer app";
+"a11y.save_icon" = "Bewaar";
+"a11y.add_icon" = "Voeg toe";
+
+/* ===== Toetsnamen ===== */
+
+"key.space" = "Spatie";
+
+/* ===== Overig ===== */
+
+"app.unknown" = "Onbekend";

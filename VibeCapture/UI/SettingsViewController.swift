@@ -4,14 +4,14 @@ final class SettingsViewController: NSViewController {
     private let shortcutRecorder = ShortcutRecorderView()
 
     // Save section
-    private let saveCheckbox = NSButton(checkboxWithTitle: "Auto-save screenshots after Paste", target: nil, action: nil)
+    private let saveCheckbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     private let saveFolderLabel = NSTextField(labelWithString: "")
-    private let chooseFolderButton = NSButton(title: "Choose Folder…", target: nil, action: nil)
+    private let chooseFolderButton = NSButton(title: "", target: nil, action: nil)
 
-    private let launchAtLoginCheckbox = NSButton(checkboxWithTitle: "Launch at Login", target: nil, action: nil)
+    private let launchAtLoginCheckbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     
     // Send List section
-    private let sendListLabel = NSTextField(labelWithString: "Added Apps")
+    private let sendListLabel = NSTextField(labelWithString: "")
     private let sendListScrollView = NSScrollView()
     private let sendListTableView = NSTableView()
     private let addAppButton = NSButton(title: "+", target: nil, action: nil)
@@ -30,6 +30,7 @@ final class SettingsViewController: NSViewController {
         }
 
         // Save section
+        saveCheckbox.title = L("settings.save.checkbox")
         saveCheckbox.target = self
         saveCheckbox.action = #selector(saveToggled)
         saveCheckbox.state = SettingsStore.shared.saveEnabled ? .on : .off
@@ -38,9 +39,11 @@ final class SettingsViewController: NSViewController {
         saveFolderLabel.font = NSFont.systemFont(ofSize: 12)
         saveFolderLabel.lineBreakMode = .byTruncatingMiddle
 
+        chooseFolderButton.title = L("settings.save.choose_folder")
         chooseFolderButton.target = self
         chooseFolderButton.action = #selector(chooseFolderPressed)
 
+        launchAtLoginCheckbox.title = L("settings.login.checkbox")
         launchAtLoginCheckbox.target = self
         launchAtLoginCheckbox.action = #selector(launchAtLoginToggled)
         launchAtLoginCheckbox.state = LaunchAtLoginService.shared.isEnabled ? .on : .off
@@ -56,6 +59,7 @@ final class SettingsViewController: NSViewController {
         saveSection.spacing = 6
         
         // Send List section
+        sendListLabel.stringValue = L("settings.send_list.title")
         sendListLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
         
         sendListTableView.delegate = self
@@ -129,7 +133,7 @@ final class SettingsViewController: NSViewController {
             // Revert UI to stored value.
             let current = SettingsStore.shared.captureHotKey
             shortcutRecorder.setCombo(current)
-            showError(title: "Shortcut Unavailable", message: error.localizedDescription)
+            showError(title: L("error.shortcut_unavailable"), message: error.localizedDescription)
         }
     }
 
@@ -141,11 +145,11 @@ final class SettingsViewController: NSViewController {
     @objc private func chooseFolderPressed() {
         do {
             if let url = try ScreenshotSaveService.shared.chooseAndStoreFolder() {
-                HUDService.shared.show(message: "Folder Selected", style: .success)
+                HUDService.shared.show(message: L("hud.folder_selected"), style: .success)
                 saveFolderLabel.stringValue = url.path
             }
         } catch {
-            showError(title: "Unable to Set Folder", message: error.localizedDescription)
+            showError(title: L("error.unable_to_set_folder"), message: error.localizedDescription)
         }
     }
 
@@ -163,16 +167,16 @@ final class SettingsViewController: NSViewController {
         } catch {
             // Revert checkbox.
             launchAtLoginCheckbox.state = enabled ? .off : .on
-            showError(title: "Launch at Login Failed", message: error.localizedDescription)
+            showError(title: L("error.launch_login_failed"), message: error.localizedDescription)
         }
     }
 
     private func showLaunchApprovalAlert() {
         let alert = NSAlert()
-        alert.messageText = "Approval Required"
-        alert.informativeText = "To launch VibeCap at login, enable it in System Settings → General → Login Items."
-        alert.addButton(withTitle: "Open Login Items")
-        alert.addButton(withTitle: "OK")
+        alert.messageText = L("permission.login.approval_required")
+        alert.informativeText = L("permission.login.message")
+        alert.addButton(withTitle: L("button.open_login_items"))
+        alert.addButton(withTitle: L("button.ok"))
         let resp = alert.runModal()
         if resp == .alertFirstButtonReturn {
             LaunchAtLoginService.openLoginItemsSettings()
@@ -183,7 +187,7 @@ final class SettingsViewController: NSViewController {
         if let url = ScreenshotSaveService.shared.currentFolderURL() {
             saveFolderLabel.stringValue = url.path
         } else {
-            saveFolderLabel.stringValue = "No folder selected (you'll be asked on first save)"
+            saveFolderLabel.stringValue = L("settings.save.no_folder")
         }
     }
 
@@ -192,7 +196,7 @@ final class SettingsViewController: NSViewController {
         alert.alertStyle = .warning
         alert.messageText = title
         alert.informativeText = message
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: L("button.ok"))
         alert.runModal()
     }
     

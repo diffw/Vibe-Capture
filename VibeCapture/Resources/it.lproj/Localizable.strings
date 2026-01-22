@@ -1,0 +1,144 @@
+/* ===== Barra dei menu ===== */
+
+"menu.capture_area" = "Cattura area";
+"menu.settings" = "Impostazioni…";
+"menu.quit" = "Esci";
+"menu.language" = "Lingua";
+"menu.language.system_default" = "Predefinito di sistema";
+
+/* ===== Menu App ===== */
+
+"menu.app.quit_vibecap" = "Esci da VibeCap";
+"menu.edit" = "Modifica";
+"menu.edit.undo" = "Annulla";
+"menu.edit.redo" = "Ripristina";
+"menu.edit.cut" = "Taglia";
+"menu.edit.copy" = "Copia";
+"menu.edit.paste" = "Incolla";
+"menu.edit.select_all" = "Seleziona tutto";
+
+/* ===== Anteprima cattura ===== */
+
+"modal.button.send_to_app" = "Invia a %@";
+"modal.button.save_image" = "Salva immagine";
+"modal.button.close" = "Chiudi";
+"modal.hint.esc_to_close" = "ESC per chiudere";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ per inviare";
+"modal.placeholder.add_instructions" = "Aggiungi istruzioni (facoltativo)";
+"modal.menu.no_supported_apps" = "Nessuna app supportata in esecuzione";
+"modal.menu.send_to_app" = "Invia a %@";
+"modal.menu.save_image" = "Salva immagine";
+"modal.menu.add_to_send_list" = "Aggiungi all'elenco di invio…";
+
+/* ===== Impostazioni ===== */
+
+"settings.window_title" = "Impostazioni";
+"settings.shortcut.title" = "Abbreviazione cattura";
+"settings.shortcut.recording" = "Digita l'abbreviazione…";
+"settings.shortcut.help" = "Fai clic per registrare. Esc per annullare.";
+"settings.save.checkbox" = "Salva automaticamente dopo aver incollato";
+"settings.save.choose_folder" = "Scegli cartella…";
+"settings.save.no_folder" = "Nessuna cartella selezionata (verrà richiesta al primo salvataggio)";
+"settings.login.checkbox" = "Apri al login";
+"settings.send_list.title" = "App aggiunte";
+
+/* ===== Aggiungi app ===== */
+
+"add_app.window_title" = "Aggiungi all'elenco di invio";
+"add_app.header" = "App in esecuzione:";
+"add_app.choose_from_apps" = "Scegli da Applicazioni…";
+"add_app.done" = "Fine";
+"add_app.panel_message" = "Seleziona un'app da aggiungere all'elenco di invio";
+"add_app.status.builtin" = "Integrata";
+
+/* ===== Strumenti di annotazione ===== */
+
+"annotation.tool.arrow" = "Strumento freccia";
+"annotation.tool.circle" = "Strumento cerchio";
+"annotation.tool.rectangle" = "Strumento rettangolo";
+"annotation.tool.number" = "Strumento numero";
+"annotation.color.tooltip" = "Colore annotazione";
+"annotation.clear_all" = "Cancella tutto";
+"annotation.clear_all.tooltip" = "Cancella tutte le annotazioni";
+
+/* ===== Colori ===== */
+
+"color.red" = "Rosso";
+"color.orange" = "Arancione";
+"color.yellow" = "Giallo";
+"color.green" = "Verde";
+"color.blue" = "Blu";
+"color.purple" = "Viola";
+
+/* ===== Messaggi HUD ===== */
+
+"hud.app_running" = "VibeCap in esecuzione";
+"hud.pasted_to_app" = "Incollato in %@";
+"hud.saved" = "Salvato";
+"hud.screenshot_saved" = "Screenshot salvato";
+"hud.folder_selected" = "Cartella selezionata";
+
+/* ===== Errori ===== */
+
+"error.shortcut_unavailable" = "Abbreviazione non disponibile";
+"error.shortcut_registration_failed" = "Impossibile registrare questa abbreviazione (OSStatus %d). Potrebbe essere usata da un'altra app o riservata dal sistema.";
+"error.unable_to_set_folder" = "Impossibile impostare la cartella";
+"error.launch_login_failed" = "Apertura al login non riuscita";
+"error.launch_login_requires_approval" = "L'apertura al login richiede l'approvazione in Impostazioni di Sistema → Generali → Elementi login.";
+"error.invalid_application" = "Applicazione non valida";
+"error.could_not_read_bundle" = "Impossibile leggere il bundle dell'applicazione.";
+"error.cannot_add_app" = "Impossibile aggiungere l'app";
+"error.app_no_paste_support" = "Questa app non supporta l'incollaggio di immagini.";
+"error.already_added" = "Già aggiunta";
+"error.app_already_in_list" = "Questa app è già nell'elenco di invio.";
+"error.app_not_found" = "Impossibile trovare %@. È in esecuzione?";
+"error.no_folder_selected" = "Nessuna cartella di salvataggio selezionata.";
+"error.folder_access_failed" = "Impossibile accedere alla cartella di salvataggio.";
+"error.image_encoding_failed" = "Codifica immagine non riuscita.";
+"error.save_failed" = "Salvataggio screenshot non riuscito: %@";
+"error.clipboard_write_failed" = "Scrittura negli appunti non riuscita.";
+"error.capture_failed" = "Impossibile catturare l'area selezionata.";
+"error.modifier_required" = "Usa almeno un tasto modificatore (⌘⇧⌥⌃).";
+
+/* ===== Permessi ===== */
+
+"permission.screen_recording.title" = "Autorizzazione registrazione schermo richiesta";
+"permission.screen_recording.message" = "VibeCap richiede l'autorizzazione alla registrazione dello schermo per catturare lo schermo.\n\nApri Impostazioni di Sistema → Privacy e sicurezza → Registrazione schermo, abilita VibeCap, quindi esci e riapri l'app.";
+"permission.screen_recording.error" = "È richiesta l'autorizzazione alla registrazione dello schermo per catturare lo schermo.";
+"permission.accessibility.message" = "Autorizzazione accessibilità richiesta. Concedila in Impostazioni di Sistema → Privacy e sicurezza → Accessibilità, quindi riprova.";
+"permission.login.approval_required" = "Approvazione richiesta";
+"permission.login.message" = "Per aprire VibeCap al login, abilitalo in Impostazioni di Sistema → Generali → Elementi login.";
+
+/* ===== Pulsanti comuni ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Annulla";
+"button.open_system_settings" = "Apri Impostazioni di Sistema";
+"button.open_login_items" = "Apri Elementi login";
+"button.choose" = "Scegli";
+"button.restart_now" = "Riavvia ora";
+"button.later" = "Più tardi";
+
+/* ===== Avvisi ===== */
+
+"alert.restart.title" = "Riavvio richiesto";
+"alert.restart.message" = "Riavvia VibeCap per applicare la modifica della lingua.";
+
+/* ===== Pannelli file ===== */
+
+"panel.choose_folder.title" = "Scegli cartella di salvataggio";
+"panel.choose_folder.message" = "Seleziona una cartella dove VibeCap salverà gli screenshot.";
+
+/* ===== Accessibilità ===== */
+
+"a11y.dropdown_select_app" = "Seleziona app";
+"a11y.save_icon" = "Salva";
+"a11y.add_icon" = "Aggiungi";
+
+/* ===== Nomi tasti ===== */
+
+"key.space" = "Spazio";
+
+/* ===== Varie ===== */
+
+"app.unknown" = "Sconosciuto";

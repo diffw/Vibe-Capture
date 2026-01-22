@@ -82,7 +82,7 @@ struct KeyCombo: Codable, Equatable {
         case UInt32(kVK_ANSI_9): return "9"
         case UInt32(kVK_Return): return "↩︎"
         case UInt32(kVK_Tab): return "⇥"
-        case UInt32(kVK_Space): return "Space"
+        case UInt32(kVK_Space): return L("key.space")
         case UInt32(kVK_Delete): return "⌫"
         case UInt32(kVK_ForwardDelete): return "⌦"
         case UInt32(kVK_Escape): return "⎋"

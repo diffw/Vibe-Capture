@@ -1,0 +1,322 @@
+/* ===== Menu Bar ===== */
+
+/* [Context: Menu Bar] Main capture action */
+"menu.capture_area" = "Capture Area";
+
+/* [Context: Menu Bar] Open settings window */
+"menu.settings" = "Settings…";
+
+/* [Context: Menu Bar] Quit application */
+"menu.quit" = "Quit";
+
+/* [Context: Menu Bar] Language submenu */
+"menu.language" = "Language";
+
+/* [Context: Menu Bar] System default language option */
+"menu.language.system_default" = "System Default";
+
+/* ===== App Menu ===== */
+
+/* [Context: App Menu] Quit VibeCap */
+"menu.app.quit_vibecap" = "Quit VibeCap";
+
+/* [Context: App Menu] Edit menu title */
+"menu.edit" = "Edit";
+
+/* [Context: Edit Menu] Undo action */
+"menu.edit.undo" = "Undo";
+
+/* [Context: Edit Menu] Redo action */
+"menu.edit.redo" = "Redo";
+
+/* [Context: Edit Menu] Cut action */
+"menu.edit.cut" = "Cut";
+
+/* [Context: Edit Menu] Copy action */
+"menu.edit.copy" = "Copy";
+
+/* [Context: Edit Menu] Paste action */
+"menu.edit.paste" = "Paste";
+
+/* [Context: Edit Menu] Select all action */
+"menu.edit.select_all" = "Select All";
+
+/* ===== Capture Modal ===== */
+
+/* [Context: Modal] Send button with app name. %@ = app name */
+"modal.button.send_to_app" = "Send to %@";
+
+/* [Context: Modal] Save image button */
+"modal.button.save_image" = "Save Image";
+
+/* [Context: Modal] Close button */
+"modal.button.close" = "Close";
+
+/* [Context: Modal] ESC key hint */
+"modal.hint.esc_to_close" = "ESC to close";
+
+/* [Context: Modal] Command+Enter hint */
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ to Send";
+
+/* [Context: Modal] Text input placeholder */
+"modal.placeholder.add_instructions" = "Add instructions (optional)";
+
+/* [Context: Modal Menu] No supported apps message */
+"modal.menu.no_supported_apps" = "No supported apps running";
+
+/* [Context: Modal Menu] Send to app item. %@ = app name */
+"modal.menu.send_to_app" = "Send to %@";
+
+/* [Context: Modal Menu] Save image item */
+"modal.menu.save_image" = "Save Image";
+
+/* [Context: Modal Menu] Add to send list item */
+"modal.menu.add_to_send_list" = "Add to Send List...";
+
+/* ===== Settings Window ===== */
+
+/* [Context: Settings] Window title */
+"settings.window_title" = "Settings";
+
+/* [Context: Settings] Shortcut section title */
+"settings.shortcut.title" = "Capture Shortcut";
+
+/* [Context: Settings] Recording shortcut state */
+"settings.shortcut.recording" = "Type shortcut…";
+
+/* [Context: Settings] Shortcut help text */
+"settings.shortcut.help" = "Click to record. Press Esc to cancel.";
+
+/* [Context: Settings] Auto-save checkbox */
+"settings.save.checkbox" = "Auto-save screenshots after Paste";
+
+/* [Context: Settings] Choose folder button */
+"settings.save.choose_folder" = "Choose Folder…";
+
+/* [Context: Settings] No folder selected message */
+"settings.save.no_folder" = "No folder selected (you'll be asked on first save)";
+
+/* [Context: Settings] Launch at login checkbox */
+"settings.login.checkbox" = "Launch at Login";
+
+/* [Context: Settings] Send list section title */
+"settings.send_list.title" = "Added Apps";
+
+/* ===== Add App Panel ===== */
+
+/* [Context: Add App] Window title */
+"add_app.window_title" = "Add to Send List";
+
+/* [Context: Add App] Running apps header */
+"add_app.header" = "Running Apps:";
+
+/* [Context: Add App] Choose from applications button */
+"add_app.choose_from_apps" = "Choose from Applications...";
+
+/* [Context: Add App] Done button */
+"add_app.done" = "Done";
+
+/* [Context: Add App] File panel message */
+"add_app.panel_message" = "Select an application to add to the Send List";
+
+/* [Context: Add App] Built-in status label */
+"add_app.status.builtin" = "Built-in";
+
+/* ===== Annotation Toolbar ===== */
+
+/* [Context: Annotation] Arrow tool tooltip */
+"annotation.tool.arrow" = "Arrow Tool";
+
+/* [Context: Annotation] Circle tool tooltip */
+"annotation.tool.circle" = "Circle Tool";
+
+/* [Context: Annotation] Rectangle tool tooltip */
+"annotation.tool.rectangle" = "Rectangle Tool";
+
+/* [Context: Annotation] Number tool tooltip */
+"annotation.tool.number" = "Number Tool";
+
+/* [Context: Annotation] Color picker tooltip */
+"annotation.color.tooltip" = "Annotation Color";
+
+/* [Context: Annotation] Clear all button */
+"annotation.clear_all" = "Clear All";
+
+/* [Context: Annotation] Clear all button tooltip */
+"annotation.clear_all.tooltip" = "Clear All Annotations";
+
+/* ===== Colors ===== */
+
+/* [Context: Color Menu] Red */
+"color.red" = "Red";
+
+/* [Context: Color Menu] Orange */
+"color.orange" = "Orange";
+
+/* [Context: Color Menu] Yellow */
+"color.yellow" = "Yellow";
+
+/* [Context: Color Menu] Green */
+"color.green" = "Green";
+
+/* [Context: Color Menu] Blue */
+"color.blue" = "Blue";
+
+/* [Context: Color Menu] Purple */
+"color.purple" = "Purple";
+
+/* ===== HUD Messages ===== */
+
+/* [Context: HUD] App is running message */
+"hud.app_running" = "VibeCap is running";
+
+/* [Context: HUD] Pasted to app success. %@ = app name */
+"hud.pasted_to_app" = "Pasted to %@";
+
+/* [Context: HUD] Saved message */
+"hud.saved" = "Saved";
+
+/* [Context: HUD] Screenshot saved message */
+"hud.screenshot_saved" = "Screenshot Saved";
+
+/* [Context: HUD] Folder selected message */
+"hud.folder_selected" = "Folder Selected";
+
+/* ===== Errors ===== */
+
+/* [Context: Error] Shortcut unavailable title */
+"error.shortcut_unavailable" = "Shortcut Unavailable";
+
+/* [Context: Error] Shortcut registration failed. %d = OSStatus code */
+"error.shortcut_registration_failed" = "Unable to register this shortcut (OSStatus %d). It may be used by another app or reserved by the system.";
+
+/* [Context: Error] Unable to set folder title */
+"error.unable_to_set_folder" = "Unable to Set Folder";
+
+/* [Context: Error] Launch at login failed title */
+"error.launch_login_failed" = "Launch at Login Failed";
+
+/* [Context: Error] Launch at login requires approval */
+"error.launch_login_requires_approval" = "Launch at Login requires approval in System Settings → General → Login Items.";
+
+/* [Context: Error] Invalid application title */
+"error.invalid_application" = "Invalid Application";
+
+/* [Context: Error] Could not read bundle message */
+"error.could_not_read_bundle" = "Could not read application bundle.";
+
+/* [Context: Error] Cannot add app title */
+"error.cannot_add_app" = "Cannot Add App";
+
+/* [Context: Error] App doesn't support paste */
+"error.app_no_paste_support" = "This app doesn't support image paste.";
+
+/* [Context: Error] Already added title */
+"error.already_added" = "Already Added";
+
+/* [Context: Error] App already in list message */
+"error.app_already_in_list" = "This app is already in the Send List.";
+
+/* [Context: Error] App not found. %@ = app name */
+"error.app_not_found" = "Could not find %@. Is it running?";
+
+/* [Context: Error] No folder selected */
+"error.no_folder_selected" = "No save folder selected.";
+
+/* [Context: Error] Folder access failed */
+"error.folder_access_failed" = "Unable to access the save folder.";
+
+/* [Context: Error] Image encoding failed */
+"error.image_encoding_failed" = "Failed to encode image.";
+
+/* [Context: Error] Save failed. %@ = error description */
+"error.save_failed" = "Failed to save screenshot: %@";
+
+/* [Context: Error] Clipboard write failed */
+"error.clipboard_write_failed" = "Failed to write to clipboard.";
+
+/* [Context: Error] Capture failed */
+"error.capture_failed" = "Unable to capture the selected area.";
+
+/* [Context: Error] Modifier key required */
+"error.modifier_required" = "Use at least one modifier key (⌘⇧⌥⌃).";
+
+/* ===== Permissions ===== */
+
+/* [Context: Permission] Screen recording title */
+"permission.screen_recording.title" = "Screen Recording Permission Required";
+
+/* [Context: Permission] Screen recording message */
+"permission.screen_recording.message" = "VibeCap needs Screen Recording permission to capture your screen.\n\nOpen System Settings → Privacy & Security → Screen Recording, enable VibeCap, then quit and reopen the app.";
+
+/* [Context: Permission] Screen recording error */
+"permission.screen_recording.error" = "Screen Recording permission is required to capture your screen.";
+
+/* [Context: Permission] Accessibility message */
+"permission.accessibility.message" = "Accessibility permission required. Please grant it in System Settings → Privacy & Security → Accessibility, then try again.";
+
+/* [Context: Permission] Approval required title */
+"permission.login.approval_required" = "Approval Required";
+
+/* [Context: Permission] Login items message */
+"permission.login.message" = "To launch VibeCap at login, enable it in System Settings → General → Login Items.";
+
+/* ===== Common Buttons ===== */
+
+/* [Context: Button] OK */
+"button.ok" = "OK";
+
+/* [Context: Button] Cancel */
+"button.cancel" = "Cancel";
+
+/* [Context: Button] Open System Settings */
+"button.open_system_settings" = "Open System Settings";
+
+/* [Context: Button] Open Login Items */
+"button.open_login_items" = "Open Login Items";
+
+/* [Context: Button] Choose */
+"button.choose" = "Choose";
+
+/* [Context: Button] Restart Now */
+"button.restart_now" = "Restart Now";
+
+/* [Context: Button] Later */
+"button.later" = "Later";
+
+/* ===== Alerts ===== */
+
+/* [Context: Alert] Restart required title */
+"alert.restart.title" = "Restart Required";
+
+/* [Context: Alert] Restart required message */
+"alert.restart.message" = "Please restart VibeCap for the language change to take effect.";
+
+/* ===== File Panels ===== */
+
+/* [Context: Panel] Choose folder title */
+"panel.choose_folder.title" = "Choose Save Folder";
+
+/* [Context: Panel] Choose folder message */
+"panel.choose_folder.message" = "Select a folder where VibeCap will save screenshots.";
+
+/* ===== Accessibility ===== */
+
+/* [Context: Accessibility] Dropdown button */
+"a11y.dropdown_select_app" = "Select app";
+
+/* [Context: Accessibility] Save icon */
+"a11y.save_icon" = "Save";
+
+/* [Context: Accessibility] Add icon */
+"a11y.add_icon" = "Add";
+
+/* ===== Key Names ===== */
+
+/* [Context: Key] Space key */
+"key.space" = "Space";
+
+/* ===== Misc ===== */
+
+/* [Context: Fallback] Unknown app name */
+"app.unknown" = "Unknown";

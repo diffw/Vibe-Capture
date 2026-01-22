@@ -111,7 +111,7 @@ enum ShortcutError: LocalizedError {
         switch self {
         case .registrationFailed(let status):
             // Common: -9879 (eventHotKeyExistsErr)
-            return "Unable to register this shortcut (OSStatus \(status)). It may be used by another app or reserved by the system."
+            return L("error.shortcut_registration_failed", status)
         }
     }
 }

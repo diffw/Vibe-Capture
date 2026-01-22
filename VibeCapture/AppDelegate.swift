@@ -23,7 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let key = "didShowLaunchHUD"
         if !UserDefaults.standard.bool(forKey: key) {
             UserDefaults.standard.set(true, forKey: key)
-            HUDService.shared.show(message: "VibeCap is running", style: .info, duration: 0.9)
+            HUDService.shared.show(message: L("hud.app_running"), style: .info, duration: 0.9)
         }
     }
 
@@ -34,20 +34,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // App menu (required)
         let appMenuItem = NSMenuItem()
         let appMenu = NSMenu()
-        appMenu.addItem(NSMenuItem(title: "Quit VibeCap", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        appMenu.addItem(NSMenuItem(title: L("menu.app.quit_vibecap"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         appMenuItem.submenu = appMenu
         mainMenu.addItem(appMenuItem)
 
         // Edit menu (enables ⌘+A/C/V/X in text fields)
         let editMenuItem = NSMenuItem()
-        let editMenu = NSMenu(title: "Edit")
-        editMenu.addItem(NSMenuItem(title: "Undo", action: Selector(("undo:")), keyEquivalent: "z"))
-        editMenu.addItem(NSMenuItem(title: "Redo", action: Selector(("redo:")), keyEquivalent: "Z"))
+        let editMenu = NSMenu(title: L("menu.edit"))
+        editMenu.addItem(NSMenuItem(title: L("menu.edit.undo"), action: Selector(("undo:")), keyEquivalent: "z"))
+        editMenu.addItem(NSMenuItem(title: L("menu.edit.redo"), action: Selector(("redo:")), keyEquivalent: "Z"))
         editMenu.addItem(.separator())
-        editMenu.addItem(NSMenuItem(title: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x"))
-        editMenu.addItem(NSMenuItem(title: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c"))
-        editMenu.addItem(NSMenuItem(title: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
-        editMenu.addItem(NSMenuItem(title: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
+        editMenu.addItem(NSMenuItem(title: L("menu.edit.cut"), action: #selector(NSText.cut(_:)), keyEquivalent: "x"))
+        editMenu.addItem(NSMenuItem(title: L("menu.edit.copy"), action: #selector(NSText.copy(_:)), keyEquivalent: "c"))
+        editMenu.addItem(NSMenuItem(title: L("menu.edit.paste"), action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
+        editMenu.addItem(NSMenuItem(title: L("menu.edit.select_all"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
         editMenuItem.submenu = editMenu
         mainMenu.addItem(editMenuItem)
 
@@ -81,14 +81,84 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Capture Area", action: #selector(captureArea(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Settings…", action: #selector(openSettings(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: L("menu.capture_area"), action: #selector(captureArea(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: L("menu.settings"), action: #selector(openSettings(_:)), keyEquivalent: ""))
         menu.addItem(.separator())
-        let quitItem = NSMenuItem(title: "Quit", action: #selector(quit(_:)), keyEquivalent: "q")
+        
+        // Language submenu
+        let languageItem = NSMenuItem(title: L("menu.language"), action: nil, keyEquivalent: "")
+        let languageMenu = NSMenu()
+        buildLanguageMenu(languageMenu)
+        languageItem.submenu = languageMenu
+        menu.addItem(languageItem)
+        
+        menu.addItem(.separator())
+        let quitItem = NSMenuItem(title: L("menu.quit"), action: #selector(quit(_:)), keyEquivalent: "q")
         quitItem.keyEquivalentModifierMask = [.command]
         menu.addItem(quitItem)
 
         statusItem.menu = menu
+    }
+    
+    /// Build the Language submenu with all supported languages
+    private func buildLanguageMenu(_ menu: NSMenu) {
+        let override = LocalizationManager.shared.getLanguageOverride()
+        
+        // System Language option (uses system preference)
+        let systemItem = NSMenuItem(title: L("menu.language.system_default"), action: #selector(setSystemLanguage(_:)), keyEquivalent: "")
+        systemItem.target = self
+        if override == nil {
+            systemItem.state = .on
+        }
+        menu.addItem(systemItem)
+        menu.addItem(.separator())
+        
+        // All supported languages
+        for (code, displayName) in LocalizationManager.supportedLanguages {
+            let item = NSMenuItem(title: displayName, action: #selector(setLanguage(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = code
+            if override == code {
+                item.state = .on
+            }
+            menu.addItem(item)
+        }
+    }
+    
+    @objc private func setSystemLanguage(_ sender: Any?) {
+        LocalizationManager.shared.setLanguageOverride(nil)
+        showRestartAlert()
+    }
+    
+    @objc private func setLanguage(_ sender: NSMenuItem) {
+        guard let code = sender.representedObject as? String else { return }
+        LocalizationManager.shared.setLanguageOverride(code)
+        showRestartAlert()
+    }
+    
+    private func showRestartAlert() {
+        // Use the NEW language for the alert (the one user just selected)
+        let newLang = LocalizationManager.shared.getEffectiveLanguage()
+        
+        let alert = NSAlert()
+        alert.messageText = LocalizationManager.shared.localizedString(forKey: "alert.restart.title", language: newLang)
+        alert.informativeText = LocalizationManager.shared.localizedString(forKey: "alert.restart.message", language: newLang)
+        alert.addButton(withTitle: LocalizationManager.shared.localizedString(forKey: "button.restart_now", language: newLang))
+        alert.addButton(withTitle: LocalizationManager.shared.localizedString(forKey: "button.later", language: newLang))
+        alert.alertStyle = .informational
+        
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            // Restart the app
+            let url = URL(fileURLWithPath: Bundle.main.bundlePath)
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.createsNewApplicationInstance = true
+            NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, _ in
+                DispatchQueue.main.async {
+                    NSApp.terminate(nil)
+                }
+            }
+        }
     }
 
     @objc private func captureArea(_ sender: Any?) {

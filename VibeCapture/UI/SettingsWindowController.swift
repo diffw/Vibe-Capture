@@ -10,7 +10,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "Settings"
+        window.title = L("settings.window_title")
         window.isReleasedWhenClosed = false
         window.center()
         window.contentViewController = settingsVC

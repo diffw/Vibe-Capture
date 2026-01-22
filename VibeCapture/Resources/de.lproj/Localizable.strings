@@ -1,0 +1,144 @@
+/* ===== Menüleiste ===== */
+
+"menu.capture_area" = "Bereich aufnehmen";
+"menu.settings" = "Einstellungen …";
+"menu.quit" = "Beenden";
+"menu.language" = "Sprache";
+"menu.language.system_default" = "Systemstandard";
+
+/* ===== App-Menü ===== */
+
+"menu.app.quit_vibecap" = "VibeCap beenden";
+"menu.edit" = "Bearbeiten";
+"menu.edit.undo" = "Widerrufen";
+"menu.edit.redo" = "Wiederholen";
+"menu.edit.cut" = "Ausschneiden";
+"menu.edit.copy" = "Kopieren";
+"menu.edit.paste" = "Einsetzen";
+"menu.edit.select_all" = "Alles auswählen";
+
+/* ===== Aufnahme-Vorschau ===== */
+
+"modal.button.send_to_app" = "An %@ senden";
+"modal.button.save_image" = "Bild sichern";
+"modal.button.close" = "Schließen";
+"modal.hint.esc_to_close" = "ESC zum Schließen";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ zum Senden";
+"modal.placeholder.add_instructions" = "Anweisungen hinzufügen (optional)";
+"modal.menu.no_supported_apps" = "Keine unterstützten Apps aktiv";
+"modal.menu.send_to_app" = "An %@ senden";
+"modal.menu.save_image" = "Bild sichern";
+"modal.menu.add_to_send_list" = "Zur Sendeliste hinzufügen …";
+
+/* ===== Einstellungen ===== */
+
+"settings.window_title" = "Einstellungen";
+"settings.shortcut.title" = "Aufnahme-Kurzbefehl";
+"settings.shortcut.recording" = "Kurzbefehl eingeben …";
+"settings.shortcut.help" = "Klicken zum Aufnehmen. Esc zum Abbrechen.";
+"settings.save.checkbox" = "Bildschirmfotos nach dem Einsetzen automatisch sichern";
+"settings.save.choose_folder" = "Ordner auswählen …";
+"settings.save.no_folder" = "Kein Ordner ausgewählt (Sie werden beim ersten Sichern gefragt)";
+"settings.login.checkbox" = "Bei der Anmeldung öffnen";
+"settings.send_list.title" = "Hinzugefügte Apps";
+
+/* ===== App hinzufügen ===== */
+
+"add_app.window_title" = "Zur Sendeliste hinzufügen";
+"add_app.header" = "Aktive Apps:";
+"add_app.choose_from_apps" = "Aus Programmen auswählen …";
+"add_app.done" = "Fertig";
+"add_app.panel_message" = "App auswählen, die zur Sendeliste hinzugefügt werden soll";
+"add_app.status.builtin" = "Integriert";
+
+/* ===== Anmerkungs-Werkzeuge ===== */
+
+"annotation.tool.arrow" = "Pfeil-Werkzeug";
+"annotation.tool.circle" = "Kreis-Werkzeug";
+"annotation.tool.rectangle" = "Rechteck-Werkzeug";
+"annotation.tool.number" = "Nummerierungs-Werkzeug";
+"annotation.color.tooltip" = "Anmerkungsfarbe";
+"annotation.clear_all" = "Alle löschen";
+"annotation.clear_all.tooltip" = "Alle Anmerkungen löschen";
+
+/* ===== Farben ===== */
+
+"color.red" = "Rot";
+"color.orange" = "Orange";
+"color.yellow" = "Gelb";
+"color.green" = "Grün";
+"color.blue" = "Blau";
+"color.purple" = "Violett";
+
+/* ===== HUD-Meldungen ===== */
+
+"hud.app_running" = "VibeCap wird ausgeführt";
+"hud.pasted_to_app" = "In %@ eingesetzt";
+"hud.saved" = "Gesichert";
+"hud.screenshot_saved" = "Bildschirmfoto gesichert";
+"hud.folder_selected" = "Ordner ausgewählt";
+
+/* ===== Fehler ===== */
+
+"error.shortcut_unavailable" = "Kurzbefehl nicht verfügbar";
+"error.shortcut_registration_failed" = "Dieser Kurzbefehl konnte nicht registriert werden (OSStatus %d). Möglicherweise wird er von einer anderen App oder dem System verwendet.";
+"error.unable_to_set_folder" = "Ordner konnte nicht festgelegt werden";
+"error.launch_login_failed" = "Öffnen bei der Anmeldung fehlgeschlagen";
+"error.launch_login_requires_approval" = "Das Öffnen bei der Anmeldung erfordert eine Genehmigung in Systemeinstellungen → Allgemein → Anmeldeobjekte.";
+"error.invalid_application" = "Ungültige App";
+"error.could_not_read_bundle" = "App-Bundle konnte nicht gelesen werden.";
+"error.cannot_add_app" = "App kann nicht hinzugefügt werden";
+"error.app_no_paste_support" = "Diese App unterstützt kein Einsetzen von Bildern.";
+"error.already_added" = "Bereits hinzugefügt";
+"error.app_already_in_list" = "Diese App befindet sich bereits in der Sendeliste.";
+"error.app_not_found" = "%@ wurde nicht gefunden. Wird die App ausgeführt?";
+"error.no_folder_selected" = "Kein Sicherungsordner ausgewählt.";
+"error.folder_access_failed" = "Zugriff auf den Sicherungsordner nicht möglich.";
+"error.image_encoding_failed" = "Bild konnte nicht codiert werden.";
+"error.save_failed" = "Bildschirmfoto konnte nicht gesichert werden: %@";
+"error.clipboard_write_failed" = "Schreiben in die Zwischenablage fehlgeschlagen.";
+"error.capture_failed" = "Der ausgewählte Bereich konnte nicht aufgenommen werden.";
+"error.modifier_required" = "Bitte mindestens eine Sondertaste verwenden (⌘⇧⌥⌃).";
+
+/* ===== Berechtigungen ===== */
+
+"permission.screen_recording.title" = "Bildschirmaufnahme-Berechtigung erforderlich";
+"permission.screen_recording.message" = "VibeCap benötigt die Berechtigung zur Bildschirmaufnahme.\n\nÖffnen Sie Systemeinstellungen → Datenschutz & Sicherheit → Bildschirmaufnahme, aktivieren Sie VibeCap und starten Sie die App neu.";
+"permission.screen_recording.error" = "Zur Aufnahme des Bildschirms ist eine Berechtigung erforderlich.";
+"permission.accessibility.message" = "Bedienungshilfen-Berechtigung erforderlich. Bitte gewähren Sie diese in Systemeinstellungen → Datenschutz & Sicherheit → Bedienungshilfen und versuchen Sie es erneut.";
+"permission.login.approval_required" = "Genehmigung erforderlich";
+"permission.login.message" = "Um VibeCap bei der Anmeldung zu öffnen, aktivieren Sie es in Systemeinstellungen → Allgemein → Anmeldeobjekte.";
+
+/* ===== Allgemeine Tasten ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Abbrechen";
+"button.open_system_settings" = "Systemeinstellungen öffnen";
+"button.open_login_items" = "Anmeldeobjekte öffnen";
+"button.choose" = "Auswählen";
+"button.restart_now" = "Jetzt neu starten";
+"button.later" = "Später";
+
+/* ===== Warnungen ===== */
+
+"alert.restart.title" = "Neustart erforderlich";
+"alert.restart.message" = "Bitte starten Sie VibeCap neu, damit die Sprachänderung wirksam wird.";
+
+/* ===== Datei-Dialoge ===== */
+
+"panel.choose_folder.title" = "Sicherungsordner auswählen";
+"panel.choose_folder.message" = "Wählen Sie einen Ordner, in dem VibeCap Bildschirmfotos sichern soll.";
+
+/* ===== Bedienungshilfen ===== */
+
+"a11y.dropdown_select_app" = "App auswählen";
+"a11y.save_icon" = "Sichern";
+"a11y.add_icon" = "Hinzufügen";
+
+/* ===== Tastennamen ===== */
+
+"key.space" = "Leertaste";
+
+/* ===== Sonstiges ===== */
+
+"app.unknown" = "Unbekannt";

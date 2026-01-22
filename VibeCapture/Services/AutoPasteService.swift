@@ -30,7 +30,7 @@ final class AutoPasteService {
         // Check Accessibility permission first
         guard hasAccessibilityPermission else {
             requestAccessibilityPermission()
-            completion(false, "Accessibility permission required. Please grant it in System Settings → Privacy & Security → Accessibility, then try again.")
+            completion(false, L("permission.accessibility.message"))
             return
         }
 
@@ -46,7 +46,7 @@ final class AutoPasteService {
 
         // Step 2: Activate target app
         guard AppDetectionService.shared.activate(targetApp) else {
-            completion(false, "Could not find \(targetApp.displayName). Is it running?")
+            completion(false, L("error.app_not_found", targetApp.displayName))
             return
         }
 

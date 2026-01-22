@@ -8,9 +8,9 @@ enum ScreenCaptureError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
-            return "Screen Recording permission is required to capture your screen."
+            return L("permission.screen_recording.error")
         case .captureFailed:
-            return "Unable to capture the selected area."
+            return L("error.capture_failed")
         }
     }
 }
