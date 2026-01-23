@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B2C3D4E5F60718293A4B90 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */; };
+		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
+		A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B82 /* Carbon.framework */; };
+		A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */; };
+		A1B2C3D4E5F60718293A4B94 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */; };
 		A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */; };
 		A1B2C3D4E5F60718293A4D02 /* CaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C04 /* CaptureManager.swift */; };
 		A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C05 /* ScreenshotOverlayController.swift */; };
@@ -32,61 +37,76 @@
 		A1B2C3D4E5F60718293A4D20 /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C20 /* Annotation.swift */; };
 		A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */; };
 		A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */; };
-		A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */; };
 		A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */; };
+		A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */; };
 		A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */; };
-
-		A1B2C3D4E5F60718293A4B90 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */; };
-		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
-		A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B82 /* Carbon.framework */; };
-		A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */; };
+		A1B2C3D4E5F60718293A4D30 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */; };
+		A1B2C3D4E5F60718293A4D31 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */; };
+		A1B2C3D4E5F60718293A4D32 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */; };
+		A1B2C3D4E5F60718293A4D33 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */; };
+		A1B2C3D4E5F60718293A4D35 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */; };
+		A1B2C3D4E5F60718293A4D36 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C36 /* main.swift */; };
+		A1B2C3D4E5F60718293A4D95 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C95 /* Resources */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Vibe Capture.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B82 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
-
+		A1B2C3D4E5F60718293A4C36 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C04 /* CaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C05 /* ScreenshotOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotOverlayController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C06 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
-
 		A1B2C3D4E5F60718293A4C07 /* CaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSession.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C20 /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
-
 		A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C09 /* HUDService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C0A /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C0B /* ScreenCaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C0C /* ScreenshotSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotSaveService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetectionService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPasteService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderService.swift; sourceTree = "<group>"; };
-
 		A1B2C3D4E5F60718293A4C0D /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
-
 		A1B2C3D4E5F60718293A4C0E /* CaptureModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureModalViewController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C0F /* CaptureModalWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureModalWindowController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C10 /* PromptTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptTextView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C11 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C12 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C13 /* ShortcutRecorderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationCanvasView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationToolbarView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusableScrollView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAppPanelController.swift; sourceTree = "<group>"; };
-
 		A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCombo.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PNG.swift"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsUI.swift; sourceTree = "<group>"; };
-
-		A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		A1B2C3D4E5F60718293A4B82 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-
-		A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Vibe Capture.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetectionService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPasteService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C20 /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationCanvasView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationToolbarView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusableScrollView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAppPanelController.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallWindowController.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C36 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C95 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
+		A3DCB2FE2F2335D3003B887D /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F60718293A4B95 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60718293A4D95 /* Resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A1B2C3D4E5F60718293A4B72 /* Frameworks */ = {
@@ -97,6 +117,7 @@
 				A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */,
+				A1B2C3D4E5F60718293A4B94 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,17 +127,19 @@
 		A1B2C3D4E5F60718293A4B5D = {
 			isa = PBXGroup;
 			children = (
+				A3DCB2FE2F2335D3003B887D /* VibeCap.storekit */,
 				A1B2C3D4E5F60718293A4B5E /* VibeCapture */,
 				A1B2C3D4E5F60718293A4B66 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B65 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B5E /* VibeCapture */ = {
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */,
+				A1B2C3D4E5F60718293A4C95 /* Resources */,
+				A1B2C3D4E5F60718293A4C36 /* main.swift */,
 				A1B2C3D4E5F60718293A4C02 /* Info.plist */,
 				A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */,
 				A1B2C3D4E5F60718293A4B5F /* Managers */,
@@ -129,7 +152,6 @@
 			path = VibeCapture;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B5F /* Managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,7 +162,6 @@
 			path = Managers;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B60 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -150,7 +171,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B61 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,6 +178,10 @@
 				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
 				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
+				A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */,
+				A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */,
+				A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */,
+				A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */,
 				A1B2C3D4E5F60718293A4C09 /* HUDService.swift */,
 				A1B2C3D4E5F60718293A4C0A /* LaunchAtLoginService.swift */,
 				A1B2C3D4E5F60718293A4C0B /* ScreenCaptureService.swift */,
@@ -166,7 +190,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B62 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,7 +198,6 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B63 /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +207,7 @@
 				A1B2C3D4E5F60718293A4C0E /* CaptureModalViewController.swift */,
 				A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */,
 				A1B2C3D4E5F60718293A4C0F /* CaptureModalWindowController.swift */,
+				A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */,
 				A1B2C3D4E5F60718293A4C10 /* PromptTextView.swift */,
 				A1B2C3D4E5F60718293A4C11 /* SettingsViewController.swift */,
 				A1B2C3D4E5F60718293A4C12 /* SettingsWindowController.swift */,
@@ -193,7 +216,6 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B64 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -204,7 +226,6 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B65 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,7 +234,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-
 		A1B2C3D4E5F60718293A4B66 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -221,6 +241,7 @@
 				A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */,
 				A1B2C3D4E5F60718293A4B82 /* Carbon.framework */,
 				A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */,
+				A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -233,6 +254,7 @@
 			buildConfigurationList = A1B2C3D4E5F60718293A4B74 /* Build configuration list for PBXNativeTarget "Vibe Capture" */;
 			buildPhases = (
 				A1B2C3D4E5F60718293A4B71 /* Sources */,
+				A1B2C3D4E5F60718293A4B95 /* Resources */,
 				A1B2C3D4E5F60718293A4B72 /* Frameworks */,
 			);
 			buildRules = (
@@ -289,6 +311,7 @@
 				A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */,
+				A1B2C3D4E5F60718293A4D36 /* main.swift in Sources */,
 				A1B2C3D4E5F60718293A4D02 /* CaptureManager.swift in Sources */,
 				A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D04 /* ShortcutManager.swift in Sources */,
@@ -296,6 +319,10 @@
 				A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D06 /* ClipboardService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D30 /* EntitlementsService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D31 /* CapabilityService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D35 /* LocalizationManager.swift in Sources */,
+				A1B2C3D4E5F60718293A4D32 /* PurchaseService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D07 /* HUDService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D08 /* LaunchAtLoginService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D09 /* ScreenCaptureService.swift in Sources */,
@@ -303,6 +330,7 @@
 				A1B2C3D4E5F60718293A4D0B /* SettingsStore.swift in Sources */,
 				A1B2C3D4E5F60718293A4D0C /* CaptureModalViewController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D0D /* CaptureModalWindowController.swift in Sources */,
+				A1B2C3D4E5F60718293A4D33 /* PaywallWindowController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D0E /* PromptTextView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D0F /* SettingsViewController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D10 /* SettingsWindowController.swift in Sources */,
@@ -392,6 +420,3 @@
 	};
 	rootObject = A1B2C3D4E5F60718293A4B5C /* Project object */;
 }
-
-
-

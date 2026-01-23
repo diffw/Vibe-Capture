@@ -109,8 +109,8 @@ final class AppDetectionService {
     
     /// Check if the given bundle identifier is in our whitelist (official or user-added)
     func isWhitelisted(bundleID: String) -> Bool {
-        return isOfficialWhitelisted(bundleID: bundleID) || 
-               SettingsStore.shared.isInUserWhitelist(bundleID: bundleID)
+        return isOfficialWhitelisted(bundleID: bundleID) ||
+            SettingsStore.shared.isInUserWhitelist(bundleID: bundleID, isPro: EntitlementsService.shared.isPro)
     }
     
     /// Check if the given bundle identifier is in the official whitelist only
@@ -150,7 +150,7 @@ final class AppDetectionService {
         }
         
         // 2. Add user whitelist apps
-        for userApp in SettingsStore.shared.userWhitelistApps {
+        for userApp in SettingsStore.shared.userWhitelistApps(isPro: EntitlementsService.shared.isPro) {
             guard !seenBundleIDs.contains(userApp.bundleID) else { continue }
             
             if let runningApp = NSRunningApplication.runningApplications(withBundleIdentifier: userApp.bundleID).first {
@@ -240,7 +240,7 @@ final class AppDetectionService {
         if let whitelistEntry = whitelistApps.first(where: { $0.bundleID == bundleID }) {
             // Official whitelist
             displayName = whitelistEntry.displayName
-        } else if let userEntry = SettingsStore.shared.userWhitelistApps.first(where: { $0.bundleID == bundleID }) {
+        } else if let userEntry = SettingsStore.shared.userWhitelistApps(isPro: EntitlementsService.shared.isPro).first(where: { $0.bundleID == bundleID }) {
             // User whitelist
             displayName = userEntry.displayName
         } else {

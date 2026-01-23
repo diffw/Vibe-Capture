@@ -142,3 +142,76 @@
 /* ===== Ostatní ===== */
 
 "app.unknown" = "Neznámá";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Upgradovat na Pro";
+"paywall.compare.free" = "Zdarma";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Nástroje anotací";
+"paywall.feature.annotations.free" = "Pouze šipka (výchozí barva)";
+"paywall.feature.annotations.pro" = "Kruh / Obdélník / Číslo / Barvy";
+
+"paywall.feature.custom_apps" = "Vlastní aplikace pro odesílání";
+"paywall.feature.custom_apps.free" = "1 aplikace (nelze odstranit)";
+"paywall.feature.custom_apps.pro" = "Neomezeně aplikací";
+
+"paywall.feature.download_manager" = "Stahování a knihovna";
+"paywall.feature.send_queue" = "Fronta odesílání";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Již brzy";
+
+"paywall.badge.recommended" = "Doporučeno";
+
+"paywall.legal.terms" = "Podmínky";
+"paywall.legal.privacy" = "Soukromí";
+
+"paywall.plan.per_year" = "ročně";
+"paywall.plan.per_month" = "měsíčně";
+"paywall.plan.one_time" = "jednorázově";
+"paywall.plan.save_percent" = "Ušetříte %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / měs.";
+"paywall.plan.save_percent.loading" = "Ušetříte —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / měs.";
+
+"paywall.cta.title_with_savings" = "Ušetřete %@ na Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Roční platba · ≈ %@ / měs.";

@@ -130,10 +130,11 @@ final class AddAppViewController: NSViewController {
     
     private func loadRunningApps() {
         let apps = AppDetectionService.shared.getAllRunningApps()
+        let isPro = EntitlementsService.shared.isPro
         
         runningApps = apps.map { app in
             let isAdded = AppDetectionService.shared.isWhitelisted(bundleID: app.bundleIdentifier)
-            let isUserAdded = SettingsStore.shared.isInUserWhitelist(bundleID: app.bundleIdentifier)
+            let isUserAdded = SettingsStore.shared.isInUserWhitelist(bundleID: app.bundleIdentifier, isPro: isPro)
             let isBlacklisted = AppDetectionService.shared.isBlacklisted(bundleID: app.bundleIdentifier)
             let appPath = app.runningApp?.bundleURL?.path ?? ""
             
@@ -178,9 +179,15 @@ final class AddAppViewController: NSViewController {
             showAlert(title: L("error.cannot_add_app"), message: L("error.app_no_paste_support"))
             return
         }
+
+        // If it's in official whitelist, it does not count towards the Free slot.
+        if AppDetectionService.shared.isOfficialWhitelisted(bundleID: bundleID) {
+            showAlert(title: L("gating.customApp.notCounted.title"), message: L("gating.customApp.notCounted.message"))
+            return
+        }
         
-        // Check if already added
-        if AppDetectionService.shared.isWhitelisted(bundleID: bundleID) {
+        // Check if already added (user-added, depending on Free/Pro effective list)
+        if SettingsStore.shared.isInUserWhitelist(bundleID: bundleID, isPro: EntitlementsService.shared.isPro) {
             showAlert(title: L("error.already_added"), message: L("error.app_already_in_list"))
             return
         }
@@ -194,8 +201,20 @@ final class AddAppViewController: NSViewController {
             displayName: displayName,
             appPath: url.path
         )
-        
-        SettingsStore.shared.addUserWhitelistApp(userApp)
+
+        if EntitlementsService.shared.isPro {
+            SettingsStore.shared.addProUserWhitelistApp(userApp)
+        } else {
+            // Free: only one pinned custom app, add requires confirmation, cannot be removed.
+            if SettingsStore.shared.freePinnedCustomApp != nil {
+                PaywallWindowController.shared.show()
+                return
+            }
+            if !confirmFreePinnedApp(displayName: displayName) {
+                return
+            }
+            SettingsStore.shared.freePinnedCustomApp = userApp
+        }
         loadRunningApps()
         onAppAdded?()
     }
@@ -206,13 +225,26 @@ final class AddAppViewController: NSViewController {
             showAlert(title: L("error.cannot_add_app"), message: L("error.app_no_paste_support"))
             return
         }
-        
-        // If already added by user, remove it (toggle behavior)
-        if appInfo.isAdded && SettingsStore.shared.isInUserWhitelist(bundleID: appInfo.bundleID) {
-            SettingsStore.shared.removeUserWhitelistApp(bundleID: appInfo.bundleID)
-            loadRunningApps()
-            onAppAdded?()
+
+        // Official whitelist apps do not count towards Free slot.
+        if AppDetectionService.shared.isOfficialWhitelisted(bundleID: appInfo.bundleID) {
+            showAlert(title: L("gating.customApp.notCounted.title"), message: L("gating.customApp.notCounted.message"))
             return
+        }
+        
+        if EntitlementsService.shared.isPro {
+            // If already added by user, remove it (toggle behavior)
+            if appInfo.isAdded && SettingsStore.shared.isInUserWhitelist(bundleID: appInfo.bundleID, isPro: true) {
+                SettingsStore.shared.removeProUserWhitelistApp(bundleID: appInfo.bundleID)
+                loadRunningApps()
+                onAppAdded?()
+                return
+            }
+        } else {
+            // Free: pinned app cannot be removed.
+            if let pinned = SettingsStore.shared.freePinnedCustomApp, pinned.bundleID == appInfo.bundleID {
+                return
+            }
         }
         
         // If it's in official whitelist (not user-added), do nothing
@@ -225,10 +257,32 @@ final class AddAppViewController: NSViewController {
             displayName: appInfo.displayName,
             appPath: appInfo.appPath
         )
-        
-        SettingsStore.shared.addUserWhitelistApp(userApp)
+
+        if EntitlementsService.shared.isPro {
+            SettingsStore.shared.addProUserWhitelistApp(userApp)
+        } else {
+            if SettingsStore.shared.freePinnedCustomApp != nil {
+                PaywallWindowController.shared.show()
+                return
+            }
+            if !confirmFreePinnedApp(displayName: appInfo.displayName) {
+                return
+            }
+            SettingsStore.shared.freePinnedCustomApp = userApp
+        }
         loadRunningApps()
         onAppAdded?()
+    }
+
+    private func confirmFreePinnedApp(displayName: String) -> Bool {
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = L("gating.customApp.confirm.title")
+        alert.informativeText = L("gating.customApp.confirm.message", displayName)
+        alert.addButton(withTitle: L("gating.customApp.confirm.confirm"))
+        alert.addButton(withTitle: L("button.cancel"))
+        let resp = alert.runModal()
+        return resp == .alertFirstButtonReturn
     }
     
     private func showAlert(title: String, message: String) {

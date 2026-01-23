@@ -142,3 +142,76 @@
 /* ===== Прочее ===== */
 
 "app.unknown" = "Неизвестно";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Перейти на Pro";
+"paywall.compare.free" = "Бесплатно";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Инструменты аннотаций";
+"paywall.feature.annotations.free" = "Только стрелка (цвет по умолчанию)";
+"paywall.feature.annotations.pro" = "Круг / Прямоугольник / Номер / Цвета";
+
+"paywall.feature.custom_apps" = "Пользовательские приложения отправки";
+"paywall.feature.custom_apps.free" = "1 приложение (нельзя удалить)";
+"paywall.feature.custom_apps.pro" = "Неограниченно приложений";
+
+"paywall.feature.download_manager" = "Загрузки и библиотека";
+"paywall.feature.send_queue" = "Очередь отправки";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Скоро";
+
+"paywall.badge.recommended" = "Рекомендуем";
+
+"paywall.legal.terms" = "Условия";
+"paywall.legal.privacy" = "Конфиденциальность";
+
+"paywall.plan.per_year" = "в год";
+"paywall.plan.per_month" = "в месяц";
+"paywall.plan.one_time" = "разовый платёж";
+"paywall.plan.save_percent" = "Экономьте %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / мес.";
+"paywall.plan.save_percent.loading" = "Экономьте —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / мес.";
+
+"paywall.cta.title_with_savings" = "Скидка %@ на Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Ежегодная оплата · ≈ %@ / мес.";

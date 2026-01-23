@@ -142,3 +142,76 @@
 /* ===== 其他 ===== */
 
 "app.unknown" = "未知";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "升级到 Pro…";
+"settings.pro.action.restore" = "恢复购买";
+"settings.pro.action.manage" = "管理订阅";
+"settings.proStatus.free" = "免费";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "上次刷新：";
+"settings.proStatus.source" = "来源：%@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "按月";
+"settings.proStatus.source.yearly" = "按年";
+"settings.proStatus.source.lifetime" = "买断";
+"settings.proStatus.source.unknown" = "未知";
+"paywall.title" = "升级到 Pro";
+"paywall.subtitle" = "解锁高级功能。";
+"paywall.option.monthly" = "按月";
+"paywall.option.yearly" = "按年";
+"paywall.option.lifetime" = "买断";
+"paywall.error.generic" = "购买失败，请重试。";
+
+"menu.upgrade" = "升级…";
+"paywall.window_title" = "升级";
+"paywall.action.purchase" = "购买";
+"paywall.action.restore" = "恢复";
+"paywall.action.manage" = "管理";
+"paywall.action.close" = "关闭";
+"paywall.price.loading" = "加载中…";
+"paywall.status.already_pro" = "你已经是 Pro。";
+"paywall.status.purchasing" = "购买中…";
+"paywall.status.pending" = "等待确认…";
+"paywall.status.success" = "成功！";
+
+"gating.customApp.confirm.title" = "添加这个应用？";
+"gating.customApp.confirm.message" = "免费用户只能添加 1 个自定义应用，并且添加后无法移除。\n\n添加：%@";
+"gating.customApp.confirm.confirm" = "添加应用";
+"gating.customApp.notCounted.title" = "已支持";
+"gating.customApp.notCounted.message" = "该应用已在系统白名单中，不会占用你的免费自定义应用名额。";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "升级到 Pro";
+"paywall.compare.free" = "免费";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "标注工具";
+"paywall.feature.annotations.free" = "仅箭头（默认颜色）";
+"paywall.feature.annotations.pro" = "圆形 / 矩形 / 编号 / 颜色";
+
+"paywall.feature.custom_apps" = "自定义发送 App";
+"paywall.feature.custom_apps.free" = "1 个自定义 App（不可移除）";
+"paywall.feature.custom_apps.pro" = "不限数量自定义 App";
+
+"paywall.feature.download_manager" = "下载与管理";
+"paywall.feature.send_queue" = "发送队列";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "即将推出";
+
+"paywall.badge.recommended" = "推荐";
+
+"paywall.legal.terms" = "条款";
+"paywall.legal.privacy" = "隐私";
+
+"paywall.plan.per_year" = "每年";
+"paywall.plan.per_month" = "每月";
+"paywall.plan.one_time" = "一次性";
+"paywall.plan.save_percent" = "省 %@";
+"paywall.plan.equivalent_monthly" = "约 %@ / 月";
+"paywall.plan.save_percent.loading" = "省 —";
+"paywall.plan.equivalent_monthly.loading" = "约 — / 月";
+
+"paywall.cta.title_with_savings" = "升级 Pro 立省 %@";
+"paywall.cta.subtitle_yearly_equivalent" = "按年计费 · 约 %@ / 月";

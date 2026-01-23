@@ -40,6 +40,7 @@ xcrun --sdk macosx swiftc \
     -framework AppKit \
     -framework CoreGraphics \
     -framework Carbon \
+    -framework StoreKit \
     -framework ServiceManagement \
     -framework ScreenCaptureKit \
     -O \
