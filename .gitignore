@@ -11,5 +11,8 @@ xcuserdata/
 dist/.clang-module-cache/
 dist/.swift-module-cache/
 
+# Build artifacts
+dist/
+
 
 
