@@ -284,9 +284,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         updateButtonStyles()
 
         // Setup Dropdown button (arrow)
-        let chevronConfig = NSImage.SymbolConfiguration(pointSize: 11, weight: .medium)
-        dropdownButton.image = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: L("a11y.dropdown_select_app"))?
-            .withSymbolConfiguration(chevronConfig)
+        dropdownButton.image = makeTemplateIcon(named: "arrow-down-s-line", size: 12, fallbackSystemName: "chevron.down")
         dropdownButton.imagePosition = .imageOnly
         dropdownButton.fixedHeight = 32
         dropdownButton.contentInsets = NSEdgeInsets(top: 6, left: 10, bottom: 6, right: 10)
@@ -301,6 +299,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         saveButton.imagePosition = .imageLeading
         saveButton.imageScaling = .scaleProportionallyDown
         saveButton.imageHugsTitle = true
+        saveButton.imageTitleSpacing = 8
         saveButton.fixedHeight = 32
         saveButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
 
@@ -317,6 +316,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         closeButton.imagePosition = .imageLeading
         closeButton.imageScaling = .scaleProportionallyDown
         closeButton.imageHugsTitle = true
+        closeButton.imageTitleSpacing = 8
         closeButton.fixedHeight = 32
         closeButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
 
@@ -553,10 +553,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         
         let saveItem = NSMenuItem(title: L("modal.menu.save_image"), action: #selector(saveMenuItemClicked), keyEquivalent: "")
         saveItem.target = self
-        if let saveIcon = NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: L("a11y.save_icon")) {
-            saveIcon.size = NSSize(width: 16, height: 16)
-            saveItem.image = saveIcon
-        }
+        saveItem.image = makeTemplateIcon(named: "download-line", size: 16, fallbackSystemName: "square.and.arrow.down")
         menu.addItem(saveItem)
         
         // Add separator and "Add to Send List..." option
@@ -564,10 +561,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         
         let addAppItem = NSMenuItem(title: L("modal.menu.add_to_send_list"), action: #selector(addToSendListClicked), keyEquivalent: "")
         addAppItem.target = self
-        if let addIcon = NSImage(systemSymbolName: "plus.circle", accessibilityDescription: L("a11y.add_icon")) {
-            addIcon.size = NSSize(width: 16, height: 16)
-            addAppItem.image = addIcon
-        }
+        addAppItem.image = makeTemplateIcon(named: "add-circle-line", size: 16, fallbackSystemName: "plus.circle")
         menu.addItem(addAppItem)
         
         // Manual boundary detection for floating/borderless windows
@@ -627,14 +621,19 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     }
 
     private func makeTemplateIcon(named name: String, size: CGFloat, fallbackSystemName: String? = nil) -> NSImage? {
-        if let url = Bundle.main.url(forResource: name, withExtension: "svg"),
-           let image = NSImage(contentsOf: url) {
-            image.size = NSSize(width: size, height: size)
-            image.isTemplate = true
-            return image
+        if let url = Bundle.main.url(forResource: name, withExtension: "svg") {
+            if let image = NSImage(contentsOf: url) {
+                image.size = NSSize(width: size, height: size)
+                image.isTemplate = true
+                AppLog.log(.debug, "icons", "Loaded SVG icon \(name) via NSImage(contentsOf:)")
+                return image
+            }
+
+            AppLog.log(.warn, "icons", "Failed to decode SVG icon \(name) at \(url.lastPathComponent)")
         }
         if let fallbackSystemName {
             let config = NSImage.SymbolConfiguration(pointSize: size, weight: .medium)
+            AppLog.log(.debug, "icons", "Using SF Symbol fallback for \(name): \(fallbackSystemName)")
             return NSImage(systemSymbolName: fallbackSystemName, accessibilityDescription: name)?
                 .withSymbolConfiguration(config)
         }

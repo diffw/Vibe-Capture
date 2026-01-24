@@ -6,6 +6,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var settingsWindowController: SettingsWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        AppLog.bootstrap()
+        AppLog.log(.info, "app", "launch bundle_id=\(Bundle.main.bundleIdentifier ?? "nil") log_path=\(AppLog.logURL().path)")
+
         let beforePolicy = NSApp.activationPolicy()
         let didSet = NSApp.setActivationPolicy(.accessory)
         let afterPolicy = NSApp.activationPolicy()

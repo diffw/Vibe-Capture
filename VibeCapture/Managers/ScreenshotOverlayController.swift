@@ -15,6 +15,7 @@ final class ScreenshotOverlayController {
     private var globalKeyMonitor: Any?
 
     func start(completion: @escaping Completion) {
+        AppLog.log(.info, "overlay", "start")
         stop()
 
         self.completion = completion
@@ -46,6 +47,7 @@ final class ScreenshotOverlayController {
     }
 
     func stop() {
+        AppLog.log(.info, "overlay", "stop")
         isFinishing = false
 
         for win in windows {
@@ -73,6 +75,7 @@ final class ScreenshotOverlayController {
     func handleMouseDown() {
         guard !isFinishing else { return }
         let p = NSEvent.mouseLocation
+        AppLog.log(.debug, "overlay", "mouseDown x=\(Int(p.x)) y=\(Int(p.y))")
         startPoint = p
         startScreen = NSScreen.screens.first(where: { $0.frame.contains(p) })
         selectionRectGlobal = nil
@@ -97,15 +100,18 @@ final class ScreenshotOverlayController {
         guard !isFinishing else { return }
         defer { updateSelection() }
         guard let rect = selectionRectGlobal else {
+            AppLog.log(.info, "overlay", "mouseUp without selection -> cancel")
             finish(nil)
             return
         }
 
         if rect.width < 5 || rect.height < 5 {
+            AppLog.log(.info, "overlay", "mouseUp tiny selection -> cancel w=\(Int(rect.width)) h=\(Int(rect.height))")
             finish(nil)
             return
         }
 
+        AppLog.log(.info, "overlay", "mouseUp selection w=\(Int(rect.width)) h=\(Int(rect.height))")
         finish(rect)
     }
 
@@ -113,6 +119,7 @@ final class ScreenshotOverlayController {
         guard !isFinishing else { return }
         // Esc cancels.
         if event.keyCode == 53 {
+            AppLog.log(.info, "overlay", "keyDown ESC -> cancel")
             finish(nil)
         }
     }
@@ -130,6 +137,7 @@ final class ScreenshotOverlayController {
 
         // Defer completion + teardown to the next runloop tick.
         DispatchQueue.main.async { [weak self] in
+            AppLog.log(.debug, "overlay", "finish async; rect=\(rect.map { "\($0)" } ?? "nil")")
             self?.stop()
             completion?(rect, nil)
         }

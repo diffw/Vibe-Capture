@@ -17,16 +17,30 @@ enum ScreenCaptureError: LocalizedError {
 
 final class ScreenCaptureService {
     func ensurePermissionOrRequest() -> Bool {
+        let span = AppLog.span("capture", "ensurePermissionOrRequest")
+        defer { span.end(.info) }
+
         if CGPreflightScreenCaptureAccess() {
+            AppLog.log(.debug, "capture", "CGPreflightScreenCaptureAccess = true")
             return true
         }
         // Shows the system prompt. User may need to restart the app after granting.
+        AppLog.log(.warn, "capture", "CGPreflightScreenCaptureAccess = false; requesting access")
         _ = CGRequestScreenCaptureAccess()
-        return CGPreflightScreenCaptureAccess()
+        let ok = CGPreflightScreenCaptureAccess()
+        AppLog.log(.info, "capture", "CGPreflight after request = \(ok)")
+        return ok
     }
 
     func capture(rect: CGRect, belowWindowID: CGWindowID?) throws -> NSImage {
+        let span = AppLog.span("capture", "CGWindowListCreateImage", meta: [
+            "w": Int(rect.width),
+            "h": Int(rect.height),
+        ])
+        defer { span.end(.info) }
+
         guard CGPreflightScreenCaptureAccess() else {
+            AppLog.log(.error, "capture", "capture denied: no screen recording permission")
             throw ScreenCaptureError.permissionDenied
         }
 
@@ -34,12 +48,14 @@ final class ScreenCaptureService {
         let option: CGWindowListOption = (belowWindowID != nil) ? .optionOnScreenBelowWindow : .optionOnScreenOnly
         let windowID: CGWindowID = belowWindowID ?? kCGNullWindowID
 
+        AppLog.log(.debug, "capture", "CGWindowListCreateImage rect=\(cgRect) option=\(option) windowID=\(windowID)")
         guard let cgImage = CGWindowListCreateImage(
             cgRect,
             option,
             windowID,
             [.bestResolution]
         ) else {
+            AppLog.log(.error, "capture", "CGWindowListCreateImage returned nil")
             throw ScreenCaptureError.captureFailed
         }
 

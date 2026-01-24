@@ -89,7 +89,7 @@ final class CountdownCloseButton: NSButton {
         layer?.cornerRadius = radius
         let inset: CGFloat = 2
         let rect = bounds.insetBy(dx: inset, dy: inset)
-        let path = NSBezierPath(ovalIn: rect).cgPath
+        let path = NSBezierPath(ovalIn: rect).cgPathCompat
         trackLayer.frame = bounds
         trackLayer.path = path
         progressLayer.frame = bounds
@@ -120,5 +120,41 @@ final class CountdownCloseButton: NSButton {
 
     deinit {
         stop()
+    }
+}
+
+// MARK: - macOS 13 compatibility
+
+private extension NSBezierPath {
+    /// `NSBezierPath.cgPath` is only available on macOS 14+.
+    var cgPathCompat: CGPath {
+        if #available(macOS 14.0, *) {
+            return self.cgPath
+        }
+
+        let path = CGMutablePath()
+        var points = [NSPoint](repeating: .zero, count: 3)
+
+        for index in 0..<elementCount {
+            switch element(at: index, associatedPoints: &points) {
+            case .moveTo:
+                path.move(to: points[0])
+            case .lineTo:
+                path.addLine(to: points[0])
+            case .curveTo:
+                path.addCurve(to: points[2], control1: points[0], control2: points[1])
+            case .cubicCurveTo:
+                path.addCurve(to: points[2], control1: points[0], control2: points[1])
+            case .quadraticCurveTo:
+                // points[0] = control, points[1] = end
+                path.addQuadCurve(to: points[1], control: points[0])
+            case .closePath:
+                path.closeSubpath()
+            @unknown default:
+                break
+            }
+        }
+
+        return path
     }
 }

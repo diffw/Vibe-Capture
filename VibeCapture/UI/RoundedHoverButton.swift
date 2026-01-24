@@ -1,5 +1,17 @@
 import AppKit
 
+private extension NSImage {
+    func tinted(with color: NSColor) -> NSImage {
+        let image = self.copy() as! NSImage
+        image.lockFocus()
+        color.set()
+        let imageRect = NSRect(origin: .zero, size: image.size)
+        imageRect.fill(using: .sourceAtop)
+        image.unlockFocus()
+        return image
+    }
+}
+
 final class RoundedHoverButton: NSButton {
     struct Style {
         let background: NSColor
@@ -101,6 +113,54 @@ final class RoundedHoverButton: NSButton {
         let spacing = (hasImage && hasTitle && imagePosition == .imageLeading) ? imageTitleSpacing : 0
         let width = contentInsets.left + contentInsets.right + imageSize.width + spacing + titleSize.width
         return NSSize(width: ceil(width), height: fixedHeight)
+    }
+
+    override func drawFocusRingMask() {
+        // No focus ring
+    }
+    
+    override func draw(_ dirtyRect: NSRect) {
+        guard let style else {
+            super.draw(dirtyRect)
+            return
+        }
+        
+        // Background is drawn by layer, we only draw content here
+        let imageSize = image?.size ?? .zero
+        let titleSize = attributedTitle.size()
+        let hasImage = image != nil
+        let hasTitle = !title.isEmpty
+        let spacing = (hasImage && hasTitle) ? imageTitleSpacing : 0
+        
+        let totalContentWidth = imageSize.width + spacing + titleSize.width
+        var currentX = contentInsets.left
+        
+        // Center content horizontally
+        let availableWidth = bounds.width - contentInsets.left - contentInsets.right
+        if totalContentWidth < availableWidth {
+            currentX += (availableWidth - totalContentWidth) / 2
+        }
+        
+        // Draw image
+        if let img = image {
+            let imageY = (bounds.height - imageSize.height) / 2
+            let imageRect = NSRect(x: currentX, y: imageY, width: imageSize.width, height: imageSize.height)
+            
+            if img.isTemplate {
+                let tintedImage = img.tinted(with: style.titleColor)
+                tintedImage.draw(in: imageRect)
+            } else {
+                img.draw(in: imageRect)
+            }
+            currentX += imageSize.width + spacing
+        }
+        
+        // Draw title
+        if hasTitle {
+            let titleY = (bounds.height - titleSize.height) / 2
+            let titleRect = NSRect(x: currentX, y: titleY, width: titleSize.width, height: titleSize.height)
+            attributedTitle.draw(in: titleRect)
+        }
     }
 
     private func updateAppearance() {

@@ -30,6 +30,10 @@ final class AutoPasteService {
         // Check Accessibility permission first
         guard hasAccessibilityPermission else {
             requestAccessibilityPermission()
+            // If the system prompt is suppressed (e.g., user previously denied), open the right pane directly.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                PermissionsUI.openAccessibilitySettings()
+            }
             completion(false, L("permission.accessibility.message"))
             return
         }
