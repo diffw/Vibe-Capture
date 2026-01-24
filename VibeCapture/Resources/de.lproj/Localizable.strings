@@ -209,6 +209,9 @@ Add: %@";
 "paywall.legal.terms" = "AGB";
 "paywall.legal.privacy" = "Datenschutz";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
 "paywall.plan.per_year" = "pro Jahr";
 "paywall.plan.per_month" = "pro Monat";
 "paywall.plan.one_time" = "einmalig";
@@ -219,3 +222,25 @@ Add: %@";
 
 "paywall.cta.title_with_savings" = "Spare %@ bei Pro";
 "paywall.cta.subtitle_yearly_equivalent" = "Jährliche Abrechnung · ≈ %@ / Monat";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "You're Pro";
+"paywall.pro_status.type" = "Plan: %@";
+"paywall.pro_status.renews" = "Renews: %@";

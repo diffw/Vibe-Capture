@@ -157,13 +157,13 @@
 "settings.proStatus.source.none" = "-";
 "settings.proStatus.source.monthly" = "Monthly";
 "settings.proStatus.source.yearly" = "Yearly";
-"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.lifetime" = "평생";
 "settings.proStatus.source.unknown" = "Unknown";
 "paywall.title" = "Upgrade to Pro";
 "paywall.subtitle" = "Unlock premium features.";
 "paywall.option.monthly" = "Monthly";
 "paywall.option.yearly" = "Yearly";
-"paywall.option.lifetime" = "Lifetime";
+"paywall.option.lifetime" = "평생";
 "paywall.error.generic" = "Purchase failed. Please try again.";
 
 "menu.upgrade" = "Upgrade…";
@@ -209,6 +209,9 @@ Add: %@";
 "paywall.legal.terms" = "이용약관";
 "paywall.legal.privacy" = "개인정보 처리방침";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
 "paywall.plan.per_year" = "연간";
 "paywall.plan.per_month" = "월간";
 "paywall.plan.one_time" = "일회성";
@@ -219,3 +222,25 @@ Add: %@";
 
 "paywall.cta.title_with_savings" = "Pro %@ 할인";
 "paywall.cta.subtitle_yearly_equivalent" = "연간 결제 · ≈ %@ / 월";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "전체 주석 도구";
+"paywall.feature.annotations.subtitle" = "원형, 사각형, 번호 및 사용자 지정 색상.";
+
+"paywall.feature.send_list.title" = "무제한 전송 목록";
+"paywall.feature.send_list.subtitle" = "제한 없이 모든 앱을 전송 목록에 추가.";
+
+"paywall.badge.best_value" = "최고 가치";
+"paywall.badge.save_percent" = "%@%% 절약";
+
+"paywall.unit.month" = "월";
+"paywall.unit.year" = "년";
+
+"paywall.cta.subscribe_monthly" = "%@ / 월 구독";
+"paywall.cta.subscribe_yearly" = "%@ / 년 구독";
+"paywall.cta.unlock_lifetime" = "평생 %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Pro 사용자입니다";
+"paywall.pro_status.type" = "플랜: %@";
+"paywall.pro_status.renews" = "갱신일: %@";

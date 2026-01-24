@@ -7,12 +7,22 @@ struct UserWhitelistApp: Codable, Equatable {
     let appPath: String  // Path to .app for icon retrieval
 }
 
-final class SettingsStore {
+/// Protocol for SettingsStore (enables testing/DI).
+protocol SettingsStoreProtocol {
+    var proUserWhitelistApps: [UserWhitelistApp] { get set }
+    var freePinnedCustomApp: UserWhitelistApp? { get set }
+    func userWhitelistApps(isPro: Bool) -> [UserWhitelistApp]
+    func isInUserWhitelist(bundleID: String, isPro: Bool) -> Bool
+    func addProUserWhitelistApp(_ app: UserWhitelistApp)
+    func removeProUserWhitelistApp(bundleID: String)
+}
+
+final class SettingsStore: SettingsStoreProtocol {
     static let shared = SettingsStore()
 
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults
 
-    private enum Key {
+    enum Key {
         static let captureHotKey = "captureHotKey"
         static let saveEnabled = "saveEnabled"
         static let saveFolderBookmark = "saveFolderBookmark"
@@ -26,8 +36,14 @@ final class SettingsStore {
         static let didMigrateWhitelistApps = "didMigrateUserWhitelistAppsToPro"
     }
 
-    private init() {
-        migrateLegacyWhitelistIfNeeded()
+    /// Designated initializer with dependency injection support.
+    /// - Parameter defaults: UserDefaults instance for storage (defaults to .standard)
+    /// - Parameter skipMigration: If true, skip legacy migration (useful for testing)
+    init(defaults: UserDefaults = .standard, skipMigration: Bool = false) {
+        self.defaults = defaults
+        if !skipMigration {
+            migrateLegacyWhitelistIfNeeded()
+        }
     }
 
     var captureHotKey: KeyCombo {

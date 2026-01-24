@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1B2C3D4E5F60718293A4B70"
-               BuildableName = "Vibe Capture.app"
-               BlueprintName = "Vibe Capture"
+               BuildableName = "VibeCap.app"
+               BlueprintName = "VibeCap"
                ReferencedContainer = "container:VibeCapture.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1B2C3D4E5F60718293A4B70"
-            BuildableName = "Vibe Capture.app"
-            BlueprintName = "Vibe Capture"
+            BuildableName = "VibeCap.app"
+            BlueprintName = "VibeCap"
             ReferencedContainer = "container:VibeCapture.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -65,8 +65,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1B2C3D4E5F60718293A4B70"
-            BuildableName = "Vibe Capture.app"
-            BlueprintName = "Vibe Capture"
+            BuildableName = "VibeCap.app"
+            BlueprintName = "VibeCap"
             ReferencedContainer = "container:VibeCapture.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

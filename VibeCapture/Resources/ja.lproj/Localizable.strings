@@ -157,13 +157,13 @@
 "settings.proStatus.source.none" = "-";
 "settings.proStatus.source.monthly" = "Monthly";
 "settings.proStatus.source.yearly" = "Yearly";
-"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.lifetime" = "買い切り";
 "settings.proStatus.source.unknown" = "Unknown";
 "paywall.title" = "Upgrade to Pro";
 "paywall.subtitle" = "Unlock premium features.";
 "paywall.option.monthly" = "Monthly";
 "paywall.option.yearly" = "Yearly";
-"paywall.option.lifetime" = "Lifetime";
+"paywall.option.lifetime" = "買い切り";
 "paywall.error.generic" = "Purchase failed. Please try again.";
 
 "menu.upgrade" = "Upgrade…";
@@ -209,6 +209,9 @@ Add: %@";
 "paywall.legal.terms" = "利用規約";
 "paywall.legal.privacy" = "プライバシー";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
 "paywall.plan.per_year" = "年額";
 "paywall.plan.per_month" = "月額";
 "paywall.plan.one_time" = "買い切り";
@@ -219,3 +222,25 @@ Add: %@";
 
 "paywall.cta.title_with_savings" = "Pro が %@ OFF";
 "paywall.cta.subtitle_yearly_equivalent" = "年額請求 · 約 %@ / 月";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "フル注釈ツール";
+"paywall.feature.annotations.subtitle" = "円形、長方形、番号、カスタムカラー。";
+
+"paywall.feature.send_list.title" = "無制限の送信リスト";
+"paywall.feature.send_list.subtitle" = "任意のアプリを制限なく送信リストに追加。";
+
+"paywall.badge.best_value" = "お得";
+"paywall.badge.save_percent" = "%@%% 割引";
+
+"paywall.unit.month" = "月";
+"paywall.unit.year" = "年";
+
+"paywall.cta.subscribe_monthly" = "%@ / 月で購読";
+"paywall.cta.subscribe_yearly" = "%@ / 年で購読";
+"paywall.cta.unlock_lifetime" = "買い切り %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Pro ユーザーです";
+"paywall.pro_status.type" = "プラン：%@";
+"paywall.pro_status.renews" = "更新日：%@";

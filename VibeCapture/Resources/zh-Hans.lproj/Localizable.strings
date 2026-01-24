@@ -211,6 +211,9 @@
 "paywall.legal.terms" = "条款";
 "paywall.legal.privacy" = "隐私";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "订阅将自动续费，除非在当前订阅期结束前 24 小时取消。可随时在 App Store → 账户 → 订阅 中管理或取消。";
+
 "paywall.plan.per_year" = "每年";
 "paywall.plan.per_month" = "每月";
 "paywall.plan.one_time" = "一次性";
@@ -221,3 +224,25 @@
 
 "paywall.cta.title_with_savings" = "升级 Pro 立省 %@";
 "paywall.cta.subtitle_yearly_equivalent" = "按年计费 · 约 %@ / 月";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "完整标注工具";
+"paywall.feature.annotations.subtitle" = "圆形、矩形、编号和自定义颜色。";
+
+"paywall.feature.send_list.title" = "无限发送列表";
+"paywall.feature.send_list.subtitle" = "随意添加应用到发送列表，无数量限制。";
+
+"paywall.badge.best_value" = "最划算";
+"paywall.badge.save_percent" = "省 %@%%";
+
+"paywall.unit.month" = "月";
+"paywall.unit.year" = "年";
+
+"paywall.cta.subscribe_monthly" = "订阅 %@ / 月";
+"paywall.cta.subscribe_yearly" = "订阅 %@ / 年";
+"paywall.cta.unlock_lifetime" = "一次买断 %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "你已是 Pro";
+"paywall.pro_status.type" = "方案：%@";
+"paywall.pro_status.renews" = "续费日期：%@";

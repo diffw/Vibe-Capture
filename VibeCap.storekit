@@ -15,18 +15,18 @@
   ],
   "products" : [
     {
-      "displayPrice" : "19.99",
+      "displayPrice" : "22.99",
       "familyShareable" : false,
       "internalID" : "9E5F560A",
       "localizations" : [
         {
-          "description" : "Unlock all Pro features with a one-time purchase.\nUnlock all Pro features with a one-time purchase.\nUnlock all Pro features with a one-time purchase.",
+          "description" : "Unlock all Pro features with a one-time purchase.",
           "displayName" : "VibeCap Pro (Lifetime)",
           "locale" : "en_US"
         },
         {
           "description" : "一次性购买，永久解锁全部专业功能。",
-          "displayName" : "VibeCap 专业版（永久）",
+          "displayName" : "VibeCap 专业版（买断）",
           "locale" : "zh_Hans"
         }
       ],

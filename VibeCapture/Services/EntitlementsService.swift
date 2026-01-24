@@ -6,6 +6,12 @@ extension Notification.Name {
     static let proStatusDidChange = Notification.Name("ProStatusDidChange")
 }
 
+/// Protocol for EntitlementsService (enables testing/DI).
+protocol EntitlementsServiceProtocol {
+    var isPro: Bool { get }
+    var status: ProStatus { get }
+}
+
 /// Free/Pro state derived from StoreKit 2 entitlements.
 struct ProStatus: Codable, Equatable {
     enum Tier: String, Codable {
@@ -23,9 +29,21 @@ struct ProStatus: Codable, Equatable {
 
     var tier: Tier
     var source: Source
+    var expirationDate: Date?  // nil for lifetime or free
     var lastRefreshedAt: Date?
 
-    static let `default` = ProStatus(tier: .free, source: .none, lastRefreshedAt: nil)
+    static let `default` = ProStatus(tier: .free, source: .none, expirationDate: nil, lastRefreshedAt: nil)
+
+    /// Localized description of the subscription source
+    var sourceDisplayName: String {
+        switch source {
+        case .monthly: return L("settings.proStatus.source.monthly")
+        case .yearly: return L("settings.proStatus.source.yearly")
+        case .lifetime: return L("settings.proStatus.source.lifetime")
+        case .none: return L("settings.proStatus.source.none")
+        case .unknown: return L("settings.proStatus.source.unknown")
+        }
+    }
 }
 
 /// StoreKit 2 entitlements manager (SSOT for Free/Pro).
@@ -34,7 +52,7 @@ struct ProStatus: Codable, Equatable {
 /// - One place to decide Pro status (incl. "lifetime wins").
 /// - Refresh on launch, foreground, and Transaction.updates.
 /// - Optimistic offline: refresh failures keep last known status.
-final class EntitlementsService {
+final class EntitlementsService: EntitlementsServiceProtocol {
     static let shared = EntitlementsService()
 
     // MARK: - Constants
@@ -45,11 +63,13 @@ final class EntitlementsService {
         static let lifetime = "com.luke.vibecapture.pro.lifetime"
     }
 
-    private enum DefaultsKey {
+    enum DefaultsKey {
         static let cachedProStatus = "IAPCachedProStatus"
     }
 
     // MARK: - State
+
+    private let defaults: UserDefaults
 
     private(set) var status: ProStatus {
         didSet {
@@ -61,8 +81,11 @@ final class EntitlementsService {
 
     private var transactionUpdatesTask: Task<Void, Never>?
 
-    private init() {
-        self.status = Self.loadCachedStatus()
+    /// Designated initializer with dependency injection support.
+    /// - Parameter defaults: UserDefaults instance for caching (defaults to .standard)
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        self.status = Self.loadCachedStatus(from: defaults)
     }
 
     // MARK: - Lifecycle
@@ -98,19 +121,24 @@ final class EntitlementsService {
         let now = Date()
         do {
             let computed = try await Self.computeProStatus(now: now)
-            self.status = ProStatus(tier: computed.tier, source: computed.source, lastRefreshedAt: now)
-            Self.saveCachedStatus(self.status)
+            self.status = ProStatus(
+                tier: computed.tier,
+                source: computed.source,
+                expirationDate: computed.expirationDate,
+                lastRefreshedAt: now
+            )
+            Self.saveCachedStatus(self.status, to: defaults)
         } catch {
             // Optimistic offline: keep last known status, but still stamp refresh time.
             self.status.lastRefreshedAt = now
-            Self.saveCachedStatus(self.status)
+            Self.saveCachedStatus(self.status, to: defaults)
         }
     }
 
-    private static func computeProStatus(now: Date) async throws -> (tier: ProStatus.Tier, source: ProStatus.Source) {
+    private static func computeProStatus(now: Date) async throws -> (tier: ProStatus.Tier, source: ProStatus.Source, expirationDate: Date?) {
         var hasLifetime = false
-        var hasMonthly = false
-        var hasYearly = false
+        var monthlyExpiration: Date?
+        var yearlyExpiration: Date?
 
         for await result in Transaction.currentEntitlements {
             let transaction = try Self.verify(result)
@@ -126,12 +154,12 @@ final class EntitlementsService {
 
             case ProductID.monthly:
                 if Self.isSubscriptionActive(transaction, now: now) {
-                    hasMonthly = true
+                    monthlyExpiration = transaction.expirationDate
                 }
 
             case ProductID.yearly:
                 if Self.isSubscriptionActive(transaction, now: now) {
-                    hasYearly = true
+                    yearlyExpiration = transaction.expirationDate
                 }
 
             default:
@@ -139,12 +167,12 @@ final class EntitlementsService {
             }
         }
 
-        // Lifetime wins.
-        if hasLifetime { return (.pro, .lifetime) }
-        if hasYearly { return (.pro, .yearly) }
-        if hasMonthly { return (.pro, .monthly) }
+        // Lifetime wins (no expiration).
+        if hasLifetime { return (.pro, .lifetime, nil) }
+        if let exp = yearlyExpiration { return (.pro, .yearly, exp) }
+        if let exp = monthlyExpiration { return (.pro, .monthly, exp) }
 
-        return (.free, .none)
+        return (.free, .none, nil)
     }
 
     private static func isSubscriptionActive(_ transaction: Transaction, now: Date) -> Bool {
@@ -167,9 +195,9 @@ final class EntitlementsService {
 
     // MARK: - Cache
 
-    private static func loadCachedStatus() -> ProStatus {
+    static func loadCachedStatus(from defaults: UserDefaults = .standard) -> ProStatus {
         guard
-            let data = UserDefaults.standard.data(forKey: DefaultsKey.cachedProStatus),
+            let data = defaults.data(forKey: DefaultsKey.cachedProStatus),
             let value = try? JSONDecoder().decode(ProStatus.self, from: data)
         else {
             return .default
@@ -177,9 +205,15 @@ final class EntitlementsService {
         return value
     }
 
-    private static func saveCachedStatus(_ status: ProStatus) {
+    static func saveCachedStatus(_ status: ProStatus, to defaults: UserDefaults = .standard) {
         let data = try? JSONEncoder().encode(status)
-        UserDefaults.standard.set(data, forKey: DefaultsKey.cachedProStatus)
+        defaults.set(data, forKey: DefaultsKey.cachedProStatus)
+    }
+
+    /// For testing: directly set status without StoreKit.
+    func setStatus(_ newStatus: ProStatus) {
+        self.status = newStatus
+        Self.saveCachedStatus(newStatus, to: defaults)
     }
 }
 

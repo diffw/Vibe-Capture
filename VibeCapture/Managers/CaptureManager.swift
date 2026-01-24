@@ -20,13 +20,16 @@ final class CaptureManager {
         AppDetectionService.shared.recordCurrentAppAsPrevious()
         AppLog.log(.info, "capture", "Starting overlay selection")
 
-        overlay.start { [weak self] rect, belowWindowID in
-            guard let self, let rect else { return }
-            self.captureSelectedRect(rect, belowWindowID: belowWindowID)
+        overlay.start { [weak self] rect, belowWindowID, cleanup in
+            guard let self, let rect else {
+                cleanup()
+                return
+            }
+            self.captureSelectedRect(rect, belowWindowID: belowWindowID, cleanup: cleanup)
         }
     }
 
-    private func captureSelectedRect(_ rect: CGRect, belowWindowID: CGWindowID?) {
+    private func captureSelectedRect(_ rect: CGRect, belowWindowID: CGWindowID?, cleanup: @escaping () -> Void) {
         let span = AppLog.span("capture", "captureSelectedRect", meta: [
             "w": Int(rect.width),
             "h": Int(rect.height),
@@ -34,22 +37,22 @@ final class CaptureManager {
             "y": Int(rect.origin.y),
         ])
 
-        // IMPORTANT: Capture can be slow on some systems. Never block the main thread
-        // (otherwise the UI feels "locked" and the overlay may appear frozen).
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self else { return }
-            do {
-                let image = try self.captureService.capture(rect: rect, belowWindowID: belowWindowID)
-                span.end(.info, extra: ["result": "ok"])
-                DispatchQueue.main.async {
-                    self.presentModal(with: image)
-                }
-            } catch {
-                span.end(.error, extra: ["result": "error", "error": String(describing: error)])
-                DispatchQueue.main.async {
-                    HUDService.shared.show(message: error.localizedDescription, style: .error)
-                }
-            }
+        // Capture screenshot while overlay is still visible.
+        // CGWindowListCreateImage with .optionOnScreenBelowWindow will exclude the overlay.
+        // We do this on the main thread to ensure overlay windows haven't been closed yet.
+        // CGWindowListCreateImage is typically fast (milliseconds) so this is acceptable.
+        do {
+            let image = try captureService.capture(rect: rect, belowWindowID: belowWindowID)
+            span.end(.info, extra: ["result": "ok"])
+            
+            // NOW close the overlay (screenshot is complete)
+            cleanup()
+            
+            presentModal(with: image)
+        } catch {
+            span.end(.error, extra: ["result": "error", "error": String(describing: error)])
+            cleanup()
+            HUDService.shared.show(message: error.localizedDescription, style: .error)
         }
     }
 

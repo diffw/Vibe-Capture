@@ -1,5 +1,10 @@
 import Foundation
 
+/// Protocol for CapabilityService (enables testing/DI).
+protocol CapabilityServiceProtocol {
+    func canUse(_ key: CapabilityKey) -> Bool
+}
+
 /// String-based capability key (keeps adding capabilities cheap).
 struct CapabilityKey: Hashable, RawRepresentable {
     let rawValue: String
@@ -27,7 +32,7 @@ extension CapabilityKey {
 /// Capability gating service.
 ///
 /// NOTE: Until all call sites migrate, this is a read-only service.
-final class CapabilityService {
+final class CapabilityService: CapabilityServiceProtocol {
     static let shared = CapabilityService()
 
     enum AccessLevel {
@@ -35,10 +40,10 @@ final class CapabilityService {
         case pro
     }
 
-    private let entitlements: EntitlementsService
+    private let entitlements: EntitlementsServiceProtocol
 
     /// Capability table (from `IAP_SPEC.md`).
-    private let table: [CapabilityKey: AccessLevel] = [
+    static let table: [CapabilityKey: AccessLevel] = [
         .captureArea: .free,
         .captureSave: .free,
         .captureAutosave: .free,
@@ -51,12 +56,14 @@ final class CapabilityService {
         .annotationsColors: .pro,
     ]
 
-    private init(entitlements: EntitlementsService = .shared) {
+    /// Designated initializer with dependency injection support.
+    /// - Parameter entitlements: EntitlementsServiceProtocol instance (defaults to shared singleton)
+    init(entitlements: EntitlementsServiceProtocol = EntitlementsService.shared) {
         self.entitlements = entitlements
     }
 
     func canUse(_ key: CapabilityKey) -> Bool {
-        guard let access = table[key] else {
+        guard let access = Self.table[key] else {
             // Default deny for unspecified capabilities (TBD in spec).
             return false
         }

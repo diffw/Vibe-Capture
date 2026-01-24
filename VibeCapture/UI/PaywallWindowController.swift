@@ -1,48 +1,55 @@
 import AppKit
-import QuartzCore
 import StoreKit
 
-private let paywallBrandColor = NSColor(red: 1.0, green: 0.553, blue: 0.463, alpha: 1.0) // #FF8D76
-private let paywallBrandGradientEnd = NSColor.systemPurple
+private let brandColor = NSColor(red: 1.0, green: 0.553, blue: 0.463, alpha: 1.0) // #FF8D76
+private let modalBackgroundColor = NSColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1.0) // #eee
+private let cardBackgroundColor = NSColor.white
 
 final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     static let shared = PaywallWindowController()
 
-    private let titleLabel = NSTextField(labelWithString: "")
-    private let subtitleLabel = NSTextField(labelWithString: "")
-    private let statusLabel = NSTextField(labelWithString: "")
+    // MARK: - Pro Status (for existing Pro users)
+    private let proStatusContainer = NSBox()
+    private let proStatusStack = NSStackView()
 
-    private let freeColumnTitle = NSTextField(labelWithString: "")
-    private let proColumnTitle = NSTextField(labelWithString: "")
-    private let compareStack = NSStackView()
-    private let compareContentStack = NSStackView()
+    // MARK: - Plan Selection
+    private let planContainer = NSBox()
+    private let monthlyRow = PlanOptionRow()
+    private let yearlyRow = PlanOptionRow()
+    private let lifetimeRow = PlanOptionRow()
 
-    private let yearlyCard = PlanCardView()
-    private let monthlyCard = PlanCardView()
-    private let lifetimeCard = PlanCardView()
+    // MARK: - Feature List
+    private let featureContainer = NSBox()
+    private let featureStack = NSStackView()
 
-    private let ctaButton = PaywallCTAButton()
-    private let restoreButton = NSButton(title: "", target: nil, action: nil)
-    private let manageButton = NSButton(title: "", target: nil, action: nil)
-    private let closeButton = NSButton(title: "", target: nil, action: nil)
-
+    // MARK: - Bottom
+    private let ctaButton = NSButton()
+    private let legalStack = NSStackView()
     private let termsButton = NSButton(title: "", target: nil, action: nil)
     private let privacyButton = NSButton(title: "", target: nil, action: nil)
+    private let restoreButton = NSButton(title: "", target: nil, action: nil)
+    private let manageButton = NSButton(title: "", target: nil, action: nil)
 
+    private let statusLabel = NSTextField(labelWithString: "")
+
+    // MARK: - State
     private var proStatusObserver: Any?
     private var products: [String: Product] = [:]
-    private var selectedProductID: String = EntitlementsService.ProductID.yearly
+    private var selectedProductID: String = EntitlementsService.ProductID.lifetime
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 520),
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 520),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
         )
         window.title = L("paywall.window_title")
         window.isReleasedWhenClosed = false
-        // Keep above the capture modal (which uses `.floating`).
+        // Fixed width, flexible height
+        window.setContentSize(NSSize(width: 380, height: 520))
+        window.contentMinSize = NSSize(width: 380, height: 480)
+        window.contentMaxSize = NSSize(width: 380, height: 700)
         window.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 1)
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.center()
@@ -58,163 +65,451 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         guard let window else { return }
         NSApp.activate(ignoringOtherApps: true)
         window.center()
-        // Ensure it appears above floating capture windows.
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
+        startLocalEventMonitor()
         Task { await loadProductsAndRefreshUI() }
     }
 
     func windowWillClose(_ notification: Notification) {
-        // Keep controller alive (singleton). No-op.
+        stopLocalEventMonitor()
     }
 
-    // MARK: - UI
+    // MARK: - Keyboard (ESC to close)
+
+    private var localEventMonitor: Any?
+
+    private func startLocalEventMonitor() {
+        guard localEventMonitor == nil else { return }
+        localEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self, let window = self.window, window.isKeyWindow else { return event }
+            if event.keyCode == 53 { // ESC
+                window.close()
+                return nil
+            }
+            return event
+        }
+    }
+
+    private func stopLocalEventMonitor() {
+        if let monitor = localEventMonitor {
+            NSEvent.removeMonitor(monitor)
+            localEventMonitor = nil
+        }
+    }
+
+    // MARK: - Build UI
 
     private func buildContentView() -> NSView {
         let content = NSView()
+        content.wantsLayer = true
+        content.layer?.backgroundColor = modalBackgroundColor.cgColor
 
-        titleLabel.stringValue = L("paywall.title")
-        titleLabel.font = NSFont.systemFont(ofSize: 22, weight: .semibold)
+        // Title
+        let titleLabel = NSTextField(labelWithString: L("paywall.title"))
+        titleLabel.font = NSFont.systemFont(ofSize: 20, weight: .semibold)
+        titleLabel.alignment = .center
 
-        subtitleLabel.stringValue = L("paywall.subtitle")
+        // Subtitle (persuasive)
+        let subtitleLabel = NSTextField(labelWithString: L("paywall.subtitle"))
+        subtitleLabel.font = NSFont.systemFont(ofSize: 13)
         subtitleLabel.textColor = .secondaryLabelColor
-        subtitleLabel.font = NSFont.systemFont(ofSize: 12)
-        subtitleLabel.maximumNumberOfLines = 2
+        subtitleLabel.alignment = .center
 
-        statusLabel.stringValue = ""
+        // Title stack
+        let titleStack = NSStackView(views: [titleLabel, subtitleLabel])
+        titleStack.orientation = .vertical
+        titleStack.spacing = 4
+        titleStack.alignment = .centerX
+
+        // Pro status card (for existing Pro users)
+        setupProStatusCard()
+
+        // Plan selection container
+        setupPlanSelection()
+
+        // Feature list
+        setupFeatureList()
+
+        // Legal links (below feature list)
+        setupLegalSection()
+
+        // CTA Button
+        setupCTAButton()
+
+        // Status label
         statusLabel.textColor = .secondaryLabelColor
         statusLabel.font = NSFont.systemFont(ofSize: 11)
-        statusLabel.maximumNumberOfLines = 2
+        statusLabel.alignment = .center
 
-        setupCompareSection()
-        setupPlanCards()
-        setupLegalButtons()
-
-        // Default selection: Yearly (recommended)
-        selectedProductID = EntitlementsService.ProductID.yearly
-        updatePlanSelectionUI()
-
-        ctaButton.translatesAutoresizingMaskIntoConstraints = false
-        ctaButton.onClick = { [weak self] in
-            self?.performPurchase()
-        }
-
-        restoreButton.title = L("paywall.action.restore")
-        restoreButton.target = self
-        restoreButton.action = #selector(restorePressed)
-        restoreButton.isBordered = false
-        restoreButton.font = NSFont.systemFont(ofSize: 12, weight: .medium)
-        restoreButton.contentTintColor = .secondaryLabelColor
-
-        manageButton.title = L("paywall.action.manage")
-        manageButton.target = self
-        manageButton.action = #selector(managePressed)
-        manageButton.isBordered = false
-        manageButton.font = NSFont.systemFont(ofSize: 12, weight: .medium)
-        manageButton.contentTintColor = .secondaryLabelColor
-
-        closeButton.title = L("paywall.action.close")
-        closeButton.target = self
-        closeButton.action = #selector(closePressed)
-
-        let plansRow = NSStackView(views: [yearlyCard, monthlyCard, lifetimeCard])
-        plansRow.orientation = .horizontal
-        plansRow.alignment = .top
-        plansRow.spacing = 10
-        plansRow.distribution = .fillEqually
-
-        let spacer = NSView()
-        spacer.setContentHuggingPriority(.defaultLow, for: .vertical)
-        spacer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-
-        let bottomRow = NSStackView(views: [
-            termsButton,
-            dotSeparatorLabel(),
-            privacyButton,
-            NSView(),
-            restoreButton,
-            dotSeparatorLabel(),
-            manageButton,
-            dotSeparatorLabel(),
-            closeButton,
+        // Scrollable content area
+        let scrollContent = NSStackView(views: [
+            titleStack,
+            proStatusContainer,
+            planContainer,
+            featureContainer,
+            legalStack,
         ])
-        bottomRow.orientation = .horizontal
-        bottomRow.alignment = .centerY
-        bottomRow.spacing = 6
+        scrollContent.orientation = .vertical
+        scrollContent.spacing = 16
+        scrollContent.alignment = .centerX
+        scrollContent.translatesAutoresizingMaskIntoConstraints = false
+        scrollContent.edgeInsets = NSEdgeInsets(top: 20, left: 24, bottom: 20, right: 24)
 
-        let stack = NSStackView(views: [
-            titleLabel,
-            subtitleLabel,
-            compareStack,
-            plansRow,
-            spacer,
-            ctaButton,
-            statusLabel,
-            bottomRow,
-        ])
-        stack.orientation = .vertical
-        stack.spacing = 12
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.alignment = .leading
+        // Document view for scroll
+        let documentView = NSView()
+        documentView.translatesAutoresizingMaskIntoConstraints = false
+        documentView.addSubview(scrollContent)
 
-        content.addSubview(stack)
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -16),
-            stack.topAnchor.constraint(equalTo: content.topAnchor, constant: 16),
-            stack.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -16),
-
-            stack.widthAnchor.constraint(equalTo: content.widthAnchor, constant: -32),
-
-            compareStack.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            plansRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            ctaButton.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            bottomRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
-
-            ctaButton.heightAnchor.constraint(equalToConstant: 64),
+            scrollContent.topAnchor.constraint(equalTo: documentView.topAnchor),
+            scrollContent.bottomAnchor.constraint(equalTo: documentView.bottomAnchor),
+            scrollContent.leadingAnchor.constraint(equalTo: documentView.leadingAnchor),
+            scrollContent.trailingAnchor.constraint(equalTo: documentView.trailingAnchor),
         ])
 
-        refreshEntitlementUI()
-        refreshPaywallUI()
+        // Scroll view
+        let scrollView = NSScrollView()
+        scrollView.documentView = documentView
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.drawsBackground = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+
+        // Bottom toolbar (fixed CTA)
+        let toolbar = NSView()
+        toolbar.wantsLayer = true
+        toolbar.layer?.backgroundColor = cardBackgroundColor.cgColor
+        toolbar.translatesAutoresizingMaskIntoConstraints = false
+
+        // Top border for toolbar
+        let topBorder = NSView()
+        topBorder.wantsLayer = true
+        topBorder.layer?.backgroundColor = NSColor.separatorColor.cgColor
+        topBorder.translatesAutoresizingMaskIntoConstraints = false
+        toolbar.addSubview(topBorder)
+        toolbar.addSubview(ctaButton)
+
+        NSLayoutConstraint.activate([
+            topBorder.topAnchor.constraint(equalTo: toolbar.topAnchor),
+            topBorder.leadingAnchor.constraint(equalTo: toolbar.leadingAnchor),
+            topBorder.trailingAnchor.constraint(equalTo: toolbar.trailingAnchor),
+            topBorder.heightAnchor.constraint(equalToConstant: 1),
+
+            ctaButton.topAnchor.constraint(equalTo: toolbar.topAnchor, constant: 12),
+            ctaButton.bottomAnchor.constraint(equalTo: toolbar.bottomAnchor, constant: -12),
+            ctaButton.leadingAnchor.constraint(equalTo: toolbar.leadingAnchor, constant: 24),
+            ctaButton.trailingAnchor.constraint(equalTo: toolbar.trailingAnchor, constant: -24),
+            ctaButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
+
+        content.addSubview(scrollView)
+        content.addSubview(toolbar)
+
+        // Fixed width for content
+        let contentWidth: CGFloat = 380
+
+        NSLayoutConstraint.activate([
+            // Content fixed width
+            content.widthAnchor.constraint(equalToConstant: contentWidth),
+
+            scrollView.topAnchor.constraint(equalTo: content.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: content.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: content.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
+
+            toolbar.leadingAnchor.constraint(equalTo: content.leadingAnchor),
+            toolbar.trailingAnchor.constraint(equalTo: content.trailingAnchor),
+            toolbar.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+
+            // Width relative to scroll content (which will be contentWidth - padding)
+            proStatusContainer.widthAnchor.constraint(equalToConstant: contentWidth - 48),
+            planContainer.widthAnchor.constraint(equalToConstant: contentWidth - 48),
+            featureContainer.widthAnchor.constraint(equalToConstant: contentWidth - 48),
+            legalStack.widthAnchor.constraint(equalToConstant: contentWidth - 48),
+
+            documentView.widthAnchor.constraint(equalToConstant: contentWidth),
+        ])
+
+        refreshUI()
         return content
     }
 
-    private func refreshPaywallUI() {
-        // Compare section is static text; plans depend on products.
-        refreshPlanCards()
+    // MARK: - Pro Status Card
+
+    private func setupProStatusCard() {
+        proStatusContainer.boxType = .custom
+        proStatusContainer.borderWidth = 0
+        proStatusContainer.cornerRadius = 12
+        proStatusContainer.fillColor = cardBackgroundColor
+        proStatusContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        proStatusStack.orientation = .vertical
+        proStatusStack.spacing = 8
+        proStatusStack.alignment = .leading
+        proStatusStack.translatesAutoresizingMaskIntoConstraints = false
+
+        proStatusContainer.addSubview(proStatusStack)
+        NSLayoutConstraint.activate([
+            proStatusStack.topAnchor.constraint(equalTo: proStatusContainer.topAnchor, constant: 16),
+            proStatusStack.bottomAnchor.constraint(equalTo: proStatusContainer.bottomAnchor, constant: -16),
+            proStatusStack.leadingAnchor.constraint(equalTo: proStatusContainer.leadingAnchor, constant: 16),
+            proStatusStack.trailingAnchor.constraint(equalTo: proStatusContainer.trailingAnchor, constant: -16),
+        ])
+
+        // Initially hidden, shown only for Pro users
+        proStatusContainer.isHidden = true
+    }
+
+    private func updateProStatusCard() {
+        let status = EntitlementsService.shared.status
+        let isPro = status.tier == .pro
+
+        proStatusContainer.isHidden = !isPro
+        planContainer.isHidden = isPro
+
+        if !isPro {
+            return
+        }
+
+        // Clear existing content
+        proStatusStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        // Checkmark + "You're Pro"
+        let checkmark = NSImageView()
+        let checkConfig = NSImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        checkmark.image = NSImage(systemSymbolName: "checkmark.seal.fill", accessibilityDescription: nil)?
+            .withSymbolConfiguration(checkConfig)
+        checkmark.contentTintColor = brandColor
+
+        let titleLabel = NSTextField(labelWithString: L("paywall.pro_status.title"))
+        titleLabel.font = NSFont.systemFont(ofSize: 16, weight: .semibold)
+
+        let titleRow = NSStackView(views: [checkmark, titleLabel])
+        titleRow.orientation = .horizontal
+        titleRow.spacing = 8
+        titleRow.alignment = .centerY
+
+        proStatusStack.addArrangedSubview(titleRow)
+
+        // Subscription type
+        let typeLabel = NSTextField(labelWithString: L("paywall.pro_status.type", status.sourceDisplayName))
+        typeLabel.font = NSFont.systemFont(ofSize: 13)
+        typeLabel.textColor = .secondaryLabelColor
+        proStatusStack.addArrangedSubview(typeLabel)
+
+        // Expiration/renewal date (for subscriptions, not lifetime)
+        if let expirationDate = status.expirationDate {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .long
+            formatter.timeStyle = .none
+            let dateString = formatter.string(from: expirationDate)
+
+            let renewLabel = NSTextField(labelWithString: L("paywall.pro_status.renews", dateString))
+            renewLabel.font = NSFont.systemFont(ofSize: 13)
+            renewLabel.textColor = .secondaryLabelColor
+            proStatusStack.addArrangedSubview(renewLabel)
+        }
+    }
+
+    // MARK: - Plan Selection
+
+    private func setupPlanSelection() {
+        planContainer.boxType = .custom
+        planContainer.borderWidth = 0
+        planContainer.cornerRadius = 12
+        planContainer.fillColor = cardBackgroundColor
+        planContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        // Configure rows
+        monthlyRow.configure(
+            title: L("paywall.option.monthly"),
+            badge: nil,
+            price: L("paywall.price.loading")
+        )
+        monthlyRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.monthly) }
+
+        yearlyRow.configure(
+            title: L("paywall.option.yearly"),
+            badge: nil, // Will be set when products load
+            price: L("paywall.price.loading")
+        )
+        yearlyRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.yearly) }
+
+        lifetimeRow.configure(
+            title: L("paywall.option.lifetime"),
+            badge: L("paywall.badge.best_value"),
+            price: L("paywall.price.loading")
+        )
+        lifetimeRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.lifetime) }
+
+        let separator1 = createSeparator()
+        let separator2 = createSeparator()
+
+        let stack = NSStackView(views: [monthlyRow, separator1, yearlyRow, separator2, lifetimeRow])
+        stack.orientation = .vertical
+        stack.spacing = 0
+        stack.translatesAutoresizingMaskIntoConstraints = false
+
+        planContainer.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: planContainer.topAnchor, constant: 8),
+            stack.bottomAnchor.constraint(equalTo: planContainer.bottomAnchor, constant: -8),
+            stack.leadingAnchor.constraint(equalTo: planContainer.leadingAnchor),
+            stack.trailingAnchor.constraint(equalTo: planContainer.trailingAnchor),
+
+            monthlyRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            yearlyRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            lifetimeRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
+        ])
+
         updatePlanSelectionUI()
-        refreshCTA()
     }
 
-    private func refreshEntitlementUI() {
-        let isPro = EntitlementsService.shared.isPro
-        ctaButton.isEnabled = !isPro
-        if isPro {
-            statusLabel.stringValue = L("paywall.status.already_pro")
-        } else {
-            statusLabel.stringValue = ""
+    private func createSeparator() -> NSBox {
+        let sep = NSBox()
+        sep.boxType = .separator
+        return sep
+    }
+
+    // MARK: - Feature List
+
+    private func setupFeatureList() {
+        // Container with same style as plan selection
+        featureContainer.boxType = .custom
+        featureContainer.borderWidth = 0
+        featureContainer.cornerRadius = 12
+        featureContainer.fillColor = cardBackgroundColor
+        featureContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        featureStack.orientation = .vertical
+        featureStack.spacing = 0
+        featureStack.translatesAutoresizingMaskIntoConstraints = false
+
+        // Feature 1: Full annotation
+        let annotationRow = FeatureRow(
+            iconName: "pencil.tip.crop.circle",
+            title: L("paywall.feature.annotations.title"),
+            subtitle: L("paywall.feature.annotations.subtitle")
+        )
+
+        // Feature 2: Unlimited Send list
+        let sendListRow = FeatureRow(
+            iconName: "list.bullet.rectangle",
+            title: L("paywall.feature.send_list.title"),
+            subtitle: L("paywall.feature.send_list.subtitle")
+        )
+
+        let sep = createSeparator()
+
+        featureStack.addArrangedSubview(annotationRow)
+        featureStack.addArrangedSubview(sep)
+        featureStack.addArrangedSubview(sendListRow)
+
+        featureContainer.addSubview(featureStack)
+        NSLayoutConstraint.activate([
+            featureStack.topAnchor.constraint(equalTo: featureContainer.topAnchor, constant: 8),
+            featureStack.bottomAnchor.constraint(equalTo: featureContainer.bottomAnchor, constant: -8),
+            featureStack.leadingAnchor.constraint(equalTo: featureContainer.leadingAnchor),
+            featureStack.trailingAnchor.constraint(equalTo: featureContainer.trailingAnchor),
+
+            // 关键：确保每行宽度一致，与 PlanOptionRow 相同处理
+            annotationRow.widthAnchor.constraint(equalTo: featureStack.widthAnchor),
+            sendListRow.widthAnchor.constraint(equalTo: featureStack.widthAnchor),
+        ])
+    }
+
+    // MARK: - CTA Button
+
+    private func setupCTAButton() {
+        ctaButton.bezelStyle = .regularSquare
+        ctaButton.isBordered = false
+        ctaButton.wantsLayer = true
+        ctaButton.layer?.cornerRadius = 12
+        ctaButton.layer?.backgroundColor = brandColor.cgColor
+        ctaButton.contentTintColor = .white
+        ctaButton.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
+        ctaButton.target = self
+        ctaButton.action = #selector(ctaPressed)
+        ctaButton.translatesAutoresizingMaskIntoConstraints = false
+
+        updateCTAButton()
+    }
+
+    // MARK: - Legal Section
+
+    private func setupLegalSection() {
+        termsButton.title = L("paywall.legal.terms")
+        termsButton.isBordered = false
+        termsButton.target = self
+        termsButton.action = #selector(openTerms)
+        termsButton.font = NSFont.systemFont(ofSize: 11)
+        termsButton.contentTintColor = .secondaryLabelColor
+
+        privacyButton.title = L("paywall.legal.privacy")
+        privacyButton.isBordered = false
+        privacyButton.target = self
+        privacyButton.action = #selector(openPrivacy)
+        privacyButton.font = NSFont.systemFont(ofSize: 11)
+        privacyButton.contentTintColor = .secondaryLabelColor
+
+        restoreButton.title = L("paywall.action.restore")
+        restoreButton.isBordered = false
+        restoreButton.target = self
+        restoreButton.action = #selector(restorePressed)
+        restoreButton.font = NSFont.systemFont(ofSize: 11)
+        restoreButton.contentTintColor = .secondaryLabelColor
+
+        manageButton.title = L("paywall.action.manage")
+        manageButton.isBordered = false
+        manageButton.target = self
+        manageButton.action = #selector(managePressed)
+        manageButton.font = NSFont.systemFont(ofSize: 11)
+        manageButton.contentTintColor = .secondaryLabelColor
+
+        legalStack.orientation = .horizontal
+        legalStack.spacing = 4
+        legalStack.alignment = .centerY
+
+        rebuildLegalStack()
+    }
+
+    private func rebuildLegalStack() {
+        legalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        // Left side: Terms · Privacy
+        legalStack.addArrangedSubview(termsButton)
+        legalStack.addArrangedSubview(dotLabel())
+        legalStack.addArrangedSubview(privacyButton)
+
+        // Spacer
+        let spacer = NSView()
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        legalStack.addArrangedSubview(spacer)
+
+        // Right side: Restore (and Manage for Pro users)
+        legalStack.addArrangedSubview(restoreButton)
+
+        // Only show Manage for Pro users
+        if EntitlementsService.shared.isPro {
+            legalStack.addArrangedSubview(dotLabel())
+            legalStack.addArrangedSubview(manageButton)
         }
     }
 
-    // MARK: - Data
-
-    @MainActor
-    private func loadProductsAndRefreshUI() async {
-        do {
-            try await PurchaseService.shared.loadProductsIfNeeded()
-            products = [
-                EntitlementsService.ProductID.monthly: PurchaseService.shared.product(id: EntitlementsService.ProductID.monthly),
-                EntitlementsService.ProductID.yearly: PurchaseService.shared.product(id: EntitlementsService.ProductID.yearly),
-                EntitlementsService.ProductID.lifetime: PurchaseService.shared.product(id: EntitlementsService.ProductID.lifetime),
-            ].compactMapValues { $0 }
-            refreshPaywallUI()
-        } catch {
-            statusLabel.stringValue = L("paywall.error.generic")
-        }
-        refreshEntitlementUI()
+    private func dotLabel() -> NSTextField {
+        let label = NSTextField(labelWithString: "·")
+        label.textColor = .tertiaryLabelColor
+        label.font = NSFont.systemFont(ofSize: 11)
+        return label
     }
 
     // MARK: - Actions
+
+    @objc private func ctaPressed() {
+        performPurchase()
+    }
 
     private func performPurchase() {
         guard let window else { return }
@@ -230,13 +525,8 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         Task { [weak self] in
             guard let self else { return }
             await self.purchase(product: product, from: window)
-            self.refreshEntitlementUI()
-            self.refreshPaywallUI()
+            self.refreshUI()
         }
-    }
-
-    @objc private func purchasePressed() {
-        performPurchase()
     }
 
     @MainActor
@@ -269,380 +559,6 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         PurchaseService.shared.openManageSubscriptions(from: window)
     }
 
-    @objc private func closePressed() {
-        window?.performClose(nil)
-    }
-
-    // MARK: - Observing
-
-    private func startProStatusObserver() {
-        guard proStatusObserver == nil else { return }
-        proStatusObserver = NotificationCenter.default.addObserver(
-            forName: .proStatusDidChange,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.refreshEntitlementUI()
-            self?.refreshPaywallUI()
-        }
-    }
-
-    // MARK: - Sections
-
-    private func setupCompareSection() {
-        compareContentStack.orientation = .vertical
-        compareContentStack.spacing = 8
-        compareContentStack.translatesAutoresizingMaskIntoConstraints = false
-
-        freeColumnTitle.stringValue = L("paywall.compare.free")
-        freeColumnTitle.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
-        freeColumnTitle.textColor = .secondaryLabelColor
-
-        proColumnTitle.stringValue = L("paywall.compare.pro")
-        proColumnTitle.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
-        proColumnTitle.textColor = paywallBrandColor
-
-        let header = compareRow(left: freeColumnTitle, right: proColumnTitle, isHeader: true)
-        compareContentStack.addArrangedSubview(header)
-
-        // Row 1: Annotation tools
-        compareContentStack.addArrangedSubview(
-            compareRowText(
-                feature: L("paywall.feature.annotations"),
-                free: L("paywall.feature.annotations.free"),
-                pro: L("paywall.feature.annotations.pro"),
-                proState: .available
-            )
-        )
-        compareContentStack.addArrangedSubview(rowSeparator())
-
-        // Row 2: Custom apps
-        compareContentStack.addArrangedSubview(
-            compareRowText(
-                feature: L("paywall.feature.custom_apps"),
-                free: L("paywall.feature.custom_apps.free"),
-                pro: L("paywall.feature.custom_apps.pro"),
-                proState: .available
-            )
-        )
-        compareContentStack.addArrangedSubview(rowSeparator())
-
-        // Row 3: Download manager (coming soon)
-        compareContentStack.addArrangedSubview(
-            compareRowText(
-                feature: L("paywall.feature.download_manager"),
-                free: L("paywall.feature.unavailable"),
-                pro: L("paywall.feature.coming_soon"),
-                proState: .comingSoon
-            )
-        )
-        compareContentStack.addArrangedSubview(rowSeparator())
-
-        // Row 4: Send queue (coming soon)
-        compareContentStack.addArrangedSubview(
-            compareRowText(
-                feature: L("paywall.feature.send_queue"),
-                free: L("paywall.feature.unavailable"),
-                pro: L("paywall.feature.coming_soon"),
-                proState: .comingSoon
-            )
-        )
-
-        // Put compare section inside a subtle container (Auto Layout, top-aligned).
-        let box = NSView()
-        box.wantsLayer = true
-        box.layer?.cornerRadius = 10
-        box.layer?.borderWidth = 1
-        box.layer?.borderColor = NSColor.separatorColor.cgColor
-        box.layer?.backgroundColor = NSColor.controlBackgroundColor.cgColor
-        box.translatesAutoresizingMaskIntoConstraints = false
-
-        box.addSubview(compareContentStack)
-        NSLayoutConstraint.activate([
-            compareContentStack.leadingAnchor.constraint(equalTo: box.leadingAnchor, constant: 12),
-            compareContentStack.trailingAnchor.constraint(equalTo: box.trailingAnchor, constant: -12),
-            compareContentStack.topAnchor.constraint(equalTo: box.topAnchor, constant: 12),
-            compareContentStack.bottomAnchor.constraint(equalTo: box.bottomAnchor, constant: -12),
-        ])
-
-        compareStack.orientation = .vertical
-        compareStack.spacing = 0
-        compareStack.translatesAutoresizingMaskIntoConstraints = false
-        compareStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        compareStack.addArrangedSubview(box)
-
-        // Prevent the compare section from stretching vertically.
-        compareStack.setContentHuggingPriority(.required, for: .vertical)
-        box.setContentHuggingPriority(.required, for: .vertical)
-    }
-
-    private enum ProState {
-        case available
-        case comingSoon
-    }
-
-    private func compareRowText(feature: String, free: String, pro: String, proState: ProState) -> NSView {
-        let featureLabel = NSTextField(labelWithString: feature)
-        featureLabel.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
-
-        let freeView: NSView
-        let proView: NSView
-
-        switch proState {
-        case .available:
-            freeView = compareValueView(
-                text: free,
-                symbolName: "checkmark.circle.fill",
-                symbolTint: NSColor.secondaryLabelColor
-            )
-            proView = compareValueView(
-                text: pro,
-                symbolName: "checkmark.circle.fill",
-                symbolTint: paywallBrandColor
-            )
-        case .comingSoon:
-            freeView = compareValueView(
-                text: free,
-                symbolName: "minus.circle",
-                symbolTint: NSColor.tertiaryLabelColor
-            )
-            proView = pill(
-                text: L("paywall.feature.coming_soon"),
-                background: NSColor.systemGray.withAlphaComponent(0.15),
-                foreground: .secondaryLabelColor
-            )
-        }
-
-        let row = compareRow(left: freeView, right: proView, isHeader: false, featureLabel: featureLabel)
-        return row
-    }
-
-    private func compareRow(left: NSView, right: NSView, isHeader: Bool, featureLabel: NSView? = nil) -> NSView {
-        let grid = NSStackView()
-        grid.orientation = .horizontal
-        grid.alignment = .top
-        grid.spacing = 12
-
-        let feature = featureLabel ?? NSView()
-        if featureLabel == nil {
-            feature.setFrameSize(NSSize(width: 0, height: 0))
-        }
-
-        let leftCol = NSStackView(views: [left])
-        leftCol.orientation = .vertical
-        let rightCol = NSStackView(views: [right])
-        rightCol.orientation = .vertical
-
-        grid.addArrangedSubview(feature)
-        grid.addArrangedSubview(leftCol)
-        grid.addArrangedSubview(rightCol)
-
-        feature.translatesAutoresizingMaskIntoConstraints = false
-        left.translatesAutoresizingMaskIntoConstraints = false
-        right.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            feature.widthAnchor.constraint(equalToConstant: 180),
-            leftCol.widthAnchor.constraint(equalToConstant: 160),
-        ])
-
-        if isHeader {
-            let sep = NSBox()
-            sep.boxType = .separator
-            let stack = NSStackView(views: [grid, sep])
-            stack.orientation = .vertical
-            stack.spacing = 8
-            return stack
-        }
-        return grid
-    }
-
-    private func rowSeparator() -> NSBox {
-        let sep = NSBox()
-        sep.boxType = .separator
-        return sep
-    }
-
-    private func compareValueView(text: String, symbolName: String, symbolTint: NSColor) -> NSView {
-        let iconConfig = NSImage.SymbolConfiguration(pointSize: 12, weight: .semibold)
-        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
-            .withSymbolConfiguration(iconConfig)
-
-        let imageView = NSImageView(image: image ?? NSImage())
-        imageView.contentTintColor = symbolTint
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 14),
-            imageView.heightAnchor.constraint(equalToConstant: 14),
-        ])
-
-        let label = NSTextField(labelWithString: text)
-        label.font = NSFont.systemFont(ofSize: 12)
-        label.textColor = .labelColor
-        label.lineBreakMode = .byWordWrapping
-        label.maximumNumberOfLines = 2
-
-        let stack = NSStackView(views: [imageView, label])
-        stack.orientation = .horizontal
-        stack.alignment = .top
-        stack.spacing = 6
-        return stack
-    }
-
-    private func setupPlanCards() {
-        yearlyCard.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.yearly) }
-        monthlyCard.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.monthly) }
-        lifetimeCard.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.lifetime) }
-
-        yearlyCard.badgeText = L("paywall.badge.recommended")
-        monthlyCard.badgeText = nil
-        lifetimeCard.badgeText = nil
-    }
-
-    private func setupLegalButtons() {
-        termsButton.title = L("paywall.legal.terms")
-        termsButton.isBordered = false
-        termsButton.target = self
-        termsButton.action = #selector(openTerms)
-
-        privacyButton.title = L("paywall.legal.privacy")
-        privacyButton.isBordered = false
-        privacyButton.target = self
-        privacyButton.action = #selector(openPrivacy)
-    }
-
-    private func selectPlan(_ productID: String) {
-        selectedProductID = productID
-        updatePlanSelectionUI()
-        refreshPlanCards()
-    }
-
-    private func updatePlanSelectionUI() {
-        yearlyCard.isSelected = (selectedProductID == EntitlementsService.ProductID.yearly)
-        monthlyCard.isSelected = (selectedProductID == EntitlementsService.ProductID.monthly)
-        lifetimeCard.isSelected = (selectedProductID == EntitlementsService.ProductID.lifetime)
-    }
-
-    private func refreshPlanCards() {
-        let yearly = products[EntitlementsService.ProductID.yearly]
-        let monthly = products[EntitlementsService.ProductID.monthly]
-        let lifetime = products[EntitlementsService.ProductID.lifetime]
-
-        yearlyCard.title = L("paywall.option.yearly")
-        monthlyCard.title = L("paywall.option.monthly")
-        lifetimeCard.title = L("paywall.option.lifetime")
-
-        yearlyCard.priceText = yearly?.displayPrice ?? L("paywall.price.loading")
-        monthlyCard.priceText = monthly?.displayPrice ?? L("paywall.price.loading")
-        lifetimeCard.priceText = lifetime?.displayPrice ?? L("paywall.price.loading")
-
-        // Subtitles
-        yearlyCard.subtitleText = L("paywall.plan.per_year")
-        monthlyCard.subtitleText = L("paywall.plan.per_month")
-        lifetimeCard.subtitleText = L("paywall.plan.one_time")
-
-        // Yearly: show savings + equivalent monthly (best practice)
-        if let yearly, let monthly {
-            let savings = savingsPercent(yearly: yearly, monthly: monthly)
-            let eqMonthly = equivalentMonthlyText(yearly: yearly)
-            yearlyCard.detailLines = [
-                L("paywall.plan.save_percent", savings),
-                L("paywall.plan.equivalent_monthly", eqMonthly),
-            ]
-        } else {
-            yearlyCard.detailLines = [
-                L("paywall.plan.save_percent.loading"),
-                L("paywall.plan.equivalent_monthly.loading"),
-            ]
-        }
-
-        monthlyCard.detailLines = []
-        lifetimeCard.detailLines = []
-    }
-
-    private func refreshCTA() {
-        if EntitlementsService.shared.isPro {
-            ctaButton.titleText = L("paywall.status.already_pro")
-            ctaButton.subtitleText = ""
-            return
-        }
-
-        // Strong CTA: emphasize yearly savings when possible.
-        if selectedProductID == EntitlementsService.ProductID.yearly,
-           let yearly = products[EntitlementsService.ProductID.yearly],
-           let monthly = products[EntitlementsService.ProductID.monthly] {
-            let savings = savingsPercent(yearly: yearly, monthly: monthly)
-            ctaButton.titleText = L("paywall.cta.title_with_savings", savings)
-            let eqMonthly = equivalentMonthlyText(yearly: yearly)
-            ctaButton.subtitleText = L("paywall.cta.subtitle_yearly_equivalent", eqMonthly)
-            return
-        }
-
-        // Fallback: show selected plan + price.
-        ctaButton.titleText = L("paywall.action.upgrade_to_pro")
-        if let product = products[selectedProductID] {
-            let unit: String
-            switch selectedProductID {
-            case EntitlementsService.ProductID.monthly:
-                unit = L("paywall.plan.per_month")
-            case EntitlementsService.ProductID.yearly:
-                unit = L("paywall.plan.per_year")
-            default:
-                unit = L("paywall.plan.one_time")
-            }
-            ctaButton.subtitleText = "\(product.displayPrice) · \(unit)"
-        } else {
-            ctaButton.subtitleText = L("paywall.price.loading")
-        }
-    }
-
-    private func savingsPercent(yearly: Product, monthly: Product) -> String {
-        // Best practice: compare yearly vs monthly * 12
-        let yearlyValue = NSDecimalNumber(decimal: yearly.price).doubleValue
-        let monthlyValue = NSDecimalNumber(decimal: monthly.price).doubleValue
-        guard monthlyValue > 0 else { return "0%" }
-        let monthlyAnnual = monthlyValue * 12
-        guard monthlyAnnual > 0 else { return "0%" }
-        let savings = max(0, 1 - (yearlyValue / monthlyAnnual))
-        let pct = Int((savings * 100).rounded())
-        return "\(pct)%"
-    }
-
-    private func equivalentMonthlyText(yearly: Product) -> String {
-        let eq = yearly.price / 12
-        // Format using the yearly product's currency/locale style.
-        return eq.formatted(yearly.priceFormatStyle)
-    }
-
-    private func dotSeparatorLabel() -> NSTextField {
-        let label = NSTextField(labelWithString: "·")
-        label.textColor = .tertiaryLabelColor
-        return label
-    }
-
-    private func pill(text: String, background: NSColor, foreground: NSColor) -> NSView {
-        let container = NSView()
-        container.wantsLayer = true
-        container.layer?.cornerRadius = 8
-        container.layer?.backgroundColor = background.cgColor
-        container.translatesAutoresizingMaskIntoConstraints = false
-
-        let label = NSTextField(labelWithString: text)
-        label.font = NSFont.systemFont(ofSize: 10, weight: .semibold)
-        label.textColor = foreground
-        label.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 8),
-            label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
-            label.topAnchor.constraint(equalTo: container.topAnchor, constant: 3),
-            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -3),
-        ])
-
-        return container
-    }
-
     @objc private func openTerms() {
         if let url = URL(string: "http://vibecap.dev/terms") {
             NSWorkspace.shared.open(url)
@@ -654,28 +570,157 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             NSWorkspace.shared.open(url)
         }
     }
+
+    // MARK: - Data
+
+    @MainActor
+    private func loadProductsAndRefreshUI() async {
+        do {
+            try await PurchaseService.shared.loadProductsIfNeeded()
+            products = [
+                EntitlementsService.ProductID.monthly: PurchaseService.shared.product(id: EntitlementsService.ProductID.monthly),
+                EntitlementsService.ProductID.yearly: PurchaseService.shared.product(id: EntitlementsService.ProductID.yearly),
+                EntitlementsService.ProductID.lifetime: PurchaseService.shared.product(id: EntitlementsService.ProductID.lifetime),
+            ].compactMapValues { $0 }
+            refreshUI()
+        } catch {
+            statusLabel.stringValue = L("paywall.error.generic")
+        }
+    }
+
+    // MARK: - UI Updates
+
+    private func selectPlan(_ productID: String) {
+        selectedProductID = productID
+        updatePlanSelectionUI()
+        updateCTAButton()
+    }
+
+    private func updatePlanSelectionUI() {
+        monthlyRow.isSelected = (selectedProductID == EntitlementsService.ProductID.monthly)
+        yearlyRow.isSelected = (selectedProductID == EntitlementsService.ProductID.yearly)
+        lifetimeRow.isSelected = (selectedProductID == EntitlementsService.ProductID.lifetime)
+    }
+
+    private func refreshUI() {
+        updateProStatusCard()
+        refreshPlanPrices()
+        updatePlanSelectionUI()
+        updateCTAButton()
+        refreshEntitlementUI()
+        rebuildLegalStack()
+    }
+
+    private func refreshPlanPrices() {
+        let monthly = products[EntitlementsService.ProductID.monthly]
+        let yearly = products[EntitlementsService.ProductID.yearly]
+        let lifetime = products[EntitlementsService.ProductID.lifetime]
+
+        // Monthly
+        if let monthly {
+            monthlyRow.configure(
+                title: L("paywall.option.monthly"),
+                badge: nil,
+                price: "\(monthly.displayPrice)/\(L("paywall.unit.month"))"
+            )
+        }
+
+        // Yearly with savings badge
+        if let yearly, let monthly {
+            let savingsText = savingsText(yearly: yearly, monthly: monthly)
+            yearlyRow.configure(
+                title: L("paywall.option.yearly"),
+                badge: savingsText,
+                price: "\(yearly.displayPrice)/\(L("paywall.unit.year"))"
+            )
+        } else if let yearly {
+            yearlyRow.configure(
+                title: L("paywall.option.yearly"),
+                badge: nil,
+                price: "\(yearly.displayPrice)/\(L("paywall.unit.year"))"
+            )
+        }
+
+        // Lifetime
+        if let lifetime {
+            lifetimeRow.configure(
+                title: L("paywall.option.lifetime"),
+                badge: L("paywall.badge.best_value"),
+                price: lifetime.displayPrice
+            )
+        }
+    }
+
+    private func updateCTAButton() {
+        let isPro = EntitlementsService.shared.isPro
+
+        if isPro {
+            ctaButton.title = L("paywall.status.already_pro")
+            ctaButton.isEnabled = false
+            ctaButton.layer?.backgroundColor = NSColor.systemGray.cgColor
+            return
+        }
+
+        ctaButton.isEnabled = true
+        ctaButton.layer?.backgroundColor = brandColor.cgColor
+
+        guard let product = products[selectedProductID] else {
+            ctaButton.title = L("paywall.price.loading")
+            return
+        }
+
+        switch selectedProductID {
+        case EntitlementsService.ProductID.monthly:
+            ctaButton.title = L("paywall.cta.subscribe_monthly", product.displayPrice)
+        case EntitlementsService.ProductID.yearly:
+            ctaButton.title = L("paywall.cta.subscribe_yearly", product.displayPrice)
+        case EntitlementsService.ProductID.lifetime:
+            ctaButton.title = L("paywall.cta.unlock_lifetime", product.displayPrice)
+        default:
+            ctaButton.title = L("paywall.action.upgrade_to_pro")
+        }
+    }
+
+    private func refreshEntitlementUI() {
+        // Status shown in CTA button, no separate label needed
+    }
+
+    private func savingsText(yearly: Product, monthly: Product) -> String {
+        let yearlyValue = NSDecimalNumber(decimal: yearly.price).doubleValue
+        let monthlyValue = NSDecimalNumber(decimal: monthly.price).doubleValue
+        guard monthlyValue > 0 else { return "" }
+        let monthlyAnnual = monthlyValue * 12
+        guard monthlyAnnual > 0 else { return "" }
+        let savings = max(0, 1 - (yearlyValue / monthlyAnnual))
+        let pct = Int((savings * 100).rounded())
+        return L("paywall.badge.save_percent", "\(pct)")
+    }
+
+    // MARK: - Observing
+
+    private func startProStatusObserver() {
+        guard proStatusObserver == nil else { return }
+        proStatusObserver = NotificationCenter.default.addObserver(
+            forName: .proStatusDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.refreshUI()
+        }
+    }
 }
 
-// MARK: - Plan Card
+// MARK: - Plan Option Row
 
-private final class PlanCardView: NSView {
+private final class PlanOptionRow: NSView {
     var onSelect: (() -> Void)?
-
-    var title: String = "" { didSet { titleLabel.stringValue = title } }
-    var priceText: String = "" { didSet { priceLabel.stringValue = priceText } }
-    var subtitleText: String = "" { didSet { subtitleLabel.stringValue = subtitleText } }
-    var detailLines: [String] = [] { didSet { refreshDetails() } }
-    var badgeText: String? { didSet { refreshBadge() } }
-
     var isSelected: Bool = false { didSet { updateStyle() } }
 
-    private let container = NSBox()
+    private let radioImage = NSImageView()
     private let titleLabel = NSTextField(labelWithString: "")
     private let badgeLabel = NSTextField(labelWithString: "")
+    private let badgeContainer = NSView()
     private let priceLabel = NSTextField(labelWithString: "")
-    private let subtitleLabel = NSTextField(labelWithString: "")
-    private let detailsStack = NSStackView()
-    private let badgeBox = NSBox()
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -687,96 +732,91 @@ private final class PlanCardView: NSView {
         setup()
     }
 
+    func configure(title: String, badge: String?, price: String) {
+        titleLabel.stringValue = title
+        priceLabel.stringValue = price
+
+        if let badge, !badge.isEmpty {
+            badgeLabel.stringValue = badge
+            badgeContainer.isHidden = false
+        } else {
+            badgeContainer.isHidden = true
+        }
+    }
+
     private func setup() {
-        wantsLayer = true
+        translatesAutoresizingMaskIntoConstraints = false
 
-        container.boxType = .custom
-        container.borderWidth = 1
-        container.cornerRadius = 12
-        container.borderColor = NSColor.separatorColor
-        container.fillColor = NSColor.controlBackgroundColor
-        container.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(container)
+        // Radio image
+        radioImage.translatesAutoresizingMaskIntoConstraints = false
 
-        titleLabel.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
-        priceLabel.font = NSFont.systemFont(ofSize: 22, weight: .bold)
-        subtitleLabel.font = NSFont.systemFont(ofSize: 11, weight: .regular)
-        subtitleLabel.textColor = .secondaryLabelColor
+        // Title
+        titleLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        detailsStack.orientation = .vertical
-        detailsStack.spacing = 4
+        // Badge
+        badgeContainer.wantsLayer = true
+        badgeContainer.layer?.cornerRadius = 4
+        badgeContainer.layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.15).cgColor
+        badgeContainer.translatesAutoresizingMaskIntoConstraints = false
+        badgeContainer.isHidden = true
 
         badgeLabel.font = NSFont.systemFont(ofSize: 10, weight: .semibold)
-        badgeLabel.textColor = NSColor.white
-        badgeBox.boxType = .custom
-        badgeBox.borderWidth = 0
-        badgeBox.cornerRadius = 8
-        badgeBox.fillColor = paywallBrandColor
+        badgeLabel.textColor = NSColor.systemGreen
         badgeLabel.translatesAutoresizingMaskIntoConstraints = false
-        badgeBox.addSubview(badgeLabel)
-        NSLayoutConstraint.activate([
-            badgeLabel.leadingAnchor.constraint(equalTo: badgeBox.leadingAnchor, constant: 8),
-            badgeLabel.trailingAnchor.constraint(equalTo: badgeBox.trailingAnchor, constant: -8),
-            badgeLabel.topAnchor.constraint(equalTo: badgeBox.topAnchor, constant: 3),
-            badgeLabel.bottomAnchor.constraint(equalTo: badgeBox.bottomAnchor, constant: -3),
-        ])
-        badgeBox.isHidden = true
-
-        let topRow = NSStackView(views: [titleLabel, NSView(), badgeBox])
-        topRow.orientation = .horizontal
-        topRow.alignment = .centerY
-
-        let stack = NSStackView(views: [topRow, priceLabel, subtitleLabel, detailsStack])
-        stack.orientation = .vertical
-        stack.spacing = 6
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(stack)
+        badgeContainer.addSubview(badgeLabel)
 
         NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(equalTo: leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: trailingAnchor),
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            stack.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
-            stack.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
-            stack.topAnchor.constraint(equalTo: container.topAnchor, constant: 12),
-            stack.bottomAnchor.constraint(lessThanOrEqualTo: container.bottomAnchor, constant: -12),
+            badgeLabel.leadingAnchor.constraint(equalTo: badgeContainer.leadingAnchor, constant: 6),
+            badgeLabel.trailingAnchor.constraint(equalTo: badgeContainer.trailingAnchor, constant: -6),
+            badgeLabel.topAnchor.constraint(equalTo: badgeContainer.topAnchor, constant: 2),
+            badgeLabel.bottomAnchor.constraint(equalTo: badgeContainer.bottomAnchor, constant: -2),
         ])
 
+        // Price
+        priceLabel.font = NSFont.systemFont(ofSize: 14, weight: .regular)
+        priceLabel.textColor = .secondaryLabelColor
+        priceLabel.alignment = .right
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        // Left side: radio + title + badge
+        let leftStack = NSStackView(views: [radioImage, titleLabel, badgeContainer])
+        leftStack.orientation = .horizontal
+        leftStack.spacing = 8
+        leftStack.alignment = .centerY
+        leftStack.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(leftStack)
+        addSubview(priceLabel)
+
+        NSLayoutConstraint.activate([
+            heightAnchor.constraint(equalToConstant: 44),
+
+            radioImage.widthAnchor.constraint(equalToConstant: 20),
+            radioImage.heightAnchor.constraint(equalToConstant: 20),
+
+            leftStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            leftStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            priceLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
+
+        // Click gesture
         let click = NSClickGestureRecognizer(target: self, action: #selector(clicked))
         addGestureRecognizer(click)
 
         updateStyle()
     }
 
-    private func refreshDetails() {
-        detailsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for line in detailLines {
-            let l = NSTextField(labelWithString: line)
-            l.font = NSFont.systemFont(ofSize: 11, weight: .medium)
-            l.textColor = .secondaryLabelColor
-            detailsStack.addArrangedSubview(l)
-        }
-    }
-
-    private func refreshBadge() {
-        if let badgeText, !badgeText.isEmpty {
-            badgeLabel.stringValue = badgeText
-            badgeBox.isHidden = false
-        } else {
-            badgeBox.isHidden = true
-        }
-    }
-
     private func updateStyle() {
-        if isSelected {
-            container.borderColor = paywallBrandColor
-            container.fillColor = paywallBrandColor.withAlphaComponent(0.10)
-        } else {
-            container.borderColor = NSColor.separatorColor
-            container.fillColor = NSColor.controlBackgroundColor
-        }
+        let symbolName = isSelected ? "checkmark.circle.fill" : "circle"
+        let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        let tintColor: NSColor = isSelected ? brandColor : .tertiaryLabelColor
+
+        radioImage.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
+            .withSymbolConfiguration(config)
+        radioImage.contentTintColor = tintColor
     }
 
     @objc private func clicked() {
@@ -784,135 +824,71 @@ private final class PlanCardView: NSView {
     }
 }
 
-// MARK: - Paywall CTA Button
+// MARK: - Feature Row
 
-private final class PaywallCTAButton: NSControl {
-    var onClick: (() -> Void)?
-
-    var titleText: String = "" {
-        didSet { titleLabel.stringValue = titleText }
-    }
-
-    var subtitleText: String = "" {
-        didSet { subtitleLabel.stringValue = subtitleText }
-    }
-
-    private let titleLabel = NSTextField(labelWithString: "")
-    private let subtitleLabel = NSTextField(labelWithString: "")
-
-    private let gradientLayer = CAGradientLayer()
-    private var tracking: NSTrackingArea?
-    private var isHovered = false { didSet { updateStyle() } }
-
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        setup()
+private final class FeatureRow: NSView {
+    init(iconName: String, title: String, subtitle: String) {
+        super.init(frame: .zero)
+        setup(iconName: iconName, title: title, subtitle: subtitle)
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setup()
     }
 
-    override func layout() {
-        super.layout()
-        gradientLayer.frame = bounds
-        gradientLayer.cornerRadius = 14
-    }
+    private func setup(iconName: String, title: String, subtitle: String) {
+        translatesAutoresizingMaskIntoConstraints = false
 
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let tracking { removeTrackingArea(tracking) }
-        let t = NSTrackingArea(
-            rect: bounds,
-            options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
-            owner: self,
-            userInfo: nil
-        )
-        addTrackingArea(t)
-        tracking = t
-    }
+        // Icon container with fixed width for consistent alignment
+        let iconContainer = NSView()
+        iconContainer.translatesAutoresizingMaskIntoConstraints = false
 
-    override func mouseEntered(with event: NSEvent) {
-        isHovered = true
-    }
+        let iconView = NSImageView()
+        let config = NSImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+        iconView.image = NSImage(systemSymbolName: iconName, accessibilityDescription: title)?
+            .withSymbolConfiguration(config)
+        iconView.contentTintColor = brandColor
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+        iconContainer.addSubview(iconView)
 
-    override func mouseExited(with event: NSEvent) {
-        isHovered = false
-    }
+        // Title
+        let titleLabel = NSTextField(labelWithString: title)
+        titleLabel.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-    override func mouseDown(with event: NSEvent) {
-        guard isEnabled else { return }
-        // Simple pressed feedback.
-        layer?.opacity = 0.92
-    }
-
-    override func mouseUp(with event: NSEvent) {
-        guard isEnabled else { return }
-        layer?.opacity = 1.0
-        onClick?()
-    }
-
-    private func setup() {
-        wantsLayer = true
-        layer = gradientLayer
-
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        gradientLayer.colors = [
-            paywallBrandColor.cgColor,
-            paywallBrandGradientEnd.cgColor,
-        ]
-
-        // Shadow
-        gradientLayer.shadowColor = NSColor.black.cgColor
-        gradientLayer.shadowOpacity = 0.18
-        gradientLayer.shadowRadius = 12
-        gradientLayer.shadowOffset = CGSize(width: 0, height: -2)
-
-        titleLabel.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
-        titleLabel.textColor = .white
-        titleLabel.alignment = .center
-
-        subtitleLabel.font = NSFont.systemFont(ofSize: 11, weight: .medium)
-        subtitleLabel.textColor = NSColor.white.withAlphaComponent(0.85)
-        subtitleLabel.alignment = .center
+        // Subtitle
+        let subtitleLabel = NSTextField(labelWithString: subtitle)
+        subtitleLabel.font = NSFont.systemFont(ofSize: 12)
+        subtitleLabel.textColor = .secondaryLabelColor
         subtitleLabel.maximumNumberOfLines = 2
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let stack = NSStackView(views: [titleLabel, subtitleLabel])
-        stack.orientation = .vertical
-        stack.alignment = .centerX
-        stack.spacing = 2
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        let textStack = NSStackView(views: [titleLabel, subtitleLabel])
+        textStack.orientation = .vertical
+        textStack.spacing = 2
+        textStack.alignment = .leading
+        textStack.translatesAutoresizingMaskIntoConstraints = false
 
-        addSubview(stack)
+        addSubview(iconContainer)
+        addSubview(textStack)
+
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
-            stack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 60),
+
+            // Icon container - fixed width ensures consistent text alignment
+            iconContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            iconContainer.widthAnchor.constraint(equalToConstant: 36),
+            iconContainer.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            iconContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+
+            // Icon centered in container
+            iconView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
+            iconView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
+
+            // Text stack - fixed leading anchor relative to icon container
+            textStack.leadingAnchor.constraint(equalTo: iconContainer.trailingAnchor, constant: 12),
+            textStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            textStack.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
-
-        updateStyle()
-    }
-
-    private func updateStyle() {
-        if isEnabled {
-            gradientLayer.colors = [
-                paywallBrandColor.cgColor,
-                paywallBrandGradientEnd.cgColor,
-            ]
-            titleLabel.textColor = .white
-            subtitleLabel.textColor = NSColor.white.withAlphaComponent(0.85)
-            gradientLayer.shadowOpacity = isHovered ? 0.26 : 0.18
-        } else {
-            gradientLayer.colors = [
-                NSColor.quaternaryLabelColor.cgColor,
-                NSColor.tertiaryLabelColor.cgColor,
-            ]
-            titleLabel.textColor = NSColor.secondaryLabelColor
-            subtitleLabel.textColor = NSColor.tertiaryLabelColor
-            gradientLayer.shadowOpacity = 0.0
-        }
     }
 }
-

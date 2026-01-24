@@ -81,7 +81,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Vibe Capture.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60718293A4B79 /* VibeCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Vibe Capture.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B82 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -285,7 +285,7 @@
 		A1B2C3D4E5F60718293A4B65 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */,
+				A1B2C3D4E5F60718293A4B79 /* VibeCap.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -350,9 +350,9 @@
 			);
 			dependencies = (
 			);
-			name = "Vibe Capture";
-			productName = "Vibe Capture";
-			productReference = A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */;
+			name = VibeCap;
+			productName = VibeCap;
+			productReference = A1B2C3D4E5F60718293A4B79 /* VibeCap.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -571,7 +571,7 @@
 				INFOPLIST_FILE = VibeCapture/Info.plist;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture;
-				PRODUCT_NAME = "Vibe Capture";
+				PRODUCT_NAME = VibeCap;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -589,7 +589,7 @@
 				INFOPLIST_FILE = VibeCapture/Info.plist;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture;
-				PRODUCT_NAME = "Vibe Capture";
+				PRODUCT_NAME = VibeCap;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
