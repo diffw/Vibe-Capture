@@ -13,6 +13,10 @@ Vibe Capture is a lightweight macOS **menu bar** app that lets you:
 - macOS 13+
 - Xcode 15+ recommended
 
+## Development workflow
+
+See `DEV_WORKFLOW.md`.
+
 ## First-run permissions (expected)
 
 - **Screen Recording**: Required to capture your screen contents.

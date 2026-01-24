@@ -41,11 +41,14 @@ final class AnnotationToolbarView: NSView {
     private let toolbarHeight: CGFloat = 36
     private let buttonSize: CGFloat = 28
     private let colorDotSize: CGFloat = 16
+
+    private var proStatusObserver: Any?
     
     /// Brand color for selected state
     private let brandColor = NSColor(red: 1.0, green: 0.553, blue: 0.463, alpha: 1.0) // #FF8D76
     /// Default icon color (same as system icons like dropdown chevron)
     private let defaultIconColor = NSColor.labelColor
+    private let lockedIconColor = NSColor.secondaryLabelColor
     
     // MARK: - Initialization
     
@@ -57,6 +60,13 @@ final class AnnotationToolbarView: NSView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+    }
+
+    deinit {
+        if let proStatusObserver {
+            NotificationCenter.default.removeObserver(proStatusObserver)
+            self.proStatusObserver = nil
+        }
     }
     
     private func setupView() {
@@ -71,6 +81,14 @@ final class AnnotationToolbarView: NSView {
         updateToolButtonStates()
         updateColorButton()
         updateClearAllVisibility()
+
+        proStatusObserver = NotificationCenter.default.addObserver(
+            forName: .proStatusDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.handleProStatusChanged()
+        }
     }
     
     // MARK: - Setup
@@ -211,6 +229,7 @@ final class AnnotationToolbarView: NSView {
     }
     
     @objc private func circleButtonPressed() {
+        guard requireProCapability(.annotationsShapes) else { return }
         if selectedTool == .circle {
             selectedTool = .none
         } else {
@@ -220,6 +239,7 @@ final class AnnotationToolbarView: NSView {
     }
     
     @objc private func rectangleButtonPressed() {
+        guard requireProCapability(.annotationsShapes) else { return }
         if selectedTool == .rectangle {
             selectedTool = .none
         } else {
@@ -229,6 +249,7 @@ final class AnnotationToolbarView: NSView {
     }
     
     @objc private func numberButtonPressed() {
+        guard requireProCapability(.annotationsNumbering) else { return }
         if selectedTool == .number {
             selectedTool = .none
         } else {
@@ -238,6 +259,7 @@ final class AnnotationToolbarView: NSView {
     }
     
     @objc private func colorButtonPressed() {
+        guard requireProCapability(.annotationsColors) else { return }
         showColorMenu()
     }
     
@@ -280,6 +302,35 @@ final class AnnotationToolbarView: NSView {
         selectedColor = color
         delegate?.toolbarDidSelectColor(color)
     }
+
+    // MARK: - Gating
+
+    private func requireProCapability(_ capability: CapabilityKey) -> Bool {
+        if CapabilityService.shared.canUse(capability) {
+            return true
+        }
+        PaywallWindowController.shared.show()
+        return false
+    }
+
+    private func handleProStatusChanged() {
+        // If user downgraded while a Pro tool is selected, fall back to Arrow.
+        if !EntitlementsService.shared.isPro {
+            if selectedTool == .circle || selectedTool == .rectangle || selectedTool == .number {
+                selectedTool = .arrow
+                delegate?.toolbarDidSelectTool(.arrow)
+            }
+
+            // Free users can't change color; revert to default red if needed.
+            if selectedColor != .red {
+                selectedColor = .red
+                delegate?.toolbarDidSelectColor(.red)
+            }
+        }
+
+        updateToolButtonStates()
+        updateColorButton()
+    }
     
     // MARK: - UI Updates
     
@@ -294,36 +345,40 @@ final class AnnotationToolbarView: NSView {
         arrowButton.contentTintColor = arrowColor
         
         // Update circle button
-        let circleSelected = selectedTool == .circle
+        let canShapes = CapabilityService.shared.canUse(.annotationsShapes)
+        let circleSelected = selectedTool == .circle && canShapes
         let circleColor = circleSelected ? brandColor : defaultIconColor
-        let circleConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-            .applying(.init(paletteColors: [circleColor]))
-        circleButton.image = NSImage(systemSymbolName: "circle", accessibilityDescription: L("annotation.tool.circle"))?
-            .withSymbolConfiguration(circleConfig)
+        circleButton.image = canShapes
+            ? makeSymbolImage(symbolName: "circle", color: circleColor, accessibility: L("annotation.tool.circle"))
+            : makeLockedSymbolImage(symbolName: "circle", color: circleColor, accessibility: L("annotation.tool.circle"))
         circleButton.contentTintColor = circleColor
         
         // Update rectangle button
-        let rectangleSelected = selectedTool == .rectangle
+        let rectangleSelected = selectedTool == .rectangle && canShapes
         let rectangleColor = rectangleSelected ? brandColor : defaultIconColor
-        let rectangleConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-            .applying(.init(paletteColors: [rectangleColor]))
-        rectangleButton.image = NSImage(systemSymbolName: "rectangle", accessibilityDescription: L("annotation.tool.rectangle"))?
-            .withSymbolConfiguration(rectangleConfig)
+        rectangleButton.image = canShapes
+            ? makeSymbolImage(symbolName: "rectangle", color: rectangleColor, accessibility: L("annotation.tool.rectangle"))
+            : makeLockedSymbolImage(symbolName: "rectangle", color: rectangleColor, accessibility: L("annotation.tool.rectangle"))
         rectangleButton.contentTintColor = rectangleColor
         
         // Update number button
-        let numberSelected = selectedTool == .number
+        let canNumbering = CapabilityService.shared.canUse(.annotationsNumbering)
+        let numberSelected = selectedTool == .number && canNumbering
         let numberColor = numberSelected ? brandColor : defaultIconColor
-        let numberConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-            .applying(.init(paletteColors: [numberColor]))
-        numberButton.image = NSImage(systemSymbolName: "1.circle", accessibilityDescription: L("annotation.tool.number"))?
-            .withSymbolConfiguration(numberConfig)
+        numberButton.image = canNumbering
+            ? makeSymbolImage(symbolName: "1.circle", color: numberColor, accessibility: L("annotation.tool.number"))
+            : makeLockedSymbolImage(symbolName: "1.circle", color: numberColor, accessibility: L("annotation.tool.number"))
         numberButton.contentTintColor = numberColor
     }
     
     private func updateColorButton() {
+        let canColors = CapabilityService.shared.canUse(.annotationsColors)
+
+        // Free: color is fixed to red.
+        let displayedColor: AnnotationColor = canColors ? selectedColor : .red
+
         // Create composite image: color dot + chevron
-        let dotImage = createColorDotImage(color: selectedColor, size: colorDotSize)
+        let dotImage = createColorDotImage(color: displayedColor, size: colorDotSize)
         let chevronImage = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: nil)?
             .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 10, weight: .medium))
         
@@ -349,7 +404,7 @@ final class AnnotationToolbarView: NSView {
         }
         
         combinedImage.unlockFocus()
-        colorButton.image = combinedImage
+        colorButton.image = canColors ? combinedImage : overlayLock(on: combinedImage)
     }
     
     private func updateClearAllVisibility() {
@@ -379,12 +434,59 @@ final class AnnotationToolbarView: NSView {
     
     /// Set the selected tool (called externally to sync state)
     func setSelectedTool(_ tool: AnnotationTool) {
-        selectedTool = tool
+        if !EntitlementsService.shared.isPro, (tool == .circle || tool == .rectangle || tool == .number) {
+            selectedTool = .arrow
+        } else {
+            selectedTool = tool
+        }
     }
     
     /// Set the selected color (called externally to sync state)
     func setSelectedColor(_ color: AnnotationColor) {
-        selectedColor = color
+        if !CapabilityService.shared.canUse(.annotationsColors) {
+            selectedColor = .red
+        } else {
+            selectedColor = color
+        }
+    }
+
+    // MARK: - Locked UI Helpers
+
+    private func makeSymbolImage(symbolName: String, color: NSColor, accessibility: String) -> NSImage? {
+        let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+            .applying(.init(paletteColors: [color]))
+        return NSImage(systemSymbolName: symbolName, accessibilityDescription: accessibility)?
+            .withSymbolConfiguration(config)
+    }
+
+    private func makeLockedSymbolImage(symbolName: String, color: NSColor, accessibility: String) -> NSImage? {
+        guard let base = makeSymbolImage(symbolName: symbolName, color: color, accessibility: accessibility) else { return nil }
+        return overlayLock(on: base)
+    }
+
+    private func overlayLock(on base: NSImage) -> NSImage {
+        let output = NSImage(size: base.size)
+        output.lockFocus()
+
+        base.draw(in: NSRect(origin: .zero, size: base.size))
+
+        let lockConfig = NSImage.SymbolConfiguration(pointSize: 8, weight: .bold)
+            .applying(.init(paletteColors: [lockedIconColor]))
+        if let lock = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: nil)?
+            .withSymbolConfiguration(lockConfig) {
+            let padding: CGFloat = 1
+            let lockSize = lock.size
+            let rect = NSRect(
+                x: base.size.width - lockSize.width - padding,
+                y: padding,
+                width: lockSize.width,
+                height: lockSize.height
+            )
+            lock.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+        }
+
+        output.unlockFocus()
+        return output
     }
     
     // MARK: - Layout

@@ -10,6 +10,14 @@ final class SettingsViewController: NSViewController {
 
     private let launchAtLoginCheckbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     
+    // Pro section (IAP)
+    private let proTitleLabel = NSTextField(labelWithString: "")
+    private let proStatusLabel = NSTextField(labelWithString: "")
+    private let upgradeButton = NSButton(title: "", target: nil, action: nil)
+    private let restoreButton = NSButton(title: "", target: nil, action: nil)
+    private let manageButton = NSButton(title: "", target: nil, action: nil)
+    private var proStatusObserver: Any?
+
     // Send List section
     private let sendListLabel = NSTextField(labelWithString: "")
     private let sendListScrollView = NSScrollView()
@@ -28,6 +36,26 @@ final class SettingsViewController: NSViewController {
         shortcutRecorder.onChange = { [weak self] combo in
             self?.applyShortcut(combo)
         }
+
+        // Pro section
+        proTitleLabel.stringValue = L("settings.pro.section_title")
+        proTitleLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
+
+        proStatusLabel.textColor = .secondaryLabelColor
+        proStatusLabel.font = NSFont.systemFont(ofSize: 12)
+        proStatusLabel.maximumNumberOfLines = 2
+
+        upgradeButton.title = L("settings.pro.action.upgrade")
+        upgradeButton.target = self
+        upgradeButton.action = #selector(upgradePressed)
+
+        restoreButton.title = L("settings.pro.action.restore")
+        restoreButton.target = self
+        restoreButton.action = #selector(restorePressed)
+
+        manageButton.title = L("settings.pro.action.manage")
+        manageButton.target = self
+        manageButton.action = #selector(managePressed)
 
         // Save section
         saveCheckbox.title = L("settings.save.checkbox")
@@ -57,6 +85,15 @@ final class SettingsViewController: NSViewController {
         let saveSection = NSStackView(views: [saveCheckbox, saveRow])
         saveSection.orientation = .vertical
         saveSection.spacing = 6
+
+        // Pro section layout
+        let proButtonsRow = NSStackView(views: [upgradeButton, restoreButton, manageButton, NSView()])
+        proButtonsRow.orientation = .horizontal
+        proButtonsRow.alignment = .centerY
+        proButtonsRow.spacing = 8
+        let proSection = NSStackView(views: [proTitleLabel, proStatusLabel, proButtonsRow])
+        proSection.orientation = .vertical
+        proSection.spacing = 6
         
         // Send List section
         sendListLabel.stringValue = L("settings.send_list.title")
@@ -104,7 +141,18 @@ final class SettingsViewController: NSViewController {
         
         loadUserApps()
 
-        let stack = NSStackView(views: [shortcutRecorder, divider(), saveSection, divider(), sendListSection, divider(), launchAtLoginCheckbox, NSView()])
+        let stack = NSStackView(views: [
+            shortcutRecorder,
+            divider(),
+            saveSection,
+            divider(),
+            proSection,
+            divider(),
+            sendListSection,
+            divider(),
+            launchAtLoginCheckbox,
+            NSView()
+        ])
         stack.orientation = .vertical
         stack.spacing = 14
 
@@ -118,6 +166,12 @@ final class SettingsViewController: NSViewController {
         ])
 
         refreshSaveFolderLabel()
+        refreshProStatus()
+        startProStatusObserver()
+    }
+
+    deinit {
+        stopProStatusObserver()
     }
 
     private func divider() -> NSBox {
@@ -199,20 +253,89 @@ final class SettingsViewController: NSViewController {
         alert.addButton(withTitle: L("button.ok"))
         alert.runModal()
     }
+
+    // MARK: - Pro / IAP
+
+    private func startProStatusObserver() {
+        guard proStatusObserver == nil else { return }
+        proStatusObserver = NotificationCenter.default.addObserver(
+            forName: .proStatusDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.refreshProStatus()
+            self?.loadUserApps()
+        }
+    }
+
+    private func stopProStatusObserver() {
+        if let proStatusObserver {
+            NotificationCenter.default.removeObserver(proStatusObserver)
+            self.proStatusObserver = nil
+        }
+    }
+
+    private func refreshProStatus() {
+        let status = EntitlementsService.shared.status
+
+        let tierLabel: String = (status.tier == .pro) ? L("settings.proStatus.pro") : L("settings.proStatus.free")
+        let sourceLabelKey: String
+        switch status.source {
+        case .monthly: sourceLabelKey = "settings.proStatus.source.monthly"
+        case .yearly: sourceLabelKey = "settings.proStatus.source.yearly"
+        case .lifetime: sourceLabelKey = "settings.proStatus.source.lifetime"
+        case .none: sourceLabelKey = "settings.proStatus.source.none"
+        case .unknown: sourceLabelKey = "settings.proStatus.source.unknown"
+        }
+
+        let refreshed: String
+        if let date = status.lastRefreshedAt {
+            let f = DateFormatter()
+            f.locale = Locale(identifier: "en_US_POSIX")
+            f.dateStyle = .short
+            f.timeStyle = .short
+            refreshed = f.string(from: date)
+        } else {
+            refreshed = "-"
+        }
+
+        let sourceLabel = L(sourceLabelKey)
+        proStatusLabel.stringValue = "\(tierLabel)\n\(L("settings.proStatus.lastRefreshed")) \(refreshed)\n\(L("settings.proStatus.source", sourceLabel))"
+    }
+
+    @objc private func upgradePressed() {
+        PaywallWindowController.shared.show()
+    }
+
+    @objc private func restorePressed() {
+        PurchaseService.shared.restorePurchases(from: view.window)
+    }
+
+    @objc private func managePressed() {
+        PurchaseService.shared.openManageSubscriptions(from: view.window)
+    }
     
     // MARK: - Send List Management
     
     private func loadUserApps() {
-        userApps = SettingsStore.shared.userWhitelistApps
+        userApps = SettingsStore.shared.userWhitelistApps(isPro: EntitlementsService.shared.isPro)
         sendListTableView.reloadData()
         updateRemoveButtonState()
     }
     
     private func updateRemoveButtonState() {
-        removeAppButton.isEnabled = sendListTableView.selectedRow >= 0
+        if EntitlementsService.shared.isPro {
+            removeAppButton.isEnabled = sendListTableView.selectedRow >= 0
+        } else {
+            removeAppButton.isEnabled = false
+        }
     }
     
     @objc private func addAppPressed() {
+        if !EntitlementsService.shared.isPro, SettingsStore.shared.freePinnedCustomApp != nil {
+            PaywallWindowController.shared.show()
+            return
+        }
         guard let window = view.window else { return }
         let panelController = AddAppPanelController { [weak self] in
             self?.loadUserApps()
@@ -221,11 +344,14 @@ final class SettingsViewController: NSViewController {
     }
     
     @objc private func removeAppPressed() {
+        if !EntitlementsService.shared.isPro {
+            return
+        }
         let row = sendListTableView.selectedRow
         guard row >= 0 && row < userApps.count else { return }
         
         let app = userApps[row]
-        SettingsStore.shared.removeUserWhitelistApp(bundleID: app.bundleID)
+        SettingsStore.shared.removeProUserWhitelistApp(bundleID: app.bundleID)
         loadUserApps()
     }
 }

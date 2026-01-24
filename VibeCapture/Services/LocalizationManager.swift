@@ -126,8 +126,17 @@ final class LocalizationManager {
     
     /// Loads the bundle for a specific language
     private static func loadBundle(for language: String) -> Bundle {
-        // Try to find the .lproj folder
+        // Try to find the .lproj folder in the standard bundle location.
         if let path = Bundle.main.path(forResource: language, ofType: "lproj"),
+           let bundle = Bundle(path: path) {
+            return bundle
+        }
+
+        // Xcode folder-reference fallback:
+        // In this repo, `VibeCapture/Resources` is sometimes added to Xcode as a *folder reference*,
+        // which gets copied into the app bundle as a subfolder named "Resources".
+        // That places localizations at "Resources/<lang>.lproj/Localizable.strings".
+        if let path = Bundle.main.path(forResource: language, ofType: "lproj", inDirectory: "Resources"),
            let bundle = Bundle(path: path) {
             return bundle
         }

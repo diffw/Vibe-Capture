@@ -144,3 +144,75 @@
 "app.unknown" = "Tuntematon";
 
 "preview.button.show_in_finder" = "Näytä Finderissa";
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Päivitä Pro:ksi";
+"paywall.compare.free" = "Ilmainen";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Merkintätyökalut";
+"paywall.feature.annotations.free" = "Vain nuoli (oletusväri)";
+"paywall.feature.annotations.pro" = "Ympyrä / Suorakulmio / Numero / Värit";
+
+"paywall.feature.custom_apps" = "Mukautetut lähetyssovellukset";
+"paywall.feature.custom_apps.free" = "1 sovellus (ei voi poistaa)";
+"paywall.feature.custom_apps.pro" = "Rajoittamaton määrä sovelluksia";
+
+"paywall.feature.download_manager" = "Lataukset ja kirjasto";
+"paywall.feature.send_queue" = "Lähetysjono";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Tulossa pian";
+
+"paywall.badge.recommended" = "Suositus";
+
+"paywall.legal.terms" = "Ehdot";
+"paywall.legal.privacy" = "Tietosuoja";
+
+"paywall.plan.per_year" = "vuodessa";
+"paywall.plan.per_month" = "kuukaudessa";
+"paywall.plan.one_time" = "kertamaksu";
+"paywall.plan.save_percent" = "Säästä %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / kk";
+"paywall.plan.save_percent.loading" = "Säästä —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / kk";
+
+"paywall.cta.title_with_savings" = "Säästä %@ Prosta";
+"paywall.cta.subtitle_yearly_equivalent" = "Vuosilaskutus · ≈ %@ / kk";

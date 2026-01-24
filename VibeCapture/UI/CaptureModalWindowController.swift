@@ -159,6 +159,15 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
 
     private func pasteAndClose(prompt: String, targetApp: TargetApp) {
         let appName = targetApp.displayName
+
+        // Preflight: We need Accessibility permission to simulate ⌘+V.
+        // If missing, prompt the user and keep the modal open so they can retry.
+        guard AutoPasteService.shared.hasAccessibilityPermission else {
+            AutoPasteService.shared.requestAccessibilityPermission()
+            NSApp.activate(ignoringOtherApps: true)
+            HUDService.shared.show(message: L("permission.accessibility.message"), style: .error, duration: 3.5)
+            return
+        }
         
         // Composite annotations onto the image
         let annotations = viewController.annotations

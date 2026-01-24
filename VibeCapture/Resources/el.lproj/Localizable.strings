@@ -144,3 +144,75 @@
 "app.unknown" = "Άγνωστο";
 
 "preview.button.show_in_finder" = "Εμφάνιση στο Finder";
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Αναβάθμιση σε Pro";
+"paywall.compare.free" = "Δωρεάν";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Εργαλεία σχολιασμού";
+"paywall.feature.annotations.free" = "Μόνο βέλος (προεπιλεγμένο χρώμα)";
+"paywall.feature.annotations.pro" = "Κύκλος / Ορθογώνιο / Αριθμός / Χρώματα";
+
+"paywall.feature.custom_apps" = "Προσαρμοσμένες εφαρμογές αποστολής";
+"paywall.feature.custom_apps.free" = "1 εφαρμογή (δεν αφαιρείται)";
+"paywall.feature.custom_apps.pro" = "Απεριόριστες εφαρμογές";
+
+"paywall.feature.download_manager" = "Λήψεις και βιβλιοθήκη";
+"paywall.feature.send_queue" = "Ουρά αποστολής";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Σύντομα";
+
+"paywall.badge.recommended" = "Προτεινόμενο";
+
+"paywall.legal.terms" = "Όροι";
+"paywall.legal.privacy" = "Απόρρητο";
+
+"paywall.plan.per_year" = "ανά έτος";
+"paywall.plan.per_month" = "ανά μήνα";
+"paywall.plan.one_time" = "εφάπαξ";
+"paywall.plan.save_percent" = "Εξοικονομείτε %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / μήνα";
+"paywall.plan.save_percent.loading" = "Εξοικονομείτε —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / μήνα";
+
+"paywall.cta.title_with_savings" = "Εξοικονομήστε %@ στο Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Ετήσια χρέωση · ≈ %@ / μήνα";

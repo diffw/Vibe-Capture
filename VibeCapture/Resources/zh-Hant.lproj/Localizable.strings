@@ -146,3 +146,75 @@
 /* ===== 預覽 ===== */
 
 "preview.button.show_in_finder" = "在 Finder 中顯示";
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "升級到 Pro…";
+"settings.pro.action.restore" = "回復購買";
+"settings.pro.action.manage" = "管理訂閱";
+"settings.proStatus.free" = "免費";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "上次更新：";
+"settings.proStatus.source" = "來源：%@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "每月";
+"settings.proStatus.source.yearly" = "每年";
+"settings.proStatus.source.lifetime" = "買斷";
+"settings.proStatus.source.unknown" = "未知";
+"paywall.title" = "升級到 Pro";
+"paywall.subtitle" = "解鎖進階功能。";
+"paywall.option.monthly" = "每月";
+"paywall.option.yearly" = "每年";
+"paywall.option.lifetime" = "買斷";
+"paywall.error.generic" = "購買失敗，請再試一次。";
+
+"menu.upgrade" = "升級…";
+"paywall.window_title" = "升級";
+"paywall.action.purchase" = "購買";
+"paywall.action.restore" = "回復";
+"paywall.action.manage" = "管理";
+"paywall.action.close" = "關閉";
+"paywall.price.loading" = "載入中…";
+"paywall.status.already_pro" = "你已經是 Pro。";
+"paywall.status.purchasing" = "購買中…";
+"paywall.status.pending" = "等待確認…";
+"paywall.status.success" = "成功！";
+
+"gating.customApp.confirm.title" = "加入這個 App？";
+"gating.customApp.confirm.message" = "免費用戶只能加入 1 個自訂 App，且加入後無法移除。\n\n加入：%@";
+"gating.customApp.confirm.confirm" = "加入 App";
+"gating.customApp.notCounted.title" = "已支援";
+"gating.customApp.notCounted.message" = "此 App 已在系統白名單中，不會佔用你的免費自訂 App 名額。";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "升級到 Pro";
+"paywall.compare.free" = "免費";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "標註工具";
+"paywall.feature.annotations.free" = "僅箭頭（預設顏色）";
+"paywall.feature.annotations.pro" = "圓形 / 矩形 / 編號 / 顏色";
+
+"paywall.feature.custom_apps" = "自訂傳送 App";
+"paywall.feature.custom_apps.free" = "1 個自訂 App（不可移除）";
+"paywall.feature.custom_apps.pro" = "不限數量自訂 App";
+
+"paywall.feature.download_manager" = "下載與管理";
+"paywall.feature.send_queue" = "傳送佇列";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "即將推出";
+
+"paywall.badge.recommended" = "推薦";
+
+"paywall.legal.terms" = "條款";
+"paywall.legal.privacy" = "隱私";
+
+"paywall.plan.per_year" = "每年";
+"paywall.plan.per_month" = "每月";
+"paywall.plan.one_time" = "一次性";
+"paywall.plan.save_percent" = "省 %@";
+"paywall.plan.equivalent_monthly" = "約 %@ / 月";
+"paywall.plan.save_percent.loading" = "省 —";
+"paywall.plan.equivalent_monthly.loading" = "約 — / 月";
+
+"paywall.cta.title_with_savings" = "升級 Pro 立省 %@";
+"paywall.cta.subtitle_yearly_equivalent" = "按年計費 · 約 %@ / 月";

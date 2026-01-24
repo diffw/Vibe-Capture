@@ -11,6 +11,7 @@
 		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
 		A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B82 /* Carbon.framework */; };
 		A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */; };
+		A1B2C3D4E5F60718293A4B94 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */; };
 		A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */; };
 		A1B2C3D4E5F60718293A4D02 /* CaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C04 /* CaptureManager.swift */; };
 		A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C05 /* ScreenshotOverlayController.swift */; };
@@ -73,6 +74,13 @@
 		A1B2C3D4E5F60718293A4D57 /* download-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C57 /* download-line.svg */; };
 		A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */; };
 		A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */; };
+		A1B2C3D4E5F60718293A4D30 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */; };
+		A1B2C3D4E5F60718293A4D31 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */; };
+		A1B2C3D4E5F60718293A4D32 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */; };
+		A1B2C3D4E5F60718293A4D33 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */; };
+		A1B2C3D4E5F60718293A4D35 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */; };
+		A1B2C3D4E5F60718293A4D36 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C36 /* main.swift */; };
+		A1B2C3D4E5F60718293A4D95 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C95 /* Resources */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +92,11 @@
 		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C36 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C04 /* CaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C05 /* ScreenshotOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotOverlayController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C06 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
@@ -145,7 +158,26 @@
 		A1B2C3D4E5F60718293A4C57 /* download-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "download-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "add-circle-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "arrow-down-s-line.svg"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallWindowController.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C36 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C95 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
+		A3DCB2FE2F2335D3003B887D /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F60718293A4B95 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60718293A4D95 /* Resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A1B2C3D4E5F60718293A4B72 /* Frameworks */ = {
@@ -156,6 +188,7 @@
 				A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */,
+				A1B2C3D4E5F60718293A4B94 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +198,7 @@
 		A1B2C3D4E5F60718293A4B5D = {
 			isa = PBXGroup;
 			children = (
+				A3DCB2FE2F2335D3003B887D /* VibeCap.storekit */,
 				A1B2C3D4E5F60718293A4B5E /* VibeCapture */,
 				A1B2C3D4E5F60718293A4B66 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B65 /* Products */,
@@ -175,6 +209,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */,
+				A1B2C3D4E5F60718293A4C95 /* Resources */,
 				A1B2C3D4E5F60718293A4C36 /* main.swift */,
 				A1B2C3D4E5F60718293A4C02 /* Info.plist */,
 				A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */,
@@ -215,6 +250,10 @@
 				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
 				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
+				A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */,
+				A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */,
+				A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */,
+				A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */,
 				A1B2C3D4E5F60718293A4C09 /* HUDService.swift */,
 				A1B2C3D4E5F60718293A4C37 /* AppLog.swift */,
 				A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */,
@@ -245,6 +284,7 @@
 				A1B2C3D4E5F60718293A4C35 /* DraggableImageView.swift */,
 				A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */,
 				A1B2C3D4E5F60718293A4C0F /* CaptureModalWindowController.swift */,
+				A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */,
 				A1B2C3D4E5F60718293A4C10 /* PromptTextView.swift */,
 				A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */,
 				A1B2C3D4E5F60718293A4C33 /* ScreenshotPreviewPanelController.swift */,
@@ -280,6 +320,7 @@
 				A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */,
 				A1B2C3D4E5F60718293A4B82 /* Carbon.framework */,
 				A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */,
+				A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -325,6 +366,7 @@
 			buildConfigurationList = A1B2C3D4E5F60718293A4B74 /* Build configuration list for PBXNativeTarget "Vibe Capture" */;
 			buildPhases = (
 				A1B2C3D4E5F60718293A4B71 /* Sources */,
+				A1B2C3D4E5F60718293A4B95 /* Resources */,
 				A1B2C3D4E5F60718293A4B72 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B84 /* Resources */,
 			);
@@ -427,6 +469,10 @@
 				A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D06 /* ClipboardService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D30 /* EntitlementsService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D31 /* CapabilityService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D35 /* LocalizationManager.swift in Sources */,
+				A1B2C3D4E5F60718293A4D32 /* PurchaseService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D07 /* HUDService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D37 /* AppLog.swift in Sources */,
 				A1B2C3D4E5F60718293A4D30 /* LocalizationManager.swift in Sources */,
@@ -438,6 +484,7 @@
 				A1B2C3D4E5F60718293A4D0D /* CaptureModalWindowController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D34 /* CountdownCloseButton.swift in Sources */,
 				A1B2C3D4E5F60718293A4D35 /* DraggableImageView.swift in Sources */,
+				A1B2C3D4E5F60718293A4D33 /* PaywallWindowController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D0E /* PromptTextView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D31 /* RoundedHoverButton.swift in Sources */,
 				A1B2C3D4E5F60718293A4D33 /* ScreenshotPreviewPanelController.swift in Sources */,
