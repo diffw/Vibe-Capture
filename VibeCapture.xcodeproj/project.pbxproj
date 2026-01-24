@@ -73,6 +73,11 @@
 		A1B2C3D4E5F60718293A4D57 /* download-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C57 /* download-line.svg */; };
 		A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */; };
 		A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */; };
+		A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */; };
+		A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */; };
+		A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */; };
+		A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */; };
+		A1B2C3D4E5F60718293A4B95 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +86,7 @@
 		A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B82 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
@@ -145,6 +151,11 @@
 		A1B2C3D4E5F60718293A4C57 /* download-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "download-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "add-circle-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "arrow-down-s-line.svg"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallWindowController.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +167,7 @@
 				A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */,
+				A1B2C3D4E5F60718293A4B95 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +177,7 @@
 		A1B2C3D4E5F60718293A4B5D = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */,
 				A1B2C3D4E5F60718293A4B5E /* VibeCapture */,
 				A1B2C3D4E5F60718293A4B66 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B65 /* Products */,
@@ -214,11 +227,14 @@
 				A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */,
 				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
 				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
+				A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
+				A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */,
 				A1B2C3D4E5F60718293A4C09 /* HUDService.swift */,
 				A1B2C3D4E5F60718293A4C37 /* AppLog.swift */,
 				A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */,
 				A1B2C3D4E5F60718293A4C0A /* LaunchAtLoginService.swift */,
+				A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */,
 				A1B2C3D4E5F60718293A4C0B /* ScreenCaptureService.swift */,
 				A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */,
 				A1B2C3D4E5F60718293A4C0C /* ScreenshotSaveService.swift */,
@@ -245,6 +261,7 @@
 				A1B2C3D4E5F60718293A4C35 /* DraggableImageView.swift */,
 				A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */,
 				A1B2C3D4E5F60718293A4C0F /* CaptureModalWindowController.swift */,
+				A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */,
 				A1B2C3D4E5F60718293A4C10 /* PromptTextView.swift */,
 				A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */,
 				A1B2C3D4E5F60718293A4C33 /* ScreenshotPreviewPanelController.swift */,
@@ -280,6 +297,7 @@
 				A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */,
 				A1B2C3D4E5F60718293A4B82 /* Carbon.framework */,
 				A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */,
+				A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -447,6 +465,10 @@
 				A1B2C3D4E5F60718293A4D12 /* KeyCombo.swift in Sources */,
 				A1B2C3D4E5F60718293A4D13 /* NSImage+PNG.swift in Sources */,
 				A1B2C3D4E5F60718293A4D14 /* PermissionsUI.swift in Sources */,
+				A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

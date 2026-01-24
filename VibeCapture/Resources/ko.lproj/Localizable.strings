@@ -144,3 +144,78 @@
 "app.unknown" = "알 수 없음";
 
 "preview.button.show_in_finder" = "Finder에서 보기";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Pro로 업그레이드";
+"paywall.compare.free" = "무료";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "주석 도구";
+"paywall.feature.annotations.free" = "화살표만 (기본 색상)";
+"paywall.feature.annotations.pro" = "원 / 사각형 / 번호 / 색상";
+
+"paywall.feature.custom_apps" = "사용자 지정 전송 앱";
+"paywall.feature.custom_apps.free" = "사용자 지정 앱 1개 (삭제 불가)";
+"paywall.feature.custom_apps.pro" = "무제한 사용자 지정 앱";
+
+"paywall.feature.download_manager" = "다운로드 및 관리";
+"paywall.feature.send_queue" = "전송 대기열";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "출시 예정";
+
+"paywall.badge.recommended" = "추천";
+
+"paywall.legal.terms" = "이용약관";
+"paywall.legal.privacy" = "개인정보 처리방침";
+
+"paywall.plan.per_year" = "연간";
+"paywall.plan.per_month" = "월간";
+"paywall.plan.one_time" = "일회성";
+"paywall.plan.save_percent" = "절약 %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / 월";
+"paywall.plan.save_percent.loading" = "절약 —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / 월";
+
+"paywall.cta.title_with_savings" = "Pro %@ 할인";
+"paywall.cta.subtitle_yearly_equivalent" = "연간 결제 · ≈ %@ / 월";

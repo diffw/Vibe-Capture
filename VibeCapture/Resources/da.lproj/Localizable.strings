@@ -144,3 +144,78 @@
 "app.unknown" = "Ukendt";
 
 "preview.button.show_in_finder" = "Vis i Finder";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Opgrader til Pro";
+"paywall.compare.free" = "Gratis";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Annoteringsværktøjer";
+"paywall.feature.annotations.free" = "Kun pil (standardfarve)";
+"paywall.feature.annotations.pro" = "Cirkel / Rektangel / Nummer / Farver";
+
+"paywall.feature.custom_apps" = "Tilpassede sende-apps";
+"paywall.feature.custom_apps.free" = "1 app (kan ikke fjernes)";
+"paywall.feature.custom_apps.pro" = "Ubegrænset antal apps";
+
+"paywall.feature.download_manager" = "Downloads og bibliotek";
+"paywall.feature.send_queue" = "Sendekø";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Kommer snart";
+
+"paywall.badge.recommended" = "Anbefalet";
+
+"paywall.legal.terms" = "Vilkår";
+"paywall.legal.privacy" = "Privatliv";
+
+"paywall.plan.per_year" = "pr. år";
+"paywall.plan.per_month" = "pr. måned";
+"paywall.plan.one_time" = "engangskøb";
+"paywall.plan.save_percent" = "Spar %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / måned";
+"paywall.plan.save_percent.loading" = "Spar —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / måned";
+
+"paywall.cta.title_with_savings" = "Spar %@ på Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Årlig betaling · ≈ %@ / måned";

@@ -144,3 +144,78 @@
 "app.unknown" = "不明";
 
 "preview.button.show_in_finder" = "Finderで表示";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Proにアップグレード";
+"paywall.compare.free" = "無料";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "注釈ツール";
+"paywall.feature.annotations.free" = "矢印のみ（既定色）";
+"paywall.feature.annotations.pro" = "円 / 四角 / 番号 / 色";
+
+"paywall.feature.custom_apps" = "カスタム送信アプリ";
+"paywall.feature.custom_apps.free" = "カスタムアプリ1個（削除不可）";
+"paywall.feature.custom_apps.pro" = "カスタムアプリ無制限";
+
+"paywall.feature.download_manager" = "ダウンロード＆管理";
+"paywall.feature.send_queue" = "送信キュー";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "近日公開";
+
+"paywall.badge.recommended" = "おすすめ";
+
+"paywall.legal.terms" = "利用規約";
+"paywall.legal.privacy" = "プライバシー";
+
+"paywall.plan.per_year" = "年額";
+"paywall.plan.per_month" = "月額";
+"paywall.plan.one_time" = "買い切り";
+"paywall.plan.save_percent" = "割引 %@";
+"paywall.plan.equivalent_monthly" = "月あたり約 %@";
+"paywall.plan.save_percent.loading" = "割引 —";
+"paywall.plan.equivalent_monthly.loading" = "月あたり約 —";
+
+"paywall.cta.title_with_savings" = "Pro が %@ OFF";
+"paywall.cta.subtitle_yearly_equivalent" = "年額請求 · 約 %@ / 月";

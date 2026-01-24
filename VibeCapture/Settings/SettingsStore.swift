@@ -17,10 +17,18 @@ final class SettingsStore {
         static let saveEnabled = "saveEnabled"
         static let saveFolderBookmark = "saveFolderBookmark"
         static let launchAtLogin = "launchAtLogin"
-        static let userWhitelistApps = "userWhitelistApps"
+        // Legacy (pre-IAP): all user-added apps lived here
+        static let userWhitelistAppsLegacy = "userWhitelistApps"
+
+        // IAP: split storage
+        static let proUserWhitelistApps = "proUserWhitelistApps"
+        static let freePinnedCustomApp = "freePinnedCustomApp"
+        static let didMigrateWhitelistApps = "didMigrateUserWhitelistAppsToPro"
     }
 
-    private init() {}
+    private init() {
+        migrateLegacyWhitelistIfNeeded()
+    }
 
     var captureHotKey: KeyCombo {
         get {
@@ -58,12 +66,11 @@ final class SettingsStore {
         set { defaults.set(newValue, forKey: Key.launchAtLogin) }
     }
     
-    // MARK: - User Whitelist Apps
-    
-    /// List of user-added apps to the send list
-    var userWhitelistApps: [UserWhitelistApp] {
+    // MARK: - IAP Whitelist Storage
+
+    var proUserWhitelistApps: [UserWhitelistApp] {
         get {
-            guard let data = defaults.data(forKey: Key.userWhitelistApps),
+            guard let data = defaults.data(forKey: Key.proUserWhitelistApps),
                   let apps = try? JSONDecoder().decode([UserWhitelistApp].self, from: data) else {
                 return []
             }
@@ -71,30 +78,85 @@ final class SettingsStore {
         }
         set {
             let data = try? JSONEncoder().encode(newValue)
-            defaults.set(data, forKey: Key.userWhitelistApps)
+            defaults.set(data, forKey: Key.proUserWhitelistApps)
         }
     }
-    
-    /// Add an app to the user whitelist
-    func addUserWhitelistApp(_ app: UserWhitelistApp) {
-        var apps = userWhitelistApps
-        // Avoid duplicates
+
+    var freePinnedCustomApp: UserWhitelistApp? {
+        get {
+            guard let data = defaults.data(forKey: Key.freePinnedCustomApp),
+                  let app = try? JSONDecoder().decode(UserWhitelistApp.self, from: data) else {
+                return nil
+            }
+            return app
+        }
+        set {
+            if let newValue {
+                let data = try? JSONEncoder().encode(newValue)
+                defaults.set(data, forKey: Key.freePinnedCustomApp)
+            } else {
+                defaults.removeObject(forKey: Key.freePinnedCustomApp)
+            }
+        }
+    }
+
+    /// Returns the effective user-added whitelist apps based on Free/Pro tier.
+    /// - Pro: pro list + (pinned if exists)
+    /// - Free: pinned only (may be nil)
+    func userWhitelistApps(isPro: Bool) -> [UserWhitelistApp] {
+        if isPro {
+            var apps = proUserWhitelistApps
+            if let pinned = freePinnedCustomApp, !apps.contains(where: { $0.bundleID == pinned.bundleID }) {
+                apps.append(pinned)
+            }
+            return apps
+        } else {
+            return freePinnedCustomApp.map { [$0] } ?? []
+        }
+    }
+
+    func isInUserWhitelist(bundleID: String, isPro: Bool) -> Bool {
+        userWhitelistApps(isPro: isPro).contains { $0.bundleID == bundleID }
+    }
+
+    /// Pro-only: add to manageable list (ignores duplicates).
+    func addProUserWhitelistApp(_ app: UserWhitelistApp) {
+        var apps = proUserWhitelistApps
         if !apps.contains(where: { $0.bundleID == app.bundleID }) {
             apps.append(app)
-            userWhitelistApps = apps
+            proUserWhitelistApps = apps
         }
     }
-    
-    /// Remove an app from the user whitelist
-    func removeUserWhitelistApp(bundleID: String) {
-        var apps = userWhitelistApps
+
+    /// Pro-only: remove from manageable list.
+    func removeProUserWhitelistApp(bundleID: String) {
+        var apps = proUserWhitelistApps
         apps.removeAll { $0.bundleID == bundleID }
-        userWhitelistApps = apps
+        proUserWhitelistApps = apps
     }
-    
-    /// Check if an app is in the user whitelist
-    func isInUserWhitelist(bundleID: String) -> Bool {
-        userWhitelistApps.contains { $0.bundleID == bundleID }
+
+    // MARK: - Migration
+
+    private func migrateLegacyWhitelistIfNeeded() {
+        if defaults.bool(forKey: Key.didMigrateWhitelistApps) {
+            return
+        }
+
+        guard let data = defaults.data(forKey: Key.userWhitelistAppsLegacy),
+              let legacy = try? JSONDecoder().decode([UserWhitelistApp].self, from: data),
+              !legacy.isEmpty
+        else {
+            defaults.set(true, forKey: Key.didMigrateWhitelistApps)
+            return
+        }
+
+        // Only write if pro list is empty to avoid overwriting.
+        if proUserWhitelistApps.isEmpty {
+            proUserWhitelistApps = legacy
+        }
+
+        // Keep legacy key for backwards compatibility with older builds, but mark migrated.
+        defaults.set(true, forKey: Key.didMigrateWhitelistApps)
     }
 }
 

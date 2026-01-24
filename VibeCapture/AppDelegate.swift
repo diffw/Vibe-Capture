@@ -4,6 +4,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let captureManager = CaptureManager()
     private var settingsWindowController: SettingsWindowController?
+    private var didBecomeActiveObserver: Any?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppLog.bootstrap()
@@ -22,12 +23,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         ShortcutManager.shared.start()
 
+        // IAP: start entitlements service and refresh on foreground.
+        EntitlementsService.shared.start()
+        didBecomeActiveObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            Task { await EntitlementsService.shared.refreshEntitlements() }
+        }
+
         // This is a menu bar app (no Dock icon/window). Show a one-time hint so launch doesn't feel like "nothing happened".
         let key = "didShowLaunchHUD"
         if !UserDefaults.standard.bool(forKey: key) {
             UserDefaults.standard.set(true, forKey: key)
             HUDService.shared.show(message: L("hud.app_running"), style: .info, duration: 0.9)
         }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        if let didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(didBecomeActiveObserver)
+            self.didBecomeActiveObserver = nil
+        }
+        EntitlementsService.shared.stop()
     }
 
     /// Setup main menu with Edit menu so ⌘+A/C/V/X work in text fields
@@ -66,6 +85,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // 尝试从 bundle 加载
             if let resourcePath = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png") {
                 iconImage = NSImage(contentsOfFile: resourcePath)
+            } else if let resourcePath = Bundle.main.path(forResource: "MenuBarIcon", ofType: "png", inDirectory: "Resources") {
+                // When `VibeCapture/Resources` is added as a folder reference, it gets copied into the app bundle
+                // as a subdirectory named "Resources".
+                iconImage = NSImage(contentsOfFile: resourcePath)
             }
             
             if let image = iconImage {
@@ -85,6 +108,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: L("menu.capture_area"), action: #selector(captureArea(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: L("menu.upgrade"), action: #selector(openUpgrade(_:)), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: L("menu.settings"), action: #selector(openSettings(_:)), keyEquivalent: ""))
         menu.addItem(.separator())
         
@@ -173,6 +197,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             settingsWindowController = SettingsWindowController()
         }
         settingsWindowController?.show()
+    }
+
+    @objc private func openUpgrade(_ sender: Any?) {
+        PaywallWindowController.shared.show()
     }
 
     @objc private func quit(_ sender: Any?) {

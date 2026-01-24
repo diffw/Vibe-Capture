@@ -144,3 +144,78 @@
 "app.unknown" = "Unbekannt";
 
 "preview.button.show_in_finder" = "Im Finder anzeigen";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Auf Pro upgraden";
+"paywall.compare.free" = "Kostenlos";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Anmerkungswerkzeuge";
+"paywall.feature.annotations.free" = "Nur Pfeil (Standardfarbe)";
+"paywall.feature.annotations.pro" = "Kreis / Rechteck / Nummer / Farben";
+
+"paywall.feature.custom_apps" = "Benutzerdefinierte Sende-Apps";
+"paywall.feature.custom_apps.free" = "1 App (nicht entfernbar)";
+"paywall.feature.custom_apps.pro" = "Unbegrenzt viele Apps";
+
+"paywall.feature.download_manager" = "Downloads & Bibliothek";
+"paywall.feature.send_queue" = "Sende-Warteschlange";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Demnächst";
+
+"paywall.badge.recommended" = "Empfohlen";
+
+"paywall.legal.terms" = "AGB";
+"paywall.legal.privacy" = "Datenschutz";
+
+"paywall.plan.per_year" = "pro Jahr";
+"paywall.plan.per_month" = "pro Monat";
+"paywall.plan.one_time" = "einmalig";
+"paywall.plan.save_percent" = "Spare %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / Monat";
+"paywall.plan.save_percent.loading" = "Spare —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / Monat";
+
+"paywall.cta.title_with_savings" = "Spare %@ bei Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Jährliche Abrechnung · ≈ %@ / Monat";
