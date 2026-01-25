@@ -24,6 +24,14 @@
 "modal.button.close" = "Κλείσιμο";
 "modal.hint.esc_to_close" = "ESC για κλείσιμο";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ για αποστολή";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Προσθήκη οδηγιών (προαιρετικό)";
 "modal.menu.no_supported_apps" = "Καμία υποστηριζόμενη εφαρμογή δεν εκτελείται";
 "modal.menu.send_to_app" = "Αποστολή σε %@";
@@ -241,6 +249,36 @@ Add: %@";
 "paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
 
 /* Pro status card (for existing Pro users) */
-"paywall.pro_status.title" = "You're Pro";
-"paywall.pro_status.type" = "Plan: %@";
-"paywall.pro_status.renews" = "Renews: %@";
+"paywall.pro_status.title" = "Είστε Pro";
+"paywall.pro_status.type" = "Πλάνο: %@";
+"paywall.pro_status.renews" = "Ανανέωση: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Ξεκινήστε δωρεάν";
+"paywall.step1.subtitle_trial" = "Δοκιμάστε το VibeCap δωρεάν στο Mac σας. Πληρώστε μόνο αν θέλετε να συνεχίσετε, ακυρώστε οποτεδήποτε.";
+"paywall.step1.trial_badge" = "14 ημέρες δωρεάν";
+"paywall.step1.cta_trial" = "Έναρξη δωρεάν δοκιμής";
+"paywall.step1.price_with_trial" = "14 ημέρες δωρεάν, μετά %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Αναβάθμιση σε Pro";
+"paywall.step1.subtitle_no_trial" = "Πληρώστε μόνο αν θέλετε να συνεχίσετε, ακυρώστε οποτεδήποτε.";
+"paywall.step1.cta_no_trial" = "Αναβάθμιση σε Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Επιλέξτε πλάνο";
+"paywall.plan_modal.monthly_subtitle" = "Πληρώστε όσο χρησιμοποιείτε";
+"paywall.plan_modal.yearly_subtitle" = "Καλύτερη αξία";
+"paywall.plan_modal.lifetime_subtitle" = "Χωρίς συνδρομή";
+"paywall.plan_modal.badge_popular" = "ΔΗΜΟΦΙΛΕΣ";
+"paywall.plan_modal.paid_once" = "εφάπαξ πληρωμή";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Έναρξη δωρεάν δοκιμής";
+"paywall.plan_modal.cta_buy_now" = "Αγορά τώρα";
+"paywall.plan_modal.cta_subscribe" = "Συνδρομή για %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Συνδρομή τώρα";

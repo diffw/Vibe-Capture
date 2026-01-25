@@ -24,6 +24,14 @@
 "modal.button.close" = "Zavřít";
 "modal.hint.esc_to_close" = "ESC – zavřít";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ – odeslat";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Přidat pokyny (volitelné)";
 "modal.menu.no_supported_apps" = "Nejsou spuštěné žádné podporované aplikace";
 "modal.menu.send_to_app" = "Odeslat do %@";
@@ -241,6 +249,36 @@ Add: %@";
 "paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
 
 /* Pro status card (for existing Pro users) */
-"paywall.pro_status.title" = "You're Pro";
-"paywall.pro_status.type" = "Plan: %@";
-"paywall.pro_status.renews" = "Renews: %@";
+"paywall.pro_status.title" = "Jste Pro";
+"paywall.pro_status.type" = "Plán: %@";
+"paywall.pro_status.renews" = "Obnovení: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Začněte zdarma";
+"paywall.step1.subtitle_trial" = "Vyzkoušejte VibeCap zdarma na svém Macu. Plaťte pouze pokud se rozhodnete pokračovat, zrušte kdykoli.";
+"paywall.step1.trial_badge" = "14 dní zdarma";
+"paywall.step1.cta_trial" = "Začít zkušební období";
+"paywall.step1.price_with_trial" = "14 dní zdarma, poté %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Přejít na Pro";
+"paywall.step1.subtitle_no_trial" = "Plaťte pouze pokud se rozhodnete pokračovat, zrušte kdykoli.";
+"paywall.step1.cta_no_trial" = "Přejít na Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Vyberte plán";
+"paywall.plan_modal.monthly_subtitle" = "Plaťte podle potřeby";
+"paywall.plan_modal.yearly_subtitle" = "Nejlepší hodnota";
+"paywall.plan_modal.lifetime_subtitle" = "Bez předplatného";
+"paywall.plan_modal.badge_popular" = "POPULÁRNÍ";
+"paywall.plan_modal.paid_once" = "jednorázová platba";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Začít zkušební období";
+"paywall.plan_modal.cta_buy_now" = "Koupit nyní";
+"paywall.plan_modal.cta_subscribe" = "Předplatit za %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Předplatit nyní";

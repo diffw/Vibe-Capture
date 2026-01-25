@@ -73,6 +73,7 @@
 		A1B2C3D4E5F60718293A4D57 /* download-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C57 /* download-line.svg */; };
 		A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */; };
 		A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */; };
+		A1B2C3D4E5F60718293A4D5A /* file-copy-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */; };
 		A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */; };
 		A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */; };
 		A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */; };
@@ -151,6 +152,7 @@
 		A1B2C3D4E5F60718293A4C57 /* download-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "download-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "add-circle-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "arrow-down-s-line.svg"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "file-copy-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 				A1B2C3D4E5F60718293A4C57 /* download-line.svg */,
 				A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */,
 				A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */,
+				A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */,
 				A1B2C3D4E5F60718293A4C43 /* cs.lproj */,
 				A1B2C3D4E5F60718293A4C44 /* da.lproj */,
 				A1B2C3D4E5F60718293A4C45 /* de.lproj */,
@@ -399,6 +402,7 @@
 				A1B2C3D4E5F60718293A4D57 /* download-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */,
+				A1B2C3D4E5F60718293A4D5A /* file-copy-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D43 /* cs.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D44 /* da.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D45 /* de.lproj in Resources */,

@@ -24,6 +24,16 @@
 "modal.button.close" = "닫기";
 "modal.hint.esc_to_close" = "ESC로 닫기";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ 보내기";
+"modal.hint.cmd_s_to_save" = "⌘S 저장";
+"modal.button.copy_image" = "이미지 복사";
+"modal.button.copy_prompt" = "프롬프트 복사";
+"modal.hint.enable_auto_send" = "앱으로 자동 전송하고 싶으세요?";
+"modal.hint.enable_auto_send_to_app" = "%@로 자동 전송하고 싶으세요?";
+"modal.button.enable_auto_send" = "활성화 →";
+"hud.image_copied" = "이미지 복사됨";
+"hud.prompt_copied" = "프롬프트 복사됨";
+"hud.configure_save_folder" = "자동 저장을 사용하려면 %@을 클릭해 저장 폴더를 한 번 선택하세요.";
+"hud.configure_save_folder_in_settings" = "자동 저장을 사용하려면 설정을 열고 %@을 클릭하세요.";
 "modal.placeholder.add_instructions" = "지침 추가(선택 사항)";
 "modal.menu.no_supported_apps" = "지원되는 앱이 실행 중이 아님";
 "modal.menu.send_to_app" = "%@(으)로 보내기";
@@ -244,3 +254,33 @@ Add: %@";
 "paywall.pro_status.title" = "Pro 사용자입니다";
 "paywall.pro_status.type" = "플랜: %@";
 "paywall.pro_status.renews" = "갱신일: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "무료로 시작";
+"paywall.step1.subtitle_trial" = "Mac에서 VibeCap을 무료로 체험하세요. 계속 사용할지는 나중에 결정하고, 언제든 취소할 수 있습니다.";
+"paywall.step1.trial_badge" = "14일 무료";
+"paywall.step1.cta_trial" = "무료 체험 시작";
+"paywall.step1.price_with_trial" = "14일 무료, 이후 %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Pro로 업그레이드";
+"paywall.step1.subtitle_no_trial" = "계속 사용할지는 나중에 결정하고, 언제든 취소할 수 있습니다.";
+"paywall.step1.cta_no_trial" = "Pro로 업그레이드";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "플랜 선택";
+"paywall.plan_modal.monthly_subtitle" = "필요할 때만";
+"paywall.plan_modal.yearly_subtitle" = "가장 저렴";
+"paywall.plan_modal.lifetime_subtitle" = "구독 불필요";
+"paywall.plan_modal.badge_popular" = "인기";
+"paywall.plan_modal.paid_once" = "일회 결제";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "무료 체험 시작";
+"paywall.plan_modal.cta_buy_now" = "지금 구매";
+"paywall.plan_modal.cta_subscribe" = "%@/%@ 구독";
+"paywall.plan_modal.cta_subscribe_generic" = "지금 구독";
