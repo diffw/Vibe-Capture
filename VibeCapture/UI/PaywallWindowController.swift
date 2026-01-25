@@ -608,13 +608,13 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     }
 
     @objc private func openTerms() {
-        if let url = URL(string: "https://vibecap.dev/terms") {
+        if let url = URL(string: "https://vibecap.dev/en/terms/") {
             NSWorkspace.shared.open(url)
         }
     }
 
     @objc private func openPrivacy() {
-        if let url = URL(string: "https://vibecap.dev/privacy") {
+        if let url = URL(string: "https://vibecap.dev/en/privacy/") {
             NSWorkspace.shared.open(url)
         }
     }
