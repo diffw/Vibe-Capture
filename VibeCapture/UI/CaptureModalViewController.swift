@@ -156,6 +156,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
     override func loadView() {
         view = NSView()
+        view.setAccessibilityIdentifier("captureModal.root")
         view.wantsLayer = true
         view.layer?.cornerRadius = 12  // macOS system window style
         view.layer?.masksToBounds = true

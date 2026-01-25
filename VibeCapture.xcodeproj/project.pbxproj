@@ -79,15 +79,32 @@
 		A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */; };
 		A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */; };
 		A1B2C3D4E5F60718293A4B95 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */; };
+		B1B2C3D4E5F60718293AC010 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE000 /* XCTest.framework */; };
+		B1B2C3D4E5F60718293AC011 /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */; };
+		B1B2C3D4E5F60718293AC012 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE000 /* XCTest.framework */; };
+		B1B2C3D4E5F60718293AC020 /* CapabilityServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC010 /* CapabilityServiceTests.swift */; };
+		B1B2C3D4E5F60718293AC021 /* EntitlementsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC011 /* EntitlementsServiceTests.swift */; };
+		B1B2C3D4E5F60718293AC022 /* ProStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC012 /* ProStatusTests.swift */; };
+		B1B2C3D4E5F60718293AC023 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC013 /* SettingsStoreTests.swift */; };
+		B1B2C3D4E5F60718293AC024 /* PurchaseFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC020 /* PurchaseFlowTests.swift */; };
+		B1B2C3D4E5F60718293AC025 /* MockCapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC014 /* MockCapabilityService.swift */; };
+		B1B2C3D4E5F60718293AC026 /* MockEntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC015 /* MockEntitlementsService.swift */; };
+		B1B2C3D4E5F60718293AC027 /* MockSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC016 /* MockSettingsStore.swift */; };
+		B1B2C3D4E5F60718293AC028 /* VibeCap.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */; };
+		B1B2C3D4E5F60718293AC030 /* PaywallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC030 /* PaywallUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A1B2C3D4E5F60718293A4B79 /* VibeCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Vibe Capture.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VibeCapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B2C3D4E5F60718293ABD001 /* VibeCapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VibeCapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B82 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		B1B2C3D4E5F60718293ABE000 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKitTest.framework; path = System/Library/Frameworks/StoreKitTest.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
@@ -158,6 +175,15 @@
 		A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallWindowController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC010 /* CapabilityServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC011 /* EntitlementsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC012 /* ProStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC013 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC014 /* MockCapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC015 /* MockEntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC016 /* MockSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC020 /* PurchaseFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC030 /* PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +199,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1B2C3D4E5F60718293ABB10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC010 /* XCTest.framework in Frameworks */,
+				B1B2C3D4E5F60718293AC011 /* StoreKitTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC012 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -181,9 +224,26 @@
 			children = (
 				A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */,
 				A1B2C3D4E5F60718293A4B5E /* VibeCapture */,
+				B1B2C3D4E5F60718293ABF000 /* Tests */,
 				A1B2C3D4E5F60718293A4B66 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B65 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		B1B2C3D4E5F60718293ABF000 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B1B2C3D4E5F60718293ABC010 /* CapabilityServiceTests.swift */,
+				B1B2C3D4E5F60718293ABC011 /* EntitlementsServiceTests.swift */,
+				B1B2C3D4E5F60718293ABC012 /* ProStatusTests.swift */,
+				B1B2C3D4E5F60718293ABC013 /* SettingsStoreTests.swift */,
+				B1B2C3D4E5F60718293ABC014 /* MockCapabilityService.swift */,
+				B1B2C3D4E5F60718293ABC015 /* MockEntitlementsService.swift */,
+				B1B2C3D4E5F60718293ABC016 /* MockSettingsStore.swift */,
+				B1B2C3D4E5F60718293ABC020 /* PurchaseFlowTests.swift */,
+				B1B2C3D4E5F60718293ABC030 /* PaywallUITests.swift */,
+			);
+			name = Tests;
 			sourceTree = "<group>";
 		};
 		A1B2C3D4E5F60718293A4B5E /* VibeCapture */ = {
@@ -288,6 +348,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A4B79 /* VibeCap.app */,
+				B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */,
+				B1B2C3D4E5F60718293ABD001 /* VibeCapUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -300,6 +362,8 @@
 				A1B2C3D4E5F60718293A4B82 /* Carbon.framework */,
 				A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */,
 				A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */,
+				B1B2C3D4E5F60718293ABE000 /* XCTest.framework */,
+				B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -358,6 +422,41 @@
 			productReference = A1B2C3D4E5F60718293A4B79 /* VibeCap.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B1B2C3D4E5F60718293ABA000 /* VibeCapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1B2C3D4E5F60718293AC110 /* Build configuration list for PBXNativeTarget "VibeCapTests" */;
+			buildPhases = (
+				B1B2C3D4E5F60718293ABB00 /* Sources */,
+				B1B2C3D4E5F60718293ABB10 /* Frameworks */,
+				B1B2C3D4E5F60718293ABB20 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1B2C3D4E5F60718293AF020 /* PBXTargetDependency */,
+			);
+			name = VibeCapTests;
+			productName = VibeCapTests;
+			productReference = B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B1B2C3D4E5F60718293ABA001 /* VibeCapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1B2C3D4E5F60718293AC111 /* Build configuration list for PBXNativeTarget "VibeCapUITests" */;
+			buildPhases = (
+				B1B2C3D4E5F60718293ABB01 /* Sources */,
+				B1B2C3D4E5F60718293ABB11 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1B2C3D4E5F60718293AF021 /* PBXTargetDependency */,
+			);
+			name = VibeCapUITests;
+			productName = VibeCapUITests;
+			productReference = B1B2C3D4E5F60718293ABD001 /* VibeCapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -371,6 +470,14 @@
 				TargetAttributes = {
 					A1B2C3D4E5F60718293A4B70 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					B1B2C3D4E5F60718293ABA000 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A1B2C3D4E5F60718293A4B70;
+					};
+					B1B2C3D4E5F60718293ABA001 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A1B2C3D4E5F60718293A4B70;
 					};
 				};
 			};
@@ -387,9 +494,41 @@
 			projectRoot = "";
 			targets = (
 				A1B2C3D4E5F60718293A4B70 /* Vibe Capture */,
+				B1B2C3D4E5F60718293ABA000 /* VibeCapTests */,
+				B1B2C3D4E5F60718293ABA001 /* VibeCapUITests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXContainerItemProxy section */
+		B1B2C3D4E5F60718293AF010 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F60718293A4B5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B2C3D4E5F60718293A4B70;
+			remoteInfo = VibeCap;
+		};
+		B1B2C3D4E5F60718293AF011 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F60718293A4B5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B2C3D4E5F60718293A4B70;
+			remoteInfo = VibeCap;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		B1B2C3D4E5F60718293AF020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B2C3D4E5F60718293A4B70 /* Vibe Capture */;
+			targetProxy = B1B2C3D4E5F60718293AF010 /* PBXContainerItemProxy */;
+		};
+		B1B2C3D4E5F60718293AF021 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B2C3D4E5F60718293A4B70 /* Vibe Capture */;
+			targetProxy = B1B2C3D4E5F60718293AF011 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A1B2C3D4E5F60718293A4B84 /* Resources */ = {
@@ -423,6 +562,14 @@
 				A1B2C3D4E5F60718293A4D54 /* tr.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D55 /* zh-Hans.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D56 /* zh-Hant.lproj in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB20 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC028 /* VibeCap.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,6 +620,29 @@
 				A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC020 /* CapabilityServiceTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC021 /* EntitlementsServiceTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC022 /* ProStatusTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC023 /* SettingsStoreTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC024 /* PurchaseFlowTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC025 /* MockCapabilityService.swift in Sources */,
+				B1B2C3D4E5F60718293AC026 /* MockEntitlementsService.swift in Sources */,
+				B1B2C3D4E5F60718293AC027 /* MockSettingsStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC030 /* PaywallUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,6 +769,60 @@
 			};
 			name = Release;
 		};
+		B1B2C3D4E5F60718293AC100 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture.tests;
+				PRODUCT_NAME = VibeCapTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VibeCap.app/Contents/MacOS/VibeCap";
+			};
+			name = Debug;
+		};
+		B1B2C3D4E5F60718293AC101 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture.tests;
+				PRODUCT_NAME = VibeCapTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VibeCap.app/Contents/MacOS/VibeCap";
+			};
+			name = Release;
+		};
+		B1B2C3D4E5F60718293AC102 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture.uitests;
+				PRODUCT_NAME = VibeCapUITests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = VibeCap;
+			};
+			name = Debug;
+		};
+		B1B2C3D4E5F60718293AC103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture.uitests;
+				PRODUCT_NAME = VibeCapUITests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = VibeCap;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -616,6 +840,24 @@
 			buildConfigurations = (
 				A1B2C3D4E5F60718293A4B77 /* Debug */,
 				A1B2C3D4E5F60718293A4B78 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1B2C3D4E5F60718293AC110 /* Build configuration list for PBXNativeTarget "VibeCapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B2C3D4E5F60718293AC100 /* Debug */,
+				B1B2C3D4E5F60718293AC101 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1B2C3D4E5F60718293AC111 /* Build configuration list for PBXNativeTarget "VibeCapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B2C3D4E5F60718293AC102 /* Debug */,
+				B1B2C3D4E5F60718293AC103 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

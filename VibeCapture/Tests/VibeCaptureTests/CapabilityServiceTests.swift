@@ -1,5 +1,5 @@
 import XCTest
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Unit tests for CapabilityService.
 final class CapabilityServiceTests: XCTestCase {

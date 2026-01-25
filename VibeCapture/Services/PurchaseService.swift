@@ -2,6 +2,7 @@ import AppKit
 import StoreKit
 
 /// Purchase + restore helpers for StoreKit 2.
+@MainActor
 final class PurchaseService {
     static let shared = PurchaseService()
 
@@ -37,7 +38,6 @@ final class PurchaseService {
     }
 
     /// Check if user is eligible for introductory offer (free trial)
-    @MainActor
     func refreshTrialEligibility() async {
         // Check eligibility for yearly subscription (primary trial product)
         if let yearly = productsByID[EntitlementsService.ProductID.yearly] {
@@ -98,7 +98,6 @@ final class PurchaseService {
     }
 
     /// Minimal purchase picker used by Settings until Paywall UI lands.
-    @MainActor
     func presentUpgradeOptions(from window: NSWindow?) {
         Task {
             do {
@@ -139,7 +138,6 @@ final class PurchaseService {
         }
     }
 
-    @MainActor
     func restorePurchases(from window: NSWindow?) {
         Task {
             do {
@@ -151,7 +149,6 @@ final class PurchaseService {
         }
     }
 
-    @MainActor
     func openManageSubscriptions(from window: NSWindow?) {
         // macOS: open Apple-managed subscriptions page.
         // (StoreKit does not currently provide a native "Manage Subscriptions" sheet API on macOS in our toolchain.)
@@ -170,7 +167,6 @@ final class PurchaseService {
     }
 
     /// Public purchase method for PaywallWindowController
-    @MainActor
     func purchase(productID: String) async -> PurchaseResult {
         guard let product = productsByID[productID] else {
             return .failed(L("paywall.error.generic"))
@@ -198,7 +194,6 @@ final class PurchaseService {
 
     // MARK: - Private
 
-    @MainActor
     private func handlePurchaseSelection(
         response: NSApplication.ModalResponse,
         yearly: Product?,
@@ -222,7 +217,6 @@ final class PurchaseService {
         _ = await purchase(productID: product.id)
     }
 
-    @MainActor
     private func purchase(product: Product, from window: NSWindow?) async {
         let result = await purchase(productID: product.id)
         if case .failed(let message) = result {
@@ -230,7 +224,6 @@ final class PurchaseService {
         }
     }
 
-    @MainActor
     private func showErrorAlert(from window: NSWindow?, message: String) {
         let alert = NSAlert()
         alert.alertStyle = .warning

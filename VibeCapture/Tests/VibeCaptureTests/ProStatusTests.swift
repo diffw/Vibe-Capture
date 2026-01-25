@@ -1,5 +1,5 @@
 import XCTest
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Unit tests for ProStatus data model.
 final class ProStatusTests: XCTestCase {

@@ -65,6 +65,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
+        window.setAccessibilityIdentifier("paywall.window")
         window.title = L("paywall.window_title")
         window.isReleasedWhenClosed = false
         window.setContentSize(NSSize(width: 420, height: 480))
@@ -127,6 +128,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
 
     private func buildRootView() -> NSView {
         rootView.wantsLayer = true
+        rootView.setAccessibilityIdentifier("paywall.root")
 
         // Build Step 1
         buildStep1View()
@@ -363,6 +365,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         ctaButton.target = self
         ctaButton.action = #selector(ctaPressed)
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
+        ctaButton.setAccessibilityIdentifier("paywall.cta")
     }
 
     // MARK: - Price Selector
@@ -375,6 +378,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         priceSelectorButton.target = self
         priceSelectorButton.action = #selector(priceSelectorPressed)
         priceSelectorButton.translatesAutoresizingMaskIntoConstraints = false
+        priceSelectorButton.setAccessibilityIdentifier("paywall.priceSelector")
 
         let attachment = NSTextAttachment()
         let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .medium)
@@ -395,6 +399,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         termsButton.action = #selector(openTerms)
         termsButton.font = NSFont.systemFont(ofSize: 11)
         termsButton.contentTintColor = .secondaryLabelColor
+        termsButton.setAccessibilityIdentifier("paywall.legal.terms")
 
         privacyButton.title = L("paywall.legal.privacy")
         privacyButton.isBordered = false
@@ -402,6 +407,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         privacyButton.action = #selector(openPrivacy)
         privacyButton.font = NSFont.systemFont(ofSize: 11)
         privacyButton.contentTintColor = .secondaryLabelColor
+        privacyButton.setAccessibilityIdentifier("paywall.legal.privacy")
 
         restoreButton.title = L("paywall.action.restore")
         restoreButton.isBordered = false
@@ -409,6 +415,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         restoreButton.action = #selector(restorePressed)
         restoreButton.font = NSFont.systemFont(ofSize: 11)
         restoreButton.contentTintColor = .secondaryLabelColor
+        restoreButton.setAccessibilityIdentifier("paywall.restore")
 
         manageButton.title = L("paywall.action.manage")
         manageButton.isBordered = false
@@ -416,6 +423,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         manageButton.action = #selector(managePressed)
         manageButton.font = NSFont.systemFont(ofSize: 11)
         manageButton.contentTintColor = .secondaryLabelColor
+        manageButton.setAccessibilityIdentifier("paywall.manage")
 
         legalStack.orientation = .horizontal
         legalStack.spacing = 4
@@ -537,6 +545,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         cancelButton.contentTintColor = .labelColor
         cancelButton.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.setAccessibilityIdentifier("paywall.planModal.cancel")
 
         // CTA button - flat style with brand color
         planModalCTAButton.bezelStyle = .regularSquare
@@ -549,6 +558,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         planModalCTAButton.target = self
         planModalCTAButton.action = #selector(planModalCTAPressed)
         planModalCTAButton.translatesAutoresizingMaskIntoConstraints = false
+        planModalCTAButton.setAccessibilityIdentifier("paywall.planModal.cta")
 
         // Fixed height for buttons
         let buttonHeight: CGFloat = 40
@@ -958,12 +968,22 @@ private final class PlanRowView: NSView {
         didSet { updateAppearance() }
     }
 
+    private let productID: String
     private let radio = NSImageView()
     private let priceLabel = NSTextField(labelWithString: "")
     private let secondaryPriceLabel = NSTextField(labelWithString: "")
 
     init(productID: String, title: String, subtitle: String, badge: String?) {
+        self.productID = productID
         super.init(frame: .zero)
+        let id: String
+        switch productID {
+        case EntitlementsService.ProductID.monthly: id = "monthly"
+        case EntitlementsService.ProductID.yearly: id = "yearly"
+        case EntitlementsService.ProductID.lifetime: id = "lifetime"
+        default: id = productID
+        }
+        setAccessibilityIdentifier("paywall.planRow.\(id)")
         setup(title: title, subtitle: subtitle, badge: badge)
     }
 

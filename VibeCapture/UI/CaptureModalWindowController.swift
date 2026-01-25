@@ -42,6 +42,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
             defer: false
         )
 
+        window.setAccessibilityIdentifier("captureModal.window")
         window.isMovableByWindowBackground = true
         window.backgroundColor = .clear
         window.isOpaque = false

@@ -5,6 +5,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let captureManager = CaptureManager()
     private var settingsWindowController: SettingsWindowController?
     private var didBecomeActiveObserver: Any?
+    private var uiTestCaptureModal: CaptureModalWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppLog.bootstrap()
@@ -33,11 +34,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Task { await EntitlementsService.shared.refreshEntitlements() }
         }
 
+        // UI testing helpers (launch-arg gated).
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("--force-free") || args.contains("--free-mode") {
+            EntitlementsService.shared.setStatus(
+                ProStatus(tier: .free, source: .none, lastRefreshedAt: Date())
+            )
+        } else if args.contains("--force-pro") {
+            EntitlementsService.shared.setStatus(
+                ProStatus(tier: .pro, source: .lifetime, lastRefreshedAt: Date())
+            )
+        }
+
         // This is a menu bar app (no Dock icon/window). Show a one-time hint so launch doesn't feel like "nothing happened".
         let key = "didShowLaunchHUD"
         if !UserDefaults.standard.bool(forKey: key) {
             UserDefaults.standard.set(true, forKey: key)
             HUDService.shared.show(message: L("hud.app_running"), style: .info, duration: 0.9)
+        }
+
+        // UI testing helper: open paywall deterministically without relying on menu bar item labels.
+        // This is gated behind a launch argument so it won't affect real users.
+        if args.contains("--uitesting-open-paywall") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                PaywallWindowController.shared.show()
+            }
+        }
+
+        // UI testing helper: open a capture modal with a synthetic image (no screen-recording permission needed).
+        if args.contains("--uitesting-open-capture-modal") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                guard let self else { return }
+                let size = NSSize(width: 900, height: 600)
+                let image = NSImage(size: size)
+                image.lockFocus()
+                NSColor(calibratedWhite: 0.9, alpha: 1.0).setFill()
+                NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
+                image.unlockFocus()
+
+                let session = CaptureSession(image: image, prompt: "", createdAt: Date())
+                let modal = CaptureModalWindowController(session: session, targetApp: nil) { _ in }
+                self.uiTestCaptureModal = modal
+                modal.show()
+            }
         }
     }
 

@@ -28,6 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B1B2C3D4E5F60718293ABA000"
+               BuildableName = "VibeCapTests.xctest"
+               BlueprintName = "VibeCapTests"
+               ReferencedContainer = "container:VibeCapture.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B1B2C3D4E5F60718293ABA001"
+               BuildableName = "VibeCapUITests.xctest"
+               BlueprintName = "VibeCapUITests"
+               ReferencedContainer = "container:VibeCapture.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
