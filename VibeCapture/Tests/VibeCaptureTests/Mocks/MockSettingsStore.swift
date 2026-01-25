@@ -1,5 +1,5 @@
 import Foundation
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Mock implementation of SettingsStoreProtocol for unit testing.
 final class MockSettingsStore: SettingsStoreProtocol {

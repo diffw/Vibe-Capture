@@ -34,6 +34,14 @@ struct ProStatus: Codable, Equatable {
 
     static let `default` = ProStatus(tier: .free, source: .none, expirationDate: nil, lastRefreshedAt: nil)
 
+    /// Convenience initializer to keep call sites/tests stable as the model evolves.
+    init(tier: Tier, source: Source, expirationDate: Date? = nil, lastRefreshedAt: Date?) {
+        self.tier = tier
+        self.source = source
+        self.expirationDate = expirationDate
+        self.lastRefreshedAt = lastRefreshedAt
+    }
+
     /// Localized description of the subscription source
     var sourceDisplayName: String {
         switch source {
@@ -180,7 +188,10 @@ final class EntitlementsService: EntitlementsServiceProtocol {
         if let expiration = transaction.expirationDate {
             return expiration > now
         }
-        return true
+        // Safer default: if StoreKit doesn't provide an expiration date for a subscription,
+        // we should not grant Pro.
+        NSLog("VibeCap IAP: subscription missing expirationDate; denying. productID=%{public}@", transaction.productID)
+        return false
     }
 
     /// Shared verification helper for StoreKit 2.

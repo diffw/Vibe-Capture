@@ -21,6 +21,8 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
 
     private var didFinish = false
     private var keyMonitor: Any?
+    
+    private static var didShowAutoSaveNoFolderHint = false
 
     private let viewController: CaptureModalViewController
 
@@ -40,6 +42,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
             defer: false
         )
 
+        window.setAccessibilityIdentifier("captureModal.window")
         window.isMovableByWindowBackground = true
         window.backgroundColor = .clear
         window.isOpaque = false
@@ -84,11 +87,21 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     func show() {
         guard let window else { return }
 
-        // Calculate the correct window size before showing
-        let contentSize = Self.calculateWindowSize(for: session.image.size)
-        window.setContentSize(contentSize)
+        // Use aspect-ratio logic for width; derive height from Auto Layout (fittingSize)
+        let initialSize = Self.calculateWindowSize(for: session.image.size)
+        let contentWidth = initialSize.width
 
-        // Force layout to get accurate frame size
+        // Ensure constraints are installed before fitting
+        _ = viewController.view
+
+        // Establish width first (height is a placeholder)
+        window.setContentSize(NSSize(width: contentWidth, height: initialSize.height))
+        window.layoutIfNeeded()
+
+        // Ask Auto Layout what height is required for this width
+        let fittingSize = viewController.view.fittingSize
+        let finalHeight = (fittingSize.height.isFinite && fittingSize.height > 0) ? fittingSize.height : initialSize.height
+        window.setContentSize(NSSize(width: contentWidth, height: finalHeight))
         window.layoutIfNeeded()
 
         NSApp.activate(ignoringOtherApps: true)
@@ -175,15 +188,36 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
                 HUDService.shared.show(message: errorMessage, style: .error)
             }
 
-            // Attempt auto-save (if enabled)
-            DispatchQueue.main.async {
-                do {
-                    let saved = try ScreenshotSaveService.shared.saveIfEnabled(image: finalImage)
-                    if saved {
-                        HUDService.shared.show(message: L("hud.saved"), style: .success)
+            // Attempt auto-save (if enabled) - silent & non-blocking
+            if SettingsStore.shared.saveEnabled {
+                if let folderURL = ScreenshotSaveService.shared.currentFolderURL() {
+                    DispatchQueue.main.async {
+                        guard let cgImage = finalImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+                            AppLog.log(.error, "save", "Auto-save skipped: failed to extract CGImage")
+                            HUDService.shared.show(message: L("error.image_encoding_failed"), style: .error)
+                            return
+                        }
+                        DispatchQueue.global(qos: .utility).async {
+                            do {
+                                _ = try ScreenshotSaveService.shared.saveToKnownFolderAndReturnURL(cgImage: cgImage, folderURL: folderURL)
+                                AppLog.log(.info, "save", "Auto-save succeeded after paste")
+                            } catch {
+                                AppLog.log(.error, "save", "Auto-save failed: \(error.localizedDescription)")
+                                DispatchQueue.main.async {
+                                    HUDService.shared.show(message: error.localizedDescription, style: .error)
+                                }
+                            }
+                        }
                     }
-                } catch {
-                    HUDService.shared.show(message: error.localizedDescription, style: .error)
+                } else if !Self.didShowAutoSaveNoFolderHint {
+                    Self.didShowAutoSaveNoFolderHint = true
+                    DispatchQueue.main.async {
+                        HUDService.shared.show(
+                            message: L("hud.configure_save_folder_in_settings", L("settings.save.choose_folder")),
+                            style: .info,
+                            duration: 2.0
+                        )
+                    }
                 }
             }
         }
@@ -232,28 +266,9 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     private static let padding: CGFloat = 16
     private static let spacing: CGFloat = 12
     
-    /// Write debug log to desktop
-    private static func writeLog(_ message: String) {
-        let desktop = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop/vibecap_debug.log")
-        let timestamp = ISO8601DateFormatter().string(from: Date())
-        let line = "[\(timestamp)] \(message)\n"
-        if let data = line.data(using: .utf8) {
-            if FileManager.default.fileExists(atPath: desktop.path) {
-                if let handle = try? FileHandle(forWritingTo: desktop) {
-                    handle.seekToEndOfFile()
-                    handle.write(data)
-                    handle.closeFile()
-                }
-            } else {
-                try? data.write(to: desktop)
-            }
-        }
-    }
-    
     /// Calculate max window dimensions based on screen size (similar to Mac Screenshot behavior)
     private static func calculateMaxDimensions() -> (maxWidth: CGFloat, maxImageHeight: CGFloat) {
         guard let screen = NSScreen.main else {
-            writeLog("WC: No main screen, using fallback (800, 400)")
             return (800, 400)  // Fallback
         }
         
@@ -267,8 +282,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         let maxWindowHeight = screenFrame.height * 0.90
         let uiChromeHeight = promptAreaHeight + buttonsRowHeight + toolbarHeight + padding * 2 + spacing * 2 + 36
         let maxImageHeight = maxWindowHeight - uiChromeHeight
-        
-        writeLog("WC: Screen=\(screenFrame.width)x\(screenFrame.height), maxWidth=\(maxWidth), maxImageHeight=\(maxImageHeight)")
         
         return (max(maxWidth, 400), max(maxImageHeight, 300))
     }
@@ -329,9 +342,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         // Total: image container + 12px spacing + prompt + buttons + padding
         let finalWindowHeight = imageContainerHeight + spacing + promptAreaHeight + buttonsRowHeight + padding + spacing
 
-        writeLog("WC: imageSize=\(imageSize.width)x\(imageSize.height), maxImageWidth=\(maxImageWidth), maxImageHeight=\(maxImageHeight)")
-        writeLog("WC: imageDisplay=\(imageDisplayWidth)x\(imageDisplayHeight), finalWindow=\(finalWindowWidth)x\(finalWindowHeight)")
-        
         return NSSize(width: finalWindowWidth, height: finalWindowHeight)
     }
 }

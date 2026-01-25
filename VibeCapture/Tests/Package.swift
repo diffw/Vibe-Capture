@@ -18,6 +18,6 @@ let package = Package(
             path: "VibeCaptureTests/Mocks"
         ),
         // Note: Full unit tests require Xcode test target integration
-        // as they depend on @testable import VibeCapture
+        // as they depend on @testable import VibeCap
     ]
 )

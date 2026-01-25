@@ -1,5 +1,5 @@
 import Foundation
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Mock implementation of EntitlementsServiceProtocol for unit testing.
 final class MockEntitlementsService: EntitlementsServiceProtocol {

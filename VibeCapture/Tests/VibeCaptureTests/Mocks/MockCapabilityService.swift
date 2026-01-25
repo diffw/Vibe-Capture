@@ -1,5 +1,5 @@
 import Foundation
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Mock implementation of CapabilityServiceProtocol for unit testing.
 final class MockCapabilityService: CapabilityServiceProtocol {

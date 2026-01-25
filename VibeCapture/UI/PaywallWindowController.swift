@@ -2,60 +2,81 @@ import AppKit
 import StoreKit
 
 private let brandColor = NSColor(red: 1.0, green: 0.553, blue: 0.463, alpha: 1.0) // #FF8D76
-private let modalBackgroundColor = NSColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1.0) // #eee
+private let paywallBackgroundColor = NSColor.white
 private let cardBackgroundColor = NSColor.white
 
 final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     static let shared = PaywallWindowController()
 
+    // MARK: - State
+
+    private var proStatusObserver: Any?
+    private var products: [String: Product] = [:]
+    private var selectedProductID: String = EntitlementsService.ProductID.yearly
+    private var modalSelectedProductID: String = EntitlementsService.ProductID.yearly // Temporary selection in modal
+    private var isEligibleForTrial: Bool = false
+    private var productsLoadState: ProductsLoadState = .loading
+    private var didRetryProductsLoadAfterError = false
+
+    private enum ProductsLoadState {
+        case loading
+        case loaded
+        case failed
+    }
+
+    // MARK: - Root Container
+
+    private let rootView = NSView()
+
+    // MARK: - Step 1: Main View
+
+    private let step1View = NSView()
+    private let titleLabel = NSTextField(labelWithString: "")
+    private let subtitleLabel = NSTextField(labelWithString: "")
+    private let trialBadgeContainer = NSView()
+    private let trialBadgeLabel = NSTextField(labelWithString: "")
+    private let ctaButton = NSButton()
+    private let priceSelectorButton = NSButton()
+
     // MARK: - Pro Status (for existing Pro users)
+
     private let proStatusContainer = NSBox()
     private let proStatusStack = NSStackView()
 
-    // MARK: - Plan Selection
-    private let planContainer = NSBox()
-    private let monthlyRow = PlanOptionRow()
-    private let yearlyRow = PlanOptionRow()
-    private let lifetimeRow = PlanOptionRow()
+    // MARK: - Legal Links
 
-    // MARK: - Feature List
-    private let featureContainer = NSBox()
-    private let featureStack = NSStackView()
-
-    // MARK: - Bottom
-    private let ctaButton = NSButton()
     private let legalStack = NSStackView()
     private let termsButton = NSButton(title: "", target: nil, action: nil)
     private let privacyButton = NSButton(title: "", target: nil, action: nil)
     private let restoreButton = NSButton(title: "", target: nil, action: nil)
     private let manageButton = NSButton(title: "", target: nil, action: nil)
 
-    private let statusLabel = NSTextField(labelWithString: "")
+    // MARK: - Step 2: Plan Choose (Overlay within same window)
 
-    // MARK: - State
-    private var proStatusObserver: Any?
-    private var products: [String: Product] = [:]
-    private var selectedProductID: String = EntitlementsService.ProductID.lifetime
+    private let planModalOverlay = NSView()
+    private let planModalContainer = NSView()
+    private var planRows: [String: PlanRowView] = [:]
+    private let planModalCTAButton = NSButton()
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 380, height: 520),
+            contentRect: NSRect(x: 0, y: 0, width: 420, height: 480),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
         )
+        window.setAccessibilityIdentifier("paywall.window")
         window.title = L("paywall.window_title")
         window.isReleasedWhenClosed = false
-        // Fixed width, flexible height
-        window.setContentSize(NSSize(width: 380, height: 520))
-        window.contentMinSize = NSSize(width: 380, height: 480)
-        window.contentMaxSize = NSSize(width: 380, height: 700)
+        window.setContentSize(NSSize(width: 420, height: 480))
+        window.contentMinSize = NSSize(width: 420, height: 400)
+        window.contentMaxSize = NSSize(width: 420, height: 700)
         window.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 1)
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.center()
         super.init(window: window)
         window.delegate = self
-        window.contentView = buildContentView()
+        window.contentView = buildRootView()
         startProStatusObserver()
     }
 
@@ -67,6 +88,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         window.center()
         window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
+        hidePlanModal(animated: false)
         startLocalEventMonitor()
         Task { await loadProductsAndRefreshUI() }
     }
@@ -84,7 +106,11 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         localEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self, let window = self.window, window.isKeyWindow else { return event }
             if event.keyCode == 53 { // ESC
-                window.close()
+                if !self.planModalOverlay.isHidden {
+                    self.hidePlanModal(animated: true)
+                } else {
+                    window.close()
+                }
                 return nil
             }
             return event
@@ -98,142 +124,161 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    // MARK: - Build UI
+    // MARK: - Build Root View
 
-    private func buildContentView() -> NSView {
-        let content = NSView()
-        content.wantsLayer = true
-        content.layer?.backgroundColor = modalBackgroundColor.cgColor
+    private func buildRootView() -> NSView {
+        rootView.wantsLayer = true
+        rootView.setAccessibilityIdentifier("paywall.root")
+
+        // Build Step 1
+        buildStep1View()
+
+        // Build Step 2 (Plan Modal Overlay)
+        buildPlanModalOverlay()
+
+        rootView.addSubview(step1View)
+        rootView.addSubview(planModalOverlay)
+
+        step1View.translatesAutoresizingMaskIntoConstraints = false
+        planModalOverlay.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            step1View.topAnchor.constraint(equalTo: rootView.topAnchor),
+            step1View.bottomAnchor.constraint(equalTo: rootView.bottomAnchor),
+            step1View.leadingAnchor.constraint(equalTo: rootView.leadingAnchor),
+            step1View.trailingAnchor.constraint(equalTo: rootView.trailingAnchor),
+
+            planModalOverlay.topAnchor.constraint(equalTo: rootView.topAnchor),
+            planModalOverlay.bottomAnchor.constraint(equalTo: rootView.bottomAnchor),
+            planModalOverlay.leadingAnchor.constraint(equalTo: rootView.leadingAnchor),
+            planModalOverlay.trailingAnchor.constraint(equalTo: rootView.trailingAnchor),
+        ])
+
+        planModalOverlay.isHidden = true
+        return rootView
+    }
+
+    // MARK: - Build Step 1
+
+    private func buildStep1View() {
+        step1View.wantsLayer = true
+        step1View.layer?.backgroundColor = paywallBackgroundColor.cgColor
 
         // Title
-        let titleLabel = NSTextField(labelWithString: L("paywall.title"))
-        titleLabel.font = NSFont.systemFont(ofSize: 20, weight: .semibold)
+        titleLabel.font = NSFont.systemFont(ofSize: 24, weight: .bold)
         titleLabel.alignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        // Subtitle (persuasive)
-        let subtitleLabel = NSTextField(labelWithString: L("paywall.subtitle"))
-        subtitleLabel.font = NSFont.systemFont(ofSize: 13)
+        // Subtitle
+        subtitleLabel.font = NSFont.systemFont(ofSize: 14)
         subtitleLabel.textColor = .secondaryLabelColor
         subtitleLabel.alignment = .center
+        subtitleLabel.maximumNumberOfLines = 2
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        // Title stack
-        let titleStack = NSStackView(views: [titleLabel, subtitleLabel])
-        titleStack.orientation = .vertical
-        titleStack.spacing = 4
-        titleStack.alignment = .centerX
+        // Trial badge
+        setupTrialBadge()
 
-        // Pro status card (for existing Pro users)
+        // Pro status card
         setupProStatusCard()
-
-        // Plan selection container
-        setupPlanSelection()
-
-        // Feature list
-        setupFeatureList()
-
-        // Legal links (below feature list)
-        setupLegalSection()
 
         // CTA Button
         setupCTAButton()
 
-        // Status label
-        statusLabel.textColor = .secondaryLabelColor
-        statusLabel.font = NSFont.systemFont(ofSize: 11)
-        statusLabel.alignment = .center
+        // Price selector
+        setupPriceSelector()
 
-        // Scrollable content area
-        let scrollContent = NSStackView(views: [
-            titleStack,
-            proStatusContainer,
-            planContainer,
-            featureContainer,
-            legalStack,
-        ])
-        scrollContent.orientation = .vertical
-        scrollContent.spacing = 16
-        scrollContent.alignment = .centerX
-        scrollContent.translatesAutoresizingMaskIntoConstraints = false
-        scrollContent.edgeInsets = NSEdgeInsets(top: 20, left: 24, bottom: 20, right: 24)
+        // Legal links
+        setupLegalSection()
 
-        // Document view for scroll
-        let documentView = NSView()
-        documentView.translatesAutoresizingMaskIntoConstraints = false
-        documentView.addSubview(scrollContent)
+        // Layout
+        let contentStack = NSStackView()
+        contentStack.orientation = .vertical
+        contentStack.spacing = 20
+        contentStack.alignment = .centerX
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
 
-        NSLayoutConstraint.activate([
-            scrollContent.topAnchor.constraint(equalTo: documentView.topAnchor),
-            scrollContent.bottomAnchor.constraint(equalTo: documentView.bottomAnchor),
-            scrollContent.leadingAnchor.constraint(equalTo: documentView.leadingAnchor),
-            scrollContent.trailingAnchor.constraint(equalTo: documentView.trailingAnchor),
-        ])
+        let titleStack = NSStackView(views: [titleLabel, subtitleLabel])
+        titleStack.orientation = .vertical
+        titleStack.spacing = 8
+        titleStack.alignment = .centerX
 
-        // Scroll view
-        let scrollView = NSScrollView()
-        scrollView.documentView = documentView
-        scrollView.hasVerticalScroller = true
-        scrollView.hasHorizontalScroller = false
-        scrollView.autohidesScrollers = true
-        scrollView.drawsBackground = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentStack.addArrangedSubview(titleStack)
+        contentStack.addArrangedSubview(proStatusContainer)
+        contentStack.addArrangedSubview(trialBadgeContainer)
 
-        // Bottom toolbar (fixed CTA)
-        let toolbar = NSView()
-        toolbar.wantsLayer = true
-        toolbar.layer?.backgroundColor = cardBackgroundColor.cgColor
-        toolbar.translatesAutoresizingMaskIntoConstraints = false
+        let bottomStack = NSStackView()
+        bottomStack.orientation = .vertical
+        bottomStack.spacing = 12
+        bottomStack.alignment = .centerX
+        bottomStack.translatesAutoresizingMaskIntoConstraints = false
 
-        // Top border for toolbar
-        let topBorder = NSView()
-        topBorder.wantsLayer = true
-        topBorder.layer?.backgroundColor = NSColor.separatorColor.cgColor
-        topBorder.translatesAutoresizingMaskIntoConstraints = false
-        toolbar.addSubview(topBorder)
-        toolbar.addSubview(ctaButton)
+        bottomStack.addArrangedSubview(ctaButton)
+        bottomStack.addArrangedSubview(priceSelectorButton)
+
+        step1View.addSubview(contentStack)
+        step1View.addSubview(bottomStack)
+        step1View.addSubview(legalStack)
 
         NSLayoutConstraint.activate([
-            topBorder.topAnchor.constraint(equalTo: toolbar.topAnchor),
-            topBorder.leadingAnchor.constraint(equalTo: toolbar.leadingAnchor),
-            topBorder.trailingAnchor.constraint(equalTo: toolbar.trailingAnchor),
-            topBorder.heightAnchor.constraint(equalToConstant: 1),
+            contentStack.topAnchor.constraint(equalTo: step1View.topAnchor, constant: 40),
+            contentStack.leadingAnchor.constraint(equalTo: step1View.leadingAnchor, constant: 32),
+            contentStack.trailingAnchor.constraint(equalTo: step1View.trailingAnchor, constant: -32),
 
-            ctaButton.topAnchor.constraint(equalTo: toolbar.topAnchor, constant: 12),
-            ctaButton.bottomAnchor.constraint(equalTo: toolbar.bottomAnchor, constant: -12),
-            ctaButton.leadingAnchor.constraint(equalTo: toolbar.leadingAnchor, constant: 24),
-            ctaButton.trailingAnchor.constraint(equalTo: toolbar.trailingAnchor, constant: -24),
+            titleStack.widthAnchor.constraint(equalTo: contentStack.widthAnchor),
+
+            bottomStack.leadingAnchor.constraint(equalTo: step1View.leadingAnchor, constant: 32),
+            bottomStack.trailingAnchor.constraint(equalTo: step1View.trailingAnchor, constant: -32),
+            bottomStack.bottomAnchor.constraint(equalTo: legalStack.topAnchor, constant: -20),
+
+            ctaButton.widthAnchor.constraint(equalTo: bottomStack.widthAnchor),
             ctaButton.heightAnchor.constraint(equalToConstant: 48),
-        ])
 
-        content.addSubview(scrollView)
-        content.addSubview(toolbar)
-
-        // Fixed width for content
-        let contentWidth: CGFloat = 380
-
-        NSLayoutConstraint.activate([
-            // Content fixed width
-            content.widthAnchor.constraint(equalToConstant: contentWidth),
-
-            scrollView.topAnchor.constraint(equalTo: content.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: content.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: content.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: toolbar.topAnchor),
-
-            toolbar.leadingAnchor.constraint(equalTo: content.leadingAnchor),
-            toolbar.trailingAnchor.constraint(equalTo: content.trailingAnchor),
-            toolbar.bottomAnchor.constraint(equalTo: content.bottomAnchor),
-
-            // Width relative to scroll content (which will be contentWidth - padding)
-            proStatusContainer.widthAnchor.constraint(equalToConstant: contentWidth - 48),
-            planContainer.widthAnchor.constraint(equalToConstant: contentWidth - 48),
-            featureContainer.widthAnchor.constraint(equalToConstant: contentWidth - 48),
-            legalStack.widthAnchor.constraint(equalToConstant: contentWidth - 48),
-
-            documentView.widthAnchor.constraint(equalToConstant: contentWidth),
+            legalStack.leadingAnchor.constraint(equalTo: step1View.leadingAnchor, constant: 24),
+            legalStack.trailingAnchor.constraint(equalTo: step1View.trailingAnchor, constant: -24),
+            legalStack.bottomAnchor.constraint(equalTo: step1View.bottomAnchor, constant: -16),
         ])
 
         refreshUI()
-        return content
+    }
+
+    // MARK: - Trial Badge
+
+    private func setupTrialBadge() {
+        trialBadgeContainer.wantsLayer = true
+        trialBadgeContainer.layer?.backgroundColor = cardBackgroundColor.cgColor
+        trialBadgeContainer.layer?.cornerRadius = 16
+        trialBadgeContainer.layer?.shadowColor = NSColor.black.cgColor
+        trialBadgeContainer.layer?.shadowOpacity = 0.1
+        trialBadgeContainer.layer?.shadowOffset = CGSize(width: 0, height: 2)
+        trialBadgeContainer.layer?.shadowRadius = 8
+        trialBadgeContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        let iconView = NSImageView()
+        let iconConfig = NSImage.SymbolConfiguration(pointSize: 32, weight: .medium)
+        iconView.image = NSImage(systemSymbolName: "calendar.badge.checkmark", accessibilityDescription: nil)?
+            .withSymbolConfiguration(iconConfig)
+        iconView.contentTintColor = NSColor.systemGreen
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+
+        trialBadgeLabel.font = NSFont.systemFont(ofSize: 18, weight: .semibold)
+        trialBadgeLabel.alignment = .center
+        trialBadgeLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let badgeStack = NSStackView(views: [iconView, trialBadgeLabel])
+        badgeStack.orientation = .vertical
+        badgeStack.spacing = 8
+        badgeStack.alignment = .centerX
+        badgeStack.translatesAutoresizingMaskIntoConstraints = false
+
+        trialBadgeContainer.addSubview(badgeStack)
+
+        NSLayoutConstraint.activate([
+            trialBadgeContainer.widthAnchor.constraint(equalToConstant: 160),
+            trialBadgeContainer.heightAnchor.constraint(equalToConstant: 120),
+            badgeStack.centerXAnchor.constraint(equalTo: trialBadgeContainer.centerXAnchor),
+            badgeStack.centerYAnchor.constraint(equalTo: trialBadgeContainer.centerYAnchor),
+        ])
     }
 
     // MARK: - Pro Status Card
@@ -256,9 +301,9 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             proStatusStack.bottomAnchor.constraint(equalTo: proStatusContainer.bottomAnchor, constant: -16),
             proStatusStack.leadingAnchor.constraint(equalTo: proStatusContainer.leadingAnchor, constant: 16),
             proStatusStack.trailingAnchor.constraint(equalTo: proStatusContainer.trailingAnchor, constant: -16),
+            proStatusContainer.widthAnchor.constraint(equalToConstant: 320),
         ])
 
-        // Initially hidden, shown only for Pro users
         proStatusContainer.isHidden = true
     }
 
@@ -267,16 +312,12 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         let isPro = status.tier == .pro
 
         proStatusContainer.isHidden = !isPro
-        planContainer.isHidden = isPro
+        trialBadgeContainer.isHidden = isPro
 
-        if !isPro {
-            return
-        }
+        if !isPro { return }
 
-        // Clear existing content
         proStatusStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        // Checkmark + "You're Pro"
         let checkmark = NSImageView()
         let checkConfig = NSImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
         checkmark.image = NSImage(systemSymbolName: "checkmark.seal.fill", accessibilityDescription: nil)?
@@ -293,13 +334,11 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
 
         proStatusStack.addArrangedSubview(titleRow)
 
-        // Subscription type
         let typeLabel = NSTextField(labelWithString: L("paywall.pro_status.type", status.sourceDisplayName))
         typeLabel.font = NSFont.systemFont(ofSize: 13)
         typeLabel.textColor = .secondaryLabelColor
         proStatusStack.addArrangedSubview(typeLabel)
 
-        // Expiration/renewal date (for subscriptions, not lifetime)
         if let expirationDate = status.expirationDate {
             let formatter = DateFormatter()
             formatter.dateStyle = .long
@@ -313,113 +352,6 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    // MARK: - Plan Selection
-
-    private func setupPlanSelection() {
-        planContainer.boxType = .custom
-        planContainer.borderWidth = 0
-        planContainer.cornerRadius = 12
-        planContainer.fillColor = cardBackgroundColor
-        planContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        // Configure rows
-        monthlyRow.configure(
-            title: L("paywall.option.monthly"),
-            badge: nil,
-            price: L("paywall.price.loading")
-        )
-        monthlyRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.monthly) }
-
-        yearlyRow.configure(
-            title: L("paywall.option.yearly"),
-            badge: nil, // Will be set when products load
-            price: L("paywall.price.loading")
-        )
-        yearlyRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.yearly) }
-
-        lifetimeRow.configure(
-            title: L("paywall.option.lifetime"),
-            badge: L("paywall.badge.best_value"),
-            price: L("paywall.price.loading")
-        )
-        lifetimeRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.lifetime) }
-
-        let separator1 = createSeparator()
-        let separator2 = createSeparator()
-
-        let stack = NSStackView(views: [monthlyRow, separator1, yearlyRow, separator2, lifetimeRow])
-        stack.orientation = .vertical
-        stack.spacing = 0
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-        planContainer.addSubview(stack)
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: planContainer.topAnchor, constant: 8),
-            stack.bottomAnchor.constraint(equalTo: planContainer.bottomAnchor, constant: -8),
-            stack.leadingAnchor.constraint(equalTo: planContainer.leadingAnchor),
-            stack.trailingAnchor.constraint(equalTo: planContainer.trailingAnchor),
-
-            monthlyRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            yearlyRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            lifetimeRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
-        ])
-
-        updatePlanSelectionUI()
-    }
-
-    private func createSeparator() -> NSBox {
-        let sep = NSBox()
-        sep.boxType = .separator
-        return sep
-    }
-
-    // MARK: - Feature List
-
-    private func setupFeatureList() {
-        // Container with same style as plan selection
-        featureContainer.boxType = .custom
-        featureContainer.borderWidth = 0
-        featureContainer.cornerRadius = 12
-        featureContainer.fillColor = cardBackgroundColor
-        featureContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        featureStack.orientation = .vertical
-        featureStack.spacing = 0
-        featureStack.translatesAutoresizingMaskIntoConstraints = false
-
-        // Feature 1: Full annotation
-        let annotationRow = FeatureRow(
-            iconName: "pencil.tip.crop.circle",
-            title: L("paywall.feature.annotations.title"),
-            subtitle: L("paywall.feature.annotations.subtitle")
-        )
-
-        // Feature 2: Unlimited Send list
-        let sendListRow = FeatureRow(
-            iconName: "list.bullet.rectangle",
-            title: L("paywall.feature.send_list.title"),
-            subtitle: L("paywall.feature.send_list.subtitle")
-        )
-
-        let sep = createSeparator()
-
-        featureStack.addArrangedSubview(annotationRow)
-        featureStack.addArrangedSubview(sep)
-        featureStack.addArrangedSubview(sendListRow)
-
-        featureContainer.addSubview(featureStack)
-        NSLayoutConstraint.activate([
-            featureStack.topAnchor.constraint(equalTo: featureContainer.topAnchor, constant: 8),
-            featureStack.bottomAnchor.constraint(equalTo: featureContainer.bottomAnchor, constant: -8),
-            featureStack.leadingAnchor.constraint(equalTo: featureContainer.leadingAnchor),
-            featureStack.trailingAnchor.constraint(equalTo: featureContainer.trailingAnchor),
-
-            // 关键：确保每行宽度一致，与 PlanOptionRow 相同处理
-            annotationRow.widthAnchor.constraint(equalTo: featureStack.widthAnchor),
-            sendListRow.widthAnchor.constraint(equalTo: featureStack.widthAnchor),
-        ])
-    }
-
     // MARK: - CTA Button
 
     private func setupCTAButton() {
@@ -429,12 +361,33 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         ctaButton.layer?.cornerRadius = 12
         ctaButton.layer?.backgroundColor = brandColor.cgColor
         ctaButton.contentTintColor = .white
-        ctaButton.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
+        ctaButton.font = NSFont.systemFont(ofSize: 16, weight: .semibold)
         ctaButton.target = self
         ctaButton.action = #selector(ctaPressed)
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
+        ctaButton.setAccessibilityIdentifier("paywall.cta")
+    }
 
-        updateCTAButton()
+    // MARK: - Price Selector
+
+    private func setupPriceSelector() {
+        priceSelectorButton.bezelStyle = .inline
+        priceSelectorButton.isBordered = false
+        priceSelectorButton.font = NSFont.systemFont(ofSize: 13)
+        priceSelectorButton.contentTintColor = .secondaryLabelColor
+        priceSelectorButton.target = self
+        priceSelectorButton.action = #selector(priceSelectorPressed)
+        priceSelectorButton.translatesAutoresizingMaskIntoConstraints = false
+        priceSelectorButton.setAccessibilityIdentifier("paywall.priceSelector")
+
+        let attachment = NSTextAttachment()
+        let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .medium)
+        attachment.image = NSImage(systemSymbolName: "chevron.up.chevron.down", accessibilityDescription: nil)?
+            .withSymbolConfiguration(config)
+
+        let attrString = NSMutableAttributedString(string: "Loading... ")
+        attrString.append(NSAttributedString(attachment: attachment))
+        priceSelectorButton.attributedTitle = attrString
     }
 
     // MARK: - Legal Section
@@ -446,6 +399,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         termsButton.action = #selector(openTerms)
         termsButton.font = NSFont.systemFont(ofSize: 11)
         termsButton.contentTintColor = .secondaryLabelColor
+        termsButton.setAccessibilityIdentifier("paywall.legal.terms")
 
         privacyButton.title = L("paywall.legal.privacy")
         privacyButton.isBordered = false
@@ -453,6 +407,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         privacyButton.action = #selector(openPrivacy)
         privacyButton.font = NSFont.systemFont(ofSize: 11)
         privacyButton.contentTintColor = .secondaryLabelColor
+        privacyButton.setAccessibilityIdentifier("paywall.legal.privacy")
 
         restoreButton.title = L("paywall.action.restore")
         restoreButton.isBordered = false
@@ -460,6 +415,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         restoreButton.action = #selector(restorePressed)
         restoreButton.font = NSFont.systemFont(ofSize: 11)
         restoreButton.contentTintColor = .secondaryLabelColor
+        restoreButton.setAccessibilityIdentifier("paywall.restore")
 
         manageButton.title = L("paywall.action.manage")
         manageButton.isBordered = false
@@ -467,10 +423,12 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         manageButton.action = #selector(managePressed)
         manageButton.font = NSFont.systemFont(ofSize: 11)
         manageButton.contentTintColor = .secondaryLabelColor
+        manageButton.setAccessibilityIdentifier("paywall.manage")
 
         legalStack.orientation = .horizontal
         legalStack.spacing = 4
         legalStack.alignment = .centerY
+        legalStack.translatesAutoresizingMaskIntoConstraints = false
 
         rebuildLegalStack()
     }
@@ -478,20 +436,16 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     private func rebuildLegalStack() {
         legalStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        // Left side: Terms · Privacy
         legalStack.addArrangedSubview(termsButton)
         legalStack.addArrangedSubview(dotLabel())
         legalStack.addArrangedSubview(privacyButton)
 
-        // Spacer
         let spacer = NSView()
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         legalStack.addArrangedSubview(spacer)
 
-        // Right side: Restore (and Manage for Pro users)
         legalStack.addArrangedSubview(restoreButton)
 
-        // Only show Manage for Pro users
         if EntitlementsService.shared.isPro {
             legalStack.addArrangedSubview(dotLabel())
             legalStack.addArrangedSubview(manageButton)
@@ -505,50 +459,154 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         return label
     }
 
+    // MARK: - Build Plan Modal Overlay (Step 2)
+
+    private func buildPlanModalOverlay() {
+        // Semi-transparent background that captures clicks outside modal
+        planModalOverlay.wantsLayer = true
+        planModalOverlay.layer?.backgroundColor = NSColor.clear.cgColor
+
+        // Background view (actual dark overlay) - receives clicks to dismiss
+        let backgroundView = NSView()
+        backgroundView.wantsLayer = true
+        backgroundView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.4).cgColor
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        planModalOverlay.addSubview(backgroundView)
+
+        // Send background to back so modal container is on top
+        NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: planModalOverlay.topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: planModalOverlay.bottomAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: planModalOverlay.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: planModalOverlay.trailingAnchor),
+        ])
+
+        // Click on background to dismiss
+        let overlayClick = NSClickGestureRecognizer(target: self, action: #selector(overlayBackgroundClicked))
+        backgroundView.addGestureRecognizer(overlayClick)
+
+        // Modal container (white card)
+        planModalContainer.wantsLayer = true
+        planModalContainer.layer?.backgroundColor = cardBackgroundColor.cgColor
+        planModalContainer.layer?.cornerRadius = 20
+        planModalContainer.layer?.shadowColor = NSColor.black.cgColor
+        planModalContainer.layer?.shadowOpacity = 0.2
+        planModalContainer.layer?.shadowOffset = CGSize(width: 0, height: -4)
+        planModalContainer.layer?.shadowRadius = 16
+        planModalContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        // Title
+        let modalTitle = NSTextField(labelWithString: L("paywall.plan_modal.title"))
+        modalTitle.font = NSFont.systemFont(ofSize: 20, weight: .bold)
+        modalTitle.alignment = .center
+        modalTitle.translatesAutoresizingMaskIntoConstraints = false
+
+        // Plan rows
+        let monthlyRow = PlanRowView(
+            productID: EntitlementsService.ProductID.monthly,
+            title: L("paywall.option.monthly"),
+            subtitle: L("paywall.plan_modal.monthly_subtitle"),
+            badge: nil
+        )
+        monthlyRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.monthly) }
+
+        let yearlyRow = PlanRowView(
+            productID: EntitlementsService.ProductID.yearly,
+            title: L("paywall.option.yearly"),
+            subtitle: L("paywall.plan_modal.yearly_subtitle"),
+            badge: L("paywall.plan_modal.badge_popular")
+        )
+        yearlyRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.yearly) }
+
+        let lifetimeRow = PlanRowView(
+            productID: EntitlementsService.ProductID.lifetime,
+            title: L("paywall.option.lifetime"),
+            subtitle: L("paywall.plan_modal.lifetime_subtitle"),
+            badge: nil
+        )
+        lifetimeRow.onSelect = { [weak self] in self?.selectPlan(EntitlementsService.ProductID.lifetime) }
+
+        planRows[EntitlementsService.ProductID.monthly] = monthlyRow
+        planRows[EntitlementsService.ProductID.yearly] = yearlyRow
+        planRows[EntitlementsService.ProductID.lifetime] = lifetimeRow
+
+        let plansStack = NSStackView(views: [monthlyRow, yearlyRow, lifetimeRow])
+        plansStack.orientation = .vertical
+        plansStack.spacing = 8
+        plansStack.translatesAutoresizingMaskIntoConstraints = false
+
+        // Cancel button - flat style with gray background
+        let cancelButton = NSButton(title: L("button.cancel"), target: self, action: #selector(planModalCancelPressed))
+        cancelButton.bezelStyle = .regularSquare
+        cancelButton.isBordered = false
+        cancelButton.wantsLayer = true
+        cancelButton.layer?.cornerRadius = 8
+        cancelButton.layer?.backgroundColor = NSColor.systemGray.withAlphaComponent(0.15).cgColor
+        cancelButton.contentTintColor = .labelColor
+        cancelButton.font = NSFont.systemFont(ofSize: 14, weight: .medium)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.setAccessibilityIdentifier("paywall.planModal.cancel")
+
+        // CTA button - flat style with brand color
+        planModalCTAButton.bezelStyle = .regularSquare
+        planModalCTAButton.isBordered = false
+        planModalCTAButton.wantsLayer = true
+        planModalCTAButton.layer?.cornerRadius = 8
+        planModalCTAButton.layer?.backgroundColor = brandColor.cgColor
+        planModalCTAButton.contentTintColor = .white
+        planModalCTAButton.font = NSFont.systemFont(ofSize: 14, weight: .semibold)
+        planModalCTAButton.target = self
+        planModalCTAButton.action = #selector(planModalCTAPressed)
+        planModalCTAButton.translatesAutoresizingMaskIntoConstraints = false
+        planModalCTAButton.setAccessibilityIdentifier("paywall.planModal.cta")
+
+        // Fixed height for buttons
+        let buttonHeight: CGFloat = 40
+        cancelButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        planModalCTAButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+
+        let buttonStack = NSStackView(views: [cancelButton, planModalCTAButton])
+        buttonStack.orientation = .horizontal
+        buttonStack.spacing = 12
+        buttonStack.distribution = .fillEqually
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+
+        planModalContainer.addSubview(modalTitle)
+        planModalContainer.addSubview(plansStack)
+        planModalContainer.addSubview(buttonStack)
+
+        planModalOverlay.addSubview(planModalContainer)
+
+        let modalWidth: CGFloat = 380
+        let modalHeight: CGFloat = 400
+
+        NSLayoutConstraint.activate([
+            planModalContainer.centerXAnchor.constraint(equalTo: planModalOverlay.centerXAnchor),
+            planModalContainer.centerYAnchor.constraint(equalTo: planModalOverlay.centerYAnchor),
+            planModalContainer.widthAnchor.constraint(equalToConstant: modalWidth),
+            planModalContainer.heightAnchor.constraint(equalToConstant: modalHeight),
+
+            modalTitle.topAnchor.constraint(equalTo: planModalContainer.topAnchor, constant: 24),
+            modalTitle.centerXAnchor.constraint(equalTo: planModalContainer.centerXAnchor),
+
+            plansStack.topAnchor.constraint(equalTo: modalTitle.bottomAnchor, constant: 20),
+            plansStack.leadingAnchor.constraint(equalTo: planModalContainer.leadingAnchor, constant: 16),
+            plansStack.trailingAnchor.constraint(equalTo: planModalContainer.trailingAnchor, constant: -16),
+
+            buttonStack.leadingAnchor.constraint(equalTo: planModalContainer.leadingAnchor, constant: 16),
+            buttonStack.trailingAnchor.constraint(equalTo: planModalContainer.trailingAnchor, constant: -16),
+            buttonStack.bottomAnchor.constraint(equalTo: planModalContainer.bottomAnchor, constant: -20),
+        ])
+    }
+
     // MARK: - Actions
 
     @objc private func ctaPressed() {
         performPurchase()
     }
 
-    private func performPurchase() {
-        guard let window else { return }
-        guard let product = products[selectedProductID] else {
-            statusLabel.stringValue = L("paywall.price.loading")
-            Task { await loadProductsAndRefreshUI() }
-            return
-        }
-
-        ctaButton.isEnabled = false
-        statusLabel.stringValue = L("paywall.status.purchasing")
-
-        Task { [weak self] in
-            guard let self else { return }
-            await self.purchase(product: product, from: window)
-            self.refreshUI()
-        }
-    }
-
-    @MainActor
-    private func purchase(product: Product, from window: NSWindow) async {
-        do {
-            let result = try await product.purchase()
-            switch result {
-            case .success(let verification):
-                let transaction = try EntitlementsService.verify(verification)
-                await transaction.finish()
-                await EntitlementsService.shared.refreshEntitlements()
-                statusLabel.stringValue = L("paywall.status.success")
-            case .userCancelled:
-                statusLabel.stringValue = ""
-            case .pending:
-                statusLabel.stringValue = L("paywall.status.pending")
-            @unknown default:
-                statusLabel.stringValue = L("paywall.error.generic")
-            }
-        } catch {
-            statusLabel.stringValue = L("paywall.error.generic")
-        }
+    @objc private func priceSelectorPressed() {
+        showPlanModal()
     }
 
     @objc private func restorePressed() {
@@ -560,21 +618,182 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     }
 
     @objc private func openTerms() {
-        if let url = URL(string: "http://vibecap.dev/terms") {
+        if let url = URL(string: "https://vibecap.dev/en/terms/") {
             NSWorkspace.shared.open(url)
         }
     }
 
     @objc private func openPrivacy() {
-        if let url = URL(string: "http://vibecap.dev/privacy") {
+        if let url = URL(string: "https://vibecap.dev/en/privacy/") {
             NSWorkspace.shared.open(url)
         }
     }
 
-    // MARK: - Data
+    @objc private func overlayBackgroundClicked() {
+        hidePlanModal(animated: true)
+    }
+
+    @objc private func planModalCancelPressed() {
+        // Discard modal selection, keep original selectedProductID
+        hidePlanModal(animated: true)
+    }
+
+    @objc private func planModalCTAPressed() {
+        // Apply modal selection to main state
+        selectedProductID = modalSelectedProductID
+        hidePlanModal(animated: true)
+        refreshUI()
+        performPurchase()
+    }
+
+    private func selectPlan(_ productID: String) {
+        // Only update modal's temporary selection, not the main state
+        modalSelectedProductID = productID
+        updatePlanRowsSelection()
+        updatePlanModalCTAButton()
+    }
+
+    private func performPurchase() {
+        guard !EntitlementsService.shared.isPro else { return }
+
+        ctaButton.isEnabled = false
+        ctaButton.title = L("paywall.status.purchasing")
+
+        Task { [weak self] in
+            guard let self else { return }
+            let result = await PurchaseService.shared.purchase(productID: self.selectedProductID)
+
+            await MainActor.run {
+                self.ctaButton.isEnabled = true
+                self.refreshUI()
+
+                switch result {
+                case .success:
+                    self.window?.close()
+                case .pending:
+                    self.ctaButton.title = L("paywall.status.pending")
+                case .cancelled:
+                    break
+                case .failed(let message):
+                    let alert = NSAlert()
+                    alert.alertStyle = .warning
+                    alert.messageText = message
+                    alert.addButton(withTitle: L("button.ok"))
+                    if let window = self.window {
+                        alert.beginSheetModal(for: window, completionHandler: nil)
+                    } else {
+                        alert.runModal()
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Plan Modal Show/Hide
+
+    private func showPlanModal() {
+        // Reset modal selection to current main selection
+        modalSelectedProductID = selectedProductID
+
+        updatePlanRowsSelection()
+        updatePlanRowsPrices()
+        updatePlanModalCTAButton()
+
+        planModalOverlay.alphaValue = 0
+        planModalOverlay.isHidden = false
+
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.2
+            planModalOverlay.animator().alphaValue = 1
+        }
+    }
+
+    private func hidePlanModal(animated: Bool) {
+        if animated {
+            NSAnimationContext.runAnimationGroup({ context in
+                context.duration = 0.15
+                context.allowsImplicitAnimation = true
+                self.planModalOverlay.animator().alphaValue = 0
+            }, completionHandler: { [weak self] in
+                guard let self else { return }
+                self.planModalOverlay.isHidden = true
+                self.planModalOverlay.alphaValue = 0
+            })
+        } else {
+            planModalOverlay.alphaValue = 0
+            planModalOverlay.isHidden = true
+        }
+    }
+
+    private func updatePlanRowsSelection() {
+        for (productID, row) in planRows {
+            row.isSelected = (productID == modalSelectedProductID)
+        }
+    }
+
+    private func updatePlanRowsPrices() {
+        for (productID, row) in planRows {
+            guard let product = products[productID] else {
+                row.setPrice(L("paywall.price.loading"), secondary: nil)
+                continue
+            }
+
+            switch productID {
+            case EntitlementsService.ProductID.monthly:
+                row.setPrice("\(product.displayPrice)/\(L("paywall.unit.month"))", secondary: nil)
+
+            case EntitlementsService.ProductID.yearly:
+                let yearlyValue = NSDecimalNumber(decimal: product.price).doubleValue
+                let monthlyEquiv = yearlyValue / 12
+                let formatter = NumberFormatter()
+                formatter.numberStyle = .currency
+                formatter.locale = product.priceFormatStyle.locale
+                let monthlyStr = formatter.string(from: NSNumber(value: monthlyEquiv))
+                row.setPrice(
+                    "\(product.displayPrice)/\(L("paywall.unit.year"))",
+                    secondary: monthlyStr.map { "\($0)/\(L("paywall.unit.month"))" }
+                )
+
+            case EntitlementsService.ProductID.lifetime:
+                row.setPrice(product.displayPrice, secondary: L("paywall.plan_modal.paid_once"))
+
+            default:
+                break
+            }
+        }
+    }
+
+    private func updatePlanModalCTAButton() {
+        let isLifetime = modalSelectedProductID == EntitlementsService.ProductID.lifetime
+
+        if isLifetime {
+            planModalCTAButton.title = L("paywall.plan_modal.cta_buy_now")
+        } else if isEligibleForTrial {
+            planModalCTAButton.title = L("paywall.plan_modal.cta_start_trial")
+        } else {
+            if let product = products[modalSelectedProductID] {
+                let unit = modalSelectedProductID == EntitlementsService.ProductID.monthly
+                    ? L("paywall.unit.month")
+                    : L("paywall.unit.year")
+                planModalCTAButton.title = L("paywall.plan_modal.cta_subscribe", product.displayPrice, unit)
+            } else {
+                planModalCTAButton.title = L("paywall.plan_modal.cta_subscribe_generic")
+            }
+        }
+    }
+
+    // MARK: - Data Loading
 
     @MainActor
     private func loadProductsAndRefreshUI() async {
+        // Loading state (disable CTA / selector, hide trial until confirmed)
+        // Only apply if we don't already have cached products to avoid UI flicker.
+        if products.isEmpty || productsLoadState != .loaded {
+            productsLoadState = .loading
+            isEligibleForTrial = false
+            refreshUI()
+        }
+
         do {
             try await PurchaseService.shared.loadProductsIfNeeded()
             products = [
@@ -582,73 +801,69 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
                 EntitlementsService.ProductID.yearly: PurchaseService.shared.product(id: EntitlementsService.ProductID.yearly),
                 EntitlementsService.ProductID.lifetime: PurchaseService.shared.product(id: EntitlementsService.ProductID.lifetime),
             ].compactMapValues { $0 }
+
+            isEligibleForTrial = PurchaseService.shared.isEligibleForTrial
+            productsLoadState = .loaded
+            didRetryProductsLoadAfterError = false
             refreshUI()
+            updatePlanRowsPrices()
         } catch {
-            statusLabel.stringValue = L("paywall.error.generic")
+            AppLog.log(.error, "paywall", "Failed to load products: \(error.localizedDescription)")
+
+            products = [:]
+            isEligibleForTrial = false
+            productsLoadState = .failed
+            refreshUI()
+            updatePlanRowsPrices()
+
+            guard let window else { return }
+            guard !didRetryProductsLoadAfterError else { return }
+            didRetryProductsLoadAfterError = true
+
+            // Show a single OK alert, then retry once after user acknowledges.
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = L("paywall.error.generic")
+            alert.addButton(withTitle: L("button.ok"))
+            alert.beginSheetModal(for: window) { [weak self] _ in
+                guard let self else { return }
+                Task { [weak self] in
+                    guard let self else { return }
+                    do {
+                        try await PurchaseService.shared.refreshProducts()
+                    } catch {
+                        AppLog.log(.error, "paywall", "refreshProducts failed: \(error.localizedDescription)")
+                    }
+                    await self.loadProductsAndRefreshUI()
+                }
+            }
         }
     }
 
     // MARK: - UI Updates
 
-    private func selectPlan(_ productID: String) {
-        selectedProductID = productID
-        updatePlanSelectionUI()
-        updateCTAButton()
-    }
-
-    private func updatePlanSelectionUI() {
-        monthlyRow.isSelected = (selectedProductID == EntitlementsService.ProductID.monthly)
-        yearlyRow.isSelected = (selectedProductID == EntitlementsService.ProductID.yearly)
-        lifetimeRow.isSelected = (selectedProductID == EntitlementsService.ProductID.lifetime)
-    }
-
     private func refreshUI() {
+        let isPro = EntitlementsService.shared.isPro
+
+        if isPro {
+            titleLabel.stringValue = L("paywall.pro_status.title")
+            subtitleLabel.stringValue = ""
+            trialBadgeContainer.isHidden = true
+        } else if isEligibleForTrial {
+            titleLabel.stringValue = L("paywall.step1.title_trial")
+            subtitleLabel.stringValue = L("paywall.step1.subtitle_trial")
+            trialBadgeContainer.isHidden = false
+            trialBadgeLabel.stringValue = L("paywall.step1.trial_badge")
+        } else {
+            titleLabel.stringValue = L("paywall.step1.title_no_trial")
+            subtitleLabel.stringValue = L("paywall.step1.subtitle_no_trial")
+            trialBadgeContainer.isHidden = true
+        }
+
         updateProStatusCard()
-        refreshPlanPrices()
-        updatePlanSelectionUI()
         updateCTAButton()
-        refreshEntitlementUI()
+        updatePriceSelector()
         rebuildLegalStack()
-    }
-
-    private func refreshPlanPrices() {
-        let monthly = products[EntitlementsService.ProductID.monthly]
-        let yearly = products[EntitlementsService.ProductID.yearly]
-        let lifetime = products[EntitlementsService.ProductID.lifetime]
-
-        // Monthly
-        if let monthly {
-            monthlyRow.configure(
-                title: L("paywall.option.monthly"),
-                badge: nil,
-                price: "\(monthly.displayPrice)/\(L("paywall.unit.month"))"
-            )
-        }
-
-        // Yearly with savings badge
-        if let yearly, let monthly {
-            let savingsText = savingsText(yearly: yearly, monthly: monthly)
-            yearlyRow.configure(
-                title: L("paywall.option.yearly"),
-                badge: savingsText,
-                price: "\(yearly.displayPrice)/\(L("paywall.unit.year"))"
-            )
-        } else if let yearly {
-            yearlyRow.configure(
-                title: L("paywall.option.yearly"),
-                badge: nil,
-                price: "\(yearly.displayPrice)/\(L("paywall.unit.year"))"
-            )
-        }
-
-        // Lifetime
-        if let lifetime {
-            lifetimeRow.configure(
-                title: L("paywall.option.lifetime"),
-                badge: L("paywall.badge.best_value"),
-                price: lifetime.displayPrice
-            )
-        }
     }
 
     private func updateCTAButton() {
@@ -661,39 +876,73 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             return
         }
 
-        ctaButton.isEnabled = true
-        ctaButton.layer?.backgroundColor = brandColor.cgColor
-
-        guard let product = products[selectedProductID] else {
-            ctaButton.title = L("paywall.price.loading")
+        // Disable CTA if products aren't loaded yet (or failed to load)
+        if productsLoadState != .loaded {
+            ctaButton.isEnabled = false
+            ctaButton.layer?.backgroundColor = NSColor.systemGray.cgColor
+            if productsLoadState == .loading {
+                ctaButton.title = L("paywall.price.loading")
+            } else {
+                // Failed state: keep a stable CTA label but disabled
+                ctaButton.title = L("paywall.step1.cta_no_trial")
+            }
             return
         }
 
-        switch selectedProductID {
-        case EntitlementsService.ProductID.monthly:
-            ctaButton.title = L("paywall.cta.subscribe_monthly", product.displayPrice)
-        case EntitlementsService.ProductID.yearly:
-            ctaButton.title = L("paywall.cta.subscribe_yearly", product.displayPrice)
-        case EntitlementsService.ProductID.lifetime:
-            ctaButton.title = L("paywall.cta.unlock_lifetime", product.displayPrice)
-        default:
-            ctaButton.title = L("paywall.action.upgrade_to_pro")
+        ctaButton.isEnabled = true
+        ctaButton.layer?.backgroundColor = brandColor.cgColor
+
+        let isLifetime = selectedProductID == EntitlementsService.ProductID.lifetime
+
+        if isLifetime {
+            ctaButton.title = L("paywall.plan_modal.cta_buy_now")
+        } else if isEligibleForTrial {
+            ctaButton.title = L("paywall.step1.cta_trial")
+        } else {
+            ctaButton.title = L("paywall.step1.cta_no_trial")
         }
     }
 
-    private func refreshEntitlementUI() {
-        // Status shown in CTA button, no separate label needed
-    }
+    private func updatePriceSelector() {
+        if productsLoadState != .loaded {
+            priceSelectorButton.isEnabled = false
+            priceSelectorButton.title = L("paywall.price.loading")
+            return
+        }
 
-    private func savingsText(yearly: Product, monthly: Product) -> String {
-        let yearlyValue = NSDecimalNumber(decimal: yearly.price).doubleValue
-        let monthlyValue = NSDecimalNumber(decimal: monthly.price).doubleValue
-        guard monthlyValue > 0 else { return "" }
-        let monthlyAnnual = monthlyValue * 12
-        guard monthlyAnnual > 0 else { return "" }
-        let savings = max(0, 1 - (yearlyValue / monthlyAnnual))
-        let pct = Int((savings * 100).rounded())
-        return L("paywall.badge.save_percent", "\(pct)")
+        guard let product = products[selectedProductID] else {
+            priceSelectorButton.title = L("paywall.price.loading")
+            return
+        }
+        priceSelectorButton.isEnabled = true
+
+        let isLifetime = selectedProductID == EntitlementsService.ProductID.lifetime
+
+        var priceText: String
+        if isLifetime {
+            priceText = "\(product.displayPrice) · \(L("paywall.plan_modal.paid_once"))"
+        } else if isEligibleForTrial {
+            let unit = selectedProductID == EntitlementsService.ProductID.monthly
+                ? L("paywall.unit.month")
+                : L("paywall.unit.year")
+            priceText = L("paywall.step1.price_with_trial", product.displayPrice, unit)
+        } else {
+            let unit = selectedProductID == EntitlementsService.ProductID.monthly
+                ? L("paywall.unit.month")
+                : L("paywall.unit.year")
+            priceText = L("paywall.step1.price_no_trial", product.displayPrice, unit)
+        }
+
+        let attachment = NSTextAttachment()
+        let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .medium)
+        attachment.image = NSImage(systemSymbolName: "chevron.up.chevron.down", accessibilityDescription: nil)?
+            .withSymbolConfiguration(config)
+
+        let attrString = NSMutableAttributedString(string: "\(priceText) ")
+        attrString.append(NSAttributedString(attachment: attachment))
+        attrString.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor, range: NSRange(location: 0, length: attrString.length))
+        attrString.addAttribute(.font, value: NSFont.systemFont(ofSize: 13), range: NSRange(location: 0, length: attrString.length))
+        priceSelectorButton.attributedTitle = attrString
     }
 
     // MARK: - Observing
@@ -710,185 +959,159 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     }
 }
 
-// MARK: - Plan Option Row
+// MARK: - Plan Row View
 
-private final class PlanOptionRow: NSView {
+private final class PlanRowView: NSView {
     var onSelect: (() -> Void)?
-    var isSelected: Bool = false { didSet { updateStyle() } }
 
-    private let radioImage = NSImageView()
-    private let titleLabel = NSTextField(labelWithString: "")
-    private let badgeLabel = NSTextField(labelWithString: "")
-    private let badgeContainer = NSView()
+    var isSelected: Bool = false {
+        didSet { updateAppearance() }
+    }
+
+    private let productID: String
+    private let radio = NSImageView()
     private let priceLabel = NSTextField(labelWithString: "")
+    private let secondaryPriceLabel = NSTextField(labelWithString: "")
 
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
-    }
-
-    func configure(title: String, badge: String?, price: String) {
-        titleLabel.stringValue = title
-        priceLabel.stringValue = price
-
-        if let badge, !badge.isEmpty {
-            badgeLabel.stringValue = badge
-            badgeContainer.isHidden = false
-        } else {
-            badgeContainer.isHidden = true
-        }
-    }
-
-    private func setup() {
-        translatesAutoresizingMaskIntoConstraints = false
-
-        // Radio image
-        radioImage.translatesAutoresizingMaskIntoConstraints = false
-
-        // Title
-        titleLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        // Badge
-        badgeContainer.wantsLayer = true
-        badgeContainer.layer?.cornerRadius = 4
-        badgeContainer.layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.15).cgColor
-        badgeContainer.translatesAutoresizingMaskIntoConstraints = false
-        badgeContainer.isHidden = true
-
-        badgeLabel.font = NSFont.systemFont(ofSize: 10, weight: .semibold)
-        badgeLabel.textColor = NSColor.systemGreen
-        badgeLabel.translatesAutoresizingMaskIntoConstraints = false
-        badgeContainer.addSubview(badgeLabel)
-
-        NSLayoutConstraint.activate([
-            badgeLabel.leadingAnchor.constraint(equalTo: badgeContainer.leadingAnchor, constant: 6),
-            badgeLabel.trailingAnchor.constraint(equalTo: badgeContainer.trailingAnchor, constant: -6),
-            badgeLabel.topAnchor.constraint(equalTo: badgeContainer.topAnchor, constant: 2),
-            badgeLabel.bottomAnchor.constraint(equalTo: badgeContainer.bottomAnchor, constant: -2),
-        ])
-
-        // Price
-        priceLabel.font = NSFont.systemFont(ofSize: 14, weight: .regular)
-        priceLabel.textColor = .secondaryLabelColor
-        priceLabel.alignment = .right
-        priceLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        // Left side: radio + title + badge
-        let leftStack = NSStackView(views: [radioImage, titleLabel, badgeContainer])
-        leftStack.orientation = .horizontal
-        leftStack.spacing = 8
-        leftStack.alignment = .centerY
-        leftStack.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(leftStack)
-        addSubview(priceLabel)
-
-        NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: 44),
-
-            radioImage.widthAnchor.constraint(equalToConstant: 20),
-            radioImage.heightAnchor.constraint(equalToConstant: 20),
-
-            leftStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            leftStack.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-            priceLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            priceLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-        ])
-
-        // Click gesture
-        let click = NSClickGestureRecognizer(target: self, action: #selector(clicked))
-        addGestureRecognizer(click)
-
-        updateStyle()
-    }
-
-    private func updateStyle() {
-        let symbolName = isSelected ? "checkmark.circle.fill" : "circle"
-        let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-        let tintColor: NSColor = isSelected ? brandColor : .tertiaryLabelColor
-
-        radioImage.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
-            .withSymbolConfiguration(config)
-        radioImage.contentTintColor = tintColor
-    }
-
-    @objc private func clicked() {
-        onSelect?()
-    }
-}
-
-// MARK: - Feature Row
-
-private final class FeatureRow: NSView {
-    init(iconName: String, title: String, subtitle: String) {
+    init(productID: String, title: String, subtitle: String, badge: String?) {
+        self.productID = productID
         super.init(frame: .zero)
-        setup(iconName: iconName, title: title, subtitle: subtitle)
+        let id: String
+        switch productID {
+        case EntitlementsService.ProductID.monthly: id = "monthly"
+        case EntitlementsService.ProductID.yearly: id = "yearly"
+        case EntitlementsService.ProductID.lifetime: id = "lifetime"
+        default: id = productID
+        }
+        setAccessibilityIdentifier("paywall.planRow.\(id)")
+        setup(title: title, subtitle: subtitle, badge: badge)
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+    required init?(coder: NSCoder) { nil }
+
+    func setPrice(_ primary: String, secondary: String?) {
+        priceLabel.stringValue = primary
+        secondaryPriceLabel.stringValue = secondary ?? ""
+        secondaryPriceLabel.isHidden = (secondary == nil)
     }
 
-    private func setup(iconName: String, title: String, subtitle: String) {
+    private func setup(title: String, subtitle: String, badge: String?) {
+        wantsLayer = true
+        layer?.cornerRadius = 12
+        layer?.borderWidth = 1
+        layer?.borderColor = NSColor.separatorColor.cgColor
+        layer?.backgroundColor = cardBackgroundColor.cgColor
         translatesAutoresizingMaskIntoConstraints = false
 
-        // Icon container with fixed width for consistent alignment
-        let iconContainer = NSView()
-        iconContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        let iconView = NSImageView()
-        let config = NSImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-        iconView.image = NSImage(systemSymbolName: iconName, accessibilityDescription: title)?
-            .withSymbolConfiguration(config)
-        iconView.contentTintColor = brandColor
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconContainer.addSubview(iconView)
+        // Radio
+        let radioConfig = NSImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        radio.image = NSImage(systemSymbolName: "circle", accessibilityDescription: nil)?
+            .withSymbolConfiguration(radioConfig)
+        radio.contentTintColor = .tertiaryLabelColor
+        radio.translatesAutoresizingMaskIntoConstraints = false
 
         // Title
         let titleLabel = NSTextField(labelWithString: title)
-        titleLabel.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
+        titleLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let titleRow = NSStackView(views: [titleLabel])
+        titleRow.orientation = .horizontal
+        titleRow.spacing = 8
+        titleRow.alignment = .centerY
+
+        if let badge {
+            let badgeContainer = NSView()
+            badgeContainer.wantsLayer = true
+            badgeContainer.layer?.cornerRadius = 4
+            badgeContainer.layer?.backgroundColor = brandColor.withAlphaComponent(0.15).cgColor
+            badgeContainer.translatesAutoresizingMaskIntoConstraints = false
+
+            let badgeLabel = NSTextField(labelWithString: badge)
+            badgeLabel.font = NSFont.systemFont(ofSize: 9, weight: .bold)
+            badgeLabel.textColor = brandColor
+            badgeLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            badgeContainer.addSubview(badgeLabel)
+            NSLayoutConstraint.activate([
+                badgeLabel.leadingAnchor.constraint(equalTo: badgeContainer.leadingAnchor, constant: 6),
+                badgeLabel.trailingAnchor.constraint(equalTo: badgeContainer.trailingAnchor, constant: -6),
+                badgeLabel.topAnchor.constraint(equalTo: badgeContainer.topAnchor, constant: 2),
+                badgeLabel.bottomAnchor.constraint(equalTo: badgeContainer.bottomAnchor, constant: -2),
+            ])
+
+            titleRow.addArrangedSubview(badgeContainer)
+        }
 
         // Subtitle
         let subtitleLabel = NSTextField(labelWithString: subtitle)
         subtitleLabel.font = NSFont.systemFont(ofSize: 12)
         subtitleLabel.textColor = .secondaryLabelColor
-        subtitleLabel.maximumNumberOfLines = 2
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let textStack = NSStackView(views: [titleLabel, subtitleLabel])
+        // Price labels
+        priceLabel.font = NSFont.systemFont(ofSize: 14, weight: .medium)
+        priceLabel.alignment = .right
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        secondaryPriceLabel.font = NSFont.systemFont(ofSize: 11)
+        secondaryPriceLabel.textColor = .secondaryLabelColor
+        secondaryPriceLabel.alignment = .right
+        secondaryPriceLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        // Layout
+        let textStack = NSStackView(views: [titleRow, subtitleLabel])
         textStack.orientation = .vertical
         textStack.spacing = 2
         textStack.alignment = .leading
-        textStack.translatesAutoresizingMaskIntoConstraints = false
 
-        addSubview(iconContainer)
-        addSubview(textStack)
+        let leftStack = NSStackView(views: [radio, textStack])
+        leftStack.orientation = .horizontal
+        leftStack.spacing = 12
+        leftStack.alignment = .centerY
+        leftStack.translatesAutoresizingMaskIntoConstraints = false
+
+        let rightStack = NSStackView(views: [priceLabel, secondaryPriceLabel])
+        rightStack.orientation = .vertical
+        rightStack.spacing = 2
+        rightStack.alignment = .trailing
+        rightStack.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(leftStack)
+        addSubview(rightStack)
 
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 60),
+            heightAnchor.constraint(equalToConstant: 72),
 
-            // Icon container - fixed width ensures consistent text alignment
-            iconContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            iconContainer.widthAnchor.constraint(equalToConstant: 36),
-            iconContainer.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-            iconContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            leftStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            leftStack.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            // Icon centered in container
-            iconView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
+            rightStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            rightStack.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            // Text stack - fixed leading anchor relative to icon container
-            textStack.leadingAnchor.constraint(equalTo: iconContainer.trailingAnchor, constant: 12),
-            textStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            textStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            radio.widthAnchor.constraint(equalToConstant: 24),
+            radio.heightAnchor.constraint(equalToConstant: 24),
         ])
+
+        // Click handler
+        let click = NSClickGestureRecognizer(target: self, action: #selector(clicked))
+        addGestureRecognizer(click)
+
+        updateAppearance()
+    }
+
+    private func updateAppearance() {
+        let radioConfig = NSImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let radioName = isSelected ? "checkmark.circle.fill" : "circle"
+        radio.image = NSImage(systemSymbolName: radioName, accessibilityDescription: nil)?
+            .withSymbolConfiguration(radioConfig)
+        radio.contentTintColor = isSelected ? brandColor : .tertiaryLabelColor
+
+        layer?.borderWidth = isSelected ? 2 : 1
+        layer?.borderColor = isSelected ? brandColor.cgColor : NSColor.separatorColor.cgColor
+    }
+
+    @objc private func clicked() {
+        onSelect?()
     }
 }

@@ -24,6 +24,16 @@
 "modal.button.close" = "閉じる";
 "modal.hint.esc_to_close" = "ESC で閉じる";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ で送信";
+"modal.hint.cmd_s_to_save" = "⌘S 保存";
+"modal.button.copy_image" = "画像をコピー";
+"modal.button.copy_prompt" = "プロンプトをコピー";
+"modal.hint.enable_auto_send" = "ワンクリックでアプリに送信したい？";
+"modal.hint.enable_auto_send_to_app" = "%@ にワンクリックで送信したい？";
+"modal.button.enable_auto_send" = "有効化 →";
+"hud.image_copied" = "画像をコピーしました";
+"hud.prompt_copied" = "プロンプトをコピーしました";
+"hud.configure_save_folder" = "自動保存を有効にするには、%@ をクリックして保存先フォルダを選択してください。";
+"hud.configure_save_folder_in_settings" = "自動保存を有効にするには、「設定」を開いて %@ をクリックしてください。";
 "modal.placeholder.add_instructions" = "指示を追加（任意）";
 "modal.menu.no_supported_apps" = "対応アプリが起動していません";
 "modal.menu.send_to_app" = "%@ に送信";
@@ -244,3 +254,33 @@ Add: %@";
 "paywall.pro_status.title" = "Pro ユーザーです";
 "paywall.pro_status.type" = "プラン：%@";
 "paywall.pro_status.renews" = "更新日：%@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "無料で始める";
+"paywall.step1.subtitle_trial" = "Mac で VibeCap を無料でお試しください。続けるかどうかはお客様次第、いつでもキャンセル可能です。";
+"paywall.step1.trial_badge" = "14日間無料";
+"paywall.step1.cta_trial" = "無料トライアルを開始";
+"paywall.step1.price_with_trial" = "14日間無料、その後 %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Pro にアップグレード";
+"paywall.step1.subtitle_no_trial" = "続けるかどうかはお客様次第、いつでもキャンセル可能です。";
+"paywall.step1.cta_no_trial" = "Pro にアップグレード";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "プランを選択";
+"paywall.plan_modal.monthly_subtitle" = "必要な時だけ";
+"paywall.plan_modal.yearly_subtitle" = "最もお得";
+"paywall.plan_modal.lifetime_subtitle" = "サブスクリプション不要";
+"paywall.plan_modal.badge_popular" = "人気";
+"paywall.plan_modal.paid_once" = "一括払い";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "無料トライアルを開始";
+"paywall.plan_modal.cta_buy_now" = "購入する";
+"paywall.plan_modal.cta_subscribe" = "%@/%@ で購読";
+"paywall.plan_modal.cta_subscribe_generic" = "今すぐ購読";

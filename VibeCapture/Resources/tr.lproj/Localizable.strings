@@ -24,6 +24,14 @@
 "modal.button.close" = "Kapat";
 "modal.hint.esc_to_close" = "Kapatmak için ESC";
 "modal.hint.cmd_enter_to_send" = "Göndermek için ⌘↩︎";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Talimat ekle (isteğe bağlı)";
 "modal.menu.no_supported_apps" = "Desteklenen uygulama çalışmıyor";
 "modal.menu.send_to_app" = "%@ Uygulamasına Gönder";
@@ -241,6 +249,36 @@ Add: %@";
 "paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
 
 /* Pro status card (for existing Pro users) */
-"paywall.pro_status.title" = "You're Pro";
+"paywall.pro_status.title" = "Pro'sun";
 "paywall.pro_status.type" = "Plan: %@";
-"paywall.pro_status.renews" = "Renews: %@";
+"paywall.pro_status.renews" = "Yenileme: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Ücretsiz başla";
+"paywall.step1.subtitle_trial" = "VibeCap'i Mac'inde ücretsiz dene. Sadece devam etmek istersen öde, istediğin zaman iptal et.";
+"paywall.step1.trial_badge" = "14 gün ücretsiz";
+"paywall.step1.cta_trial" = "Ücretsiz denemeyi başlat";
+"paywall.step1.price_with_trial" = "14 gün ücretsiz, sonra %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Pro'ya yükselt";
+"paywall.step1.subtitle_no_trial" = "Sadece devam etmek istersen öde, istediğin zaman iptal et.";
+"paywall.step1.cta_no_trial" = "Pro'ya yükselt";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Planını seç";
+"paywall.plan_modal.monthly_subtitle" = "Kullandıkça öde";
+"paywall.plan_modal.yearly_subtitle" = "En iyi değer";
+"paywall.plan_modal.lifetime_subtitle" = "Abonelik yok";
+"paywall.plan_modal.badge_popular" = "POPÜLER";
+"paywall.plan_modal.paid_once" = "tek ödeme";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Ücretsiz denemeyi başlat";
+"paywall.plan_modal.cta_buy_now" = "Şimdi satın al";
+"paywall.plan_modal.cta_subscribe" = "%@/%@ abone ol";
+"paywall.plan_modal.cta_subscribe_generic" = "Şimdi abone ol";

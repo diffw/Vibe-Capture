@@ -98,21 +98,25 @@ final class AnnotationToolbarView: NSView {
         configureToolButton(arrowButton, symbolName: "arrow.up.right", tooltip: L("annotation.tool.arrow"))
         arrowButton.target = self
         arrowButton.action = #selector(arrowButtonPressed)
+        arrowButton.setAccessibilityIdentifier("annotation.toolbar.arrow")
         
         // Circle button
         configureToolButton(circleButton, symbolName: "circle", tooltip: L("annotation.tool.circle"))
         circleButton.target = self
         circleButton.action = #selector(circleButtonPressed)
+        circleButton.setAccessibilityIdentifier("annotation.toolbar.circle")
         
         // Rectangle button
         configureToolButton(rectangleButton, symbolName: "rectangle", tooltip: L("annotation.tool.rectangle"))
         rectangleButton.target = self
         rectangleButton.action = #selector(rectangleButtonPressed)
+        rectangleButton.setAccessibilityIdentifier("annotation.toolbar.rectangle")
         
         // Number button
         configureToolButton(numberButton, symbolName: "1.circle", tooltip: L("annotation.tool.number"))
         numberButton.target = self
         numberButton.action = #selector(numberButtonPressed)
+        numberButton.setAccessibilityIdentifier("annotation.toolbar.number")
     }
     
     private func configureToolButton(_ button: NSButton, symbolName: String, tooltip: String) {
@@ -139,6 +143,7 @@ final class AnnotationToolbarView: NSView {
         colorButton.target = self
         colorButton.action = #selector(colorButtonPressed)
         colorButton.translatesAutoresizingMaskIntoConstraints = false
+        colorButton.setAccessibilityIdentifier("annotation.toolbar.color")
         
         updateColorButton()
     }
@@ -151,6 +156,7 @@ final class AnnotationToolbarView: NSView {
         clearAllButton.target = self
         clearAllButton.action = #selector(clearAllButtonPressed)
         clearAllButton.translatesAutoresizingMaskIntoConstraints = false
+        clearAllButton.setAccessibilityIdentifier("annotation.toolbar.clearAll")
     }
     
     private func setupLayout() {

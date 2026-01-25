@@ -15,7 +15,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "22.99",
+      "displayPrice" : "24.99",
       "familyShareable" : false,
       "internalID" : "9E5F560A",
       "localizations" : [
@@ -68,7 +68,13 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "75ABDA2F",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "MONTHLY_INTRO_14D",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
           "localizations" : [
             {
               "description" : "Unlock Pro features with a monthly subscription.",
@@ -97,11 +103,17 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "19.9",
+          "displayPrice" : "17.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "4236B64C",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "YEARLY_INTRO_14D",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
           "localizations" : [
             {
               "description" : "Unlock Pro features with a yearly subscription.",

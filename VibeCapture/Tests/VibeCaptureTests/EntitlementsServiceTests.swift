@@ -1,22 +1,27 @@
 import XCTest
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Unit tests for EntitlementsService.
 final class EntitlementsServiceTests: XCTestCase {
     
     private var testDefaults: UserDefaults!
+    private var defaultsSuiteName: String!
     private var sut: EntitlementsService!
     
     override func setUp() {
         super.setUp()
         // Create a unique UserDefaults suite for each test
-        testDefaults = UserDefaults(suiteName: "com.test.entitlements.\(UUID().uuidString)")!
-        testDefaults.removePersistentDomain(forName: testDefaults.suiteName!)
+        defaultsSuiteName = "com.test.entitlements.\(UUID().uuidString)"
+        testDefaults = UserDefaults(suiteName: defaultsSuiteName)!
+        testDefaults.removePersistentDomain(forName: defaultsSuiteName)
     }
     
     override func tearDown() {
-        testDefaults.removePersistentDomain(forName: testDefaults.suiteName!)
+        if let defaultsSuiteName {
+            testDefaults.removePersistentDomain(forName: defaultsSuiteName)
+        }
         testDefaults = nil
+        defaultsSuiteName = nil
         sut = nil
         super.tearDown()
     }

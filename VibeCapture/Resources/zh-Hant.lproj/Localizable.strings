@@ -24,6 +24,16 @@
 "modal.button.close" = "關閉";
 "modal.hint.esc_to_close" = "ESC 關閉";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ 傳送";
+"modal.hint.cmd_s_to_save" = "⌘S 儲存";
+"modal.button.copy_image" = "複製圖片";
+"modal.button.copy_prompt" = "複製指令";
+"modal.hint.enable_auto_send" = "想要一鍵傳送至 App？";
+"modal.hint.enable_auto_send_to_app" = "想要一鍵傳送至 %@？";
+"modal.button.enable_auto_send" = "啟用 →";
+"hud.image_copied" = "圖片已複製";
+"hud.prompt_copied" = "指令已複製";
+"hud.configure_save_folder" = "要啟用自動儲存，請點擊 %@ 選擇一次儲存資料夾。";
+"hud.configure_save_folder_in_settings" = "要啟用自動儲存，請打開設定並點擊 %@。";
 "modal.placeholder.add_instructions" = "加入說明（選填）";
 "modal.menu.no_supported_apps" = "沒有支援的 App 正在執行";
 "modal.menu.send_to_app" = "傳送至 %@";
@@ -166,7 +176,7 @@
 "paywall.option.monthly" = "每月";
 "paywall.option.yearly" = "每年";
 "paywall.option.lifetime" = "買斷";
-"paywall.error.generic" = "購買失敗，請再試一次。";
+"paywall.error.generic" = "發生問題，請再試一次。";
 
 "menu.upgrade" = "升級…";
 "paywall.window_title" = "升級";
@@ -246,3 +256,33 @@
 "paywall.pro_status.title" = "你已是 Pro";
 "paywall.pro_status.type" = "方案：%@";
 "paywall.pro_status.renews" = "續費日期：%@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "免費開始";
+"paywall.step1.subtitle_trial" = "在 Mac 上免費試用 VibeCap。滿意後再付費，可隨時取消。";
+"paywall.step1.trial_badge" = "14 天免費";
+"paywall.step1.cta_trial" = "開始免費試用";
+"paywall.step1.price_with_trial" = "14 天免費，之後 %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "升級到 Pro";
+"paywall.step1.subtitle_no_trial" = "滿意後再付費，可隨時取消。";
+"paywall.step1.cta_no_trial" = "升級到 Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "選擇方案";
+"paywall.plan_modal.monthly_subtitle" = "按需付費";
+"paywall.plan_modal.yearly_subtitle" = "最優惠";
+"paywall.plan_modal.lifetime_subtitle" = "無需訂閱";
+"paywall.plan_modal.badge_popular" = "最受歡迎";
+"paywall.plan_modal.paid_once" = "一次付清";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "開始免費試用";
+"paywall.plan_modal.cta_buy_now" = "立即購買";
+"paywall.plan_modal.cta_subscribe" = "訂閱 %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "立即訂閱";

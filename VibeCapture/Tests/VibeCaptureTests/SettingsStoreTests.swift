@@ -1,22 +1,27 @@
 import XCTest
-@testable import VibeCapture
+@testable import VibeCap
 
 /// Unit tests for SettingsStore.
 final class SettingsStoreTests: XCTestCase {
     
     private var testDefaults: UserDefaults!
+    private var defaultsSuiteName: String!
     private var sut: SettingsStore!
     
     override func setUp() {
         super.setUp()
-        testDefaults = UserDefaults(suiteName: "com.test.settings.\(UUID().uuidString)")!
-        testDefaults.removePersistentDomain(forName: testDefaults.suiteName!)
+        defaultsSuiteName = "com.test.settings.\(UUID().uuidString)"
+        testDefaults = UserDefaults(suiteName: defaultsSuiteName)!
+        testDefaults.removePersistentDomain(forName: defaultsSuiteName)
         sut = SettingsStore(defaults: testDefaults, skipMigration: true)
     }
     
     override func tearDown() {
-        testDefaults.removePersistentDomain(forName: testDefaults.suiteName!)
+        if let defaultsSuiteName {
+            testDefaults.removePersistentDomain(forName: defaultsSuiteName)
+        }
         testDefaults = nil
+        defaultsSuiteName = nil
         sut = nil
         super.tearDown()
     }
