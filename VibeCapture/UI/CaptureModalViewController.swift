@@ -41,6 +41,15 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     
     // Basic mode: avoid spamming folder configuration hint
     private var didShowConfigureSaveFolderHint = false
+
+    // MARK: - Permission UX
+    //
+    // When opening System Settings for Accessibility, our capture modal (floating window)
+    // can cover System Settings and block the user from granting permission. We temporarily
+    // demote the window level so System Settings is usable, then restore when the app becomes active.
+    private var didDemoteWindowForAccessibilityFlow = false
+    private var previousWindowLevel: NSWindow.Level?
+    private var didBecomeActiveObserver: NSObjectProtocol?
     
     /// Whether we have Accessibility permission for auto-paste
     private var hasAccessibilityPermission: Bool {
@@ -241,6 +250,14 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         promptTextView.onTypingStarted = { [weak self] in
             // Hide placeholder immediately when typing starts
             self?.placeholderLabel.isHidden = true
+        }
+
+        didBecomeActiveObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.restoreWindowLevelAfterPermissionFlowIfNeeded()
         }
 
         // Configure scroll view
@@ -466,6 +483,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
     deinit {
         stopAppActivationObserver()
+        if let didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(didBecomeActiveObserver)
+            self.didBecomeActiveObserver = nil
+        }
     }
 
     var promptText: String {
@@ -619,9 +640,31 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     }
     
     @objc private func enableAutoSendPressed() {
+        // Step aside so System Settings isn't covered by our floating window.
+        if let window = view.window {
+            if previousWindowLevel == nil {
+                previousWindowLevel = window.level
+            }
+            didDemoteWindowForAccessibilityFlow = true
+            window.level = .normal
+            window.orderBack(nil)
+        }
+
         AutoPasteService.shared.requestAccessibilityPermission()
         // Open System Settings
         PermissionsUI.openAccessibilitySettings()
+    }
+
+    private func restoreWindowLevelAfterPermissionFlowIfNeeded() {
+        guard didDemoteWindowForAccessibilityFlow else { return }
+        guard let window = view.window else { return }
+
+        window.level = previousWindowLevel ?? .floating
+        // Bring the capture modal back when the user returns to the app.
+        window.makeKeyAndOrderFront(nil)
+
+        didDemoteWindowForAccessibilityFlow = false
+        previousWindowLevel = nil
     }
     
     private func updateBottomConstraints() {
