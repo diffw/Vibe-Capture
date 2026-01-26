@@ -150,9 +150,9 @@ final class EntitlementsServiceTests: XCTestCase {
     // MARK: - Product ID Tests
     
     func testProductIDsAreCorrect() {
-        XCTAssertEqual(EntitlementsService.ProductID.monthly, "com.luke.vibecapture.pro.monthly")
-        XCTAssertEqual(EntitlementsService.ProductID.yearly, "com.luke.vibecapture.pro.yearly")
-        XCTAssertEqual(EntitlementsService.ProductID.lifetime, "com.luke.vibecapture.pro.lifetime")
+        XCTAssertEqual(EntitlementsService.ProductID.monthly, "com.nanwang.vibecap.pro.monthly")
+        XCTAssertEqual(EntitlementsService.ProductID.yearly, "com.nanwang.vibecap.pro.yearly.v1")
+        XCTAssertEqual(EntitlementsService.ProductID.lifetime, "com.nanwang.vibecap.pro.lifetime")
     }
     
     // MARK: - Notification Tests

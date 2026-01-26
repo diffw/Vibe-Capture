@@ -66,9 +66,10 @@ final class EntitlementsService: EntitlementsServiceProtocol {
     // MARK: - Constants
 
     enum ProductID {
-        static let monthly = "com.luke.vibecapture.pro.monthly"
-        static let yearly = "com.luke.vibecapture.pro.yearly"
-        static let lifetime = "com.luke.vibecapture.pro.lifetime"
+        // Must match App Store Connect product identifiers exactly.
+        static let monthly = "com.nanwang.vibecap.pro.monthly"
+        static let yearly = "com.nanwang.vibecap.pro.yearly.v1"
+        static let lifetime = "com.nanwang.vibecap.pro.lifetime"
     }
 
     enum DefaultsKey {

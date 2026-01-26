@@ -30,7 +30,7 @@
           "locale" : "zh_Hans"
         }
       ],
-      "productID" : "com.luke.vibecapture.pro.lifetime",
+      "productID" : "com.nanwang.vibecap.pro.lifetime",
       "referenceName" : "VibeCap Pro Lifetime",
       "type" : "NonConsumable"
     }
@@ -87,7 +87,7 @@
               "locale" : "zh_Hans"
             }
           ],
-          "productID" : "com.luke.vibecapture.pro.monthly",
+          "productID" : "com.nanwang.vibecap.pro.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "VibeCap Pro Monthly",
           "subscriptionGroupID" : "F44B065E",
@@ -126,7 +126,7 @@
               "locale" : "zh_Hans"
             }
           ],
-          "productID" : "com.luke.vibecapture.pro.yearly",
+          "productID" : "com.nanwang.vibecap.pro.yearly.v1",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "VibeCap Pro Yearly",
           "subscriptionGroupID" : "F44B065E",

@@ -15,7 +15,7 @@
 - **Signing & Capabilities**:
   - 选择 "Mac App Store" 作为分发方式
   - 使用 **App Store 证书**（不是 Developer ID）
-  - 确保 Bundle Identifier 正确：`com.luke.vibecapture`
+  - 确保 Bundle Identifier 正确：`com.nanwang.vibecap`
   - 确保 Team 已设置
 
 - **Entitlements**:

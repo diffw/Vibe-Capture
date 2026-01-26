@@ -30,7 +30,7 @@
 | 编号 | 检查项 | 预期结果 | 通过 |
 |------|--------|----------|:----:|
 | P-001 | `.storekit` 文件已添加到 Xcode Scheme | Scheme → Run → Options → StoreKit Configuration 指向 `VibeCap.storekit` | ☐ |
-| P-002 | Product ID 与代码一致 | `com.luke.vibecapture.pro.monthly/yearly/lifetime` | ☐ |
+| P-002 | Product ID 与代码一致 | `com.nanwang.vibecap.pro.monthly/yearly.v1/lifetime` | ☐ |
 | P-003 | 清空 StoreKit 交易 | Xcode → Debug → StoreKit → Manage Transactions → 删除所有 | ☐ |
 | P-004 | 清空 UserDefaults 缓存 | 删除 `IAPCachedProStatus`、`proUserWhitelistApps`、`freePinnedCustomApp` | ☐ |
 
@@ -547,7 +547,7 @@ Xcode → Debug → StoreKit → Manage Transactions
 
 ```bash
 # 清空 App 的 UserDefaults（需要 App 的 Bundle ID）
-defaults delete com.luke.vibecapture
+defaults delete com.nanwang.vibecap
 ```
 
 ---
