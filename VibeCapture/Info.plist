@@ -30,5 +30,7 @@
 	<string>13.0</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>VibeCap needs Accessibility permission to paste screenshots into your target app automatically.</string>
 </dict>
 </plist>

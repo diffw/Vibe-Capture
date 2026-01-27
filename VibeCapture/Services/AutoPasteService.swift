@@ -1,6 +1,6 @@
 import AppKit
 import Carbon.HIToolbox
-import ApplicationServices
+import ApplicationServices.HIServices
 
 /// Service that automates pasting image + text to target applications by:
 /// 1. Putting image in clipboard → simulating ⌘+V
