@@ -8,16 +8,13 @@ final class KeyableWindow: NSWindow {
 
 enum CaptureModalResult {
     case cancelled
-    case pasted(toApp: String, didSave: Bool)
     case saved
-    case pasteFailed(message: String)
     case saveFailed(message: String)
 }
 
 final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     private let session: CaptureSession
     private let onResult: (CaptureModalResult) -> Void
-    private let targetApp: TargetApp?
 
     private var didFinish = false
     private var keyMonitor: Any?
@@ -26,11 +23,10 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
 
     private let viewController: CaptureModalViewController
 
-    init(session: CaptureSession, targetApp: TargetApp?, onResult: @escaping (CaptureModalResult) -> Void) {
+    init(session: CaptureSession, onResult: @escaping (CaptureModalResult) -> Void) {
         self.session = session
-        self.targetApp = targetApp
         self.onResult = onResult
-        self.viewController = CaptureModalViewController(session: session, targetApp: targetApp)
+        self.viewController = CaptureModalViewController(session: session)
 
         // Calculate window size based on image aspect ratio (like macOS Screenshot preview)
         let windowSize = Self.calculateWindowSize(for: session.image.size)
@@ -66,19 +62,8 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         viewController.onClose = { [weak self] in
             self?.finish(.cancelled)
         }
-        viewController.onPaste = { [weak self] prompt, targetApp in
-            self?.pasteAndClose(prompt: prompt, targetApp: targetApp)
-        }
         viewController.onSave = { [weak self] in
             self?.saveScreenshot()
-        }
-        viewController.onCommandEnter = { [weak self] in
-            guard let self,
-                  let targetApp = self.viewController.currentTargetApp,
-                  self.viewController.canSendToCurrentTargetApp else {
-                return
-            }
-            self.pasteAndClose(prompt: self.viewController.promptText, targetApp: targetApp)
         }
     }
 
@@ -151,13 +136,19 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
                     return nil
                 }
             }
-            if event.modifierFlags.contains(.command), (event.keyCode == 36 || event.keyCode == 76) { // ⌘↩︎
-                // Trigger paste via the onCommandEnter callback (which checks whitelist)
-                self.viewController.onCommandEnter?()
-                return nil
-            }
             if event.modifierFlags.contains(.command), event.keyCode == 1 { // ⌘S
                 self.saveScreenshot()
+                return nil
+            }
+            if event.modifierFlags.contains(.command),
+               event.charactersIgnoringModifiers?.lowercased() == "c" { // ⌘C
+                // Requirement (2C):
+                // - If prompt text view has a selection, let default Copy work.
+                // - Otherwise, trigger our Copy behavior.
+                if let tv = window.firstResponder as? NSTextView, tv.selectedRange().length > 0 {
+                    return event
+                }
+                self.viewController.performCopyAction(forceCloseAfterCopy: true)
                 return nil
             }
             return event
@@ -170,59 +161,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    private func pasteAndClose(prompt: String, targetApp: TargetApp) {
-        let appName = targetApp.displayName
-        
-        // Composite annotations onto the image
-        let annotations = viewController.annotations
-        let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
-
-        // Close the modal immediately so it doesn't interfere with target app
-        finish(.pasted(toApp: appName, didSave: false))
-
-        // Use AutoPasteService to paste image + text to target app
-        AutoPasteService.shared.pasteToApp(image: finalImage, text: prompt, targetApp: targetApp) { success, errorMessage in
-            if success {
-                HUDService.shared.show(message: L("hud.pasted_to_app", appName), style: .success)
-            } else if let errorMessage {
-                HUDService.shared.show(message: errorMessage, style: .error)
-            }
-
-            // Attempt auto-save (if enabled) - silent & non-blocking
-            if SettingsStore.shared.saveEnabled {
-                if let folderURL = ScreenshotSaveService.shared.currentFolderURL() {
-                    DispatchQueue.main.async {
-                        guard let cgImage = finalImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-                            AppLog.log(.error, "save", "Auto-save skipped: failed to extract CGImage")
-                            HUDService.shared.show(message: L("error.image_encoding_failed"), style: .error)
-                            return
-                        }
-                        DispatchQueue.global(qos: .utility).async {
-                            do {
-                                _ = try ScreenshotSaveService.shared.saveToKnownFolderAndReturnURL(cgImage: cgImage, folderURL: folderURL)
-                                AppLog.log(.info, "save", "Auto-save succeeded after paste")
-                            } catch {
-                                AppLog.log(.error, "save", "Auto-save failed: \(error.localizedDescription)")
-                                DispatchQueue.main.async {
-                                    HUDService.shared.show(message: error.localizedDescription, style: .error)
-                                }
-                            }
-                        }
-                    }
-                } else if !Self.didShowAutoSaveNoFolderHint {
-                    Self.didShowAutoSaveNoFolderHint = true
-                    DispatchQueue.main.async {
-                        HUDService.shared.show(
-                            message: L("hud.configure_save_folder_in_settings", L("settings.save.choose_folder")),
-                            style: .info,
-                            duration: 2.0
-                        )
-                    }
-                }
-            }
-        }
-    }
-    
     private func saveScreenshot() {
         // Composite annotations onto the image
         let annotations = viewController.annotations

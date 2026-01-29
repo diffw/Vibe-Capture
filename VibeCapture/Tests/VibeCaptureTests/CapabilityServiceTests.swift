@@ -45,22 +45,6 @@ final class CapabilityServiceTests: XCTestCase {
         XCTAssertTrue(sut.canUse(.captureAutosave))
     }
     
-    func testSendSystemWhitelistIsAlwaysAvailable() {
-        mockEntitlements.setFree()
-        XCTAssertTrue(sut.canUse(.sendSystemWhitelist))
-        
-        mockEntitlements.setPro()
-        XCTAssertTrue(sut.canUse(.sendSystemWhitelist))
-    }
-    
-    func testSendCustomAppFreePinnedOneIsAlwaysAvailable() {
-        mockEntitlements.setFree()
-        XCTAssertTrue(sut.canUse(.sendCustomAppFreePinnedOne))
-        
-        mockEntitlements.setPro()
-        XCTAssertTrue(sut.canUse(.sendCustomAppFreePinnedOne))
-    }
-    
     func testAnnotationsArrowIsAlwaysAvailable() {
         mockEntitlements.setFree()
         XCTAssertTrue(sut.canUse(.annotationsArrow))
@@ -70,11 +54,6 @@ final class CapabilityServiceTests: XCTestCase {
     }
     
     // MARK: - Pro Capabilities Tests (Free User)
-    
-    func testSendCustomAppManageRequiresPro_FreeUser() {
-        mockEntitlements.setFree()
-        XCTAssertFalse(sut.canUse(.sendCustomAppManage))
-    }
     
     func testAnnotationsShapesRequiresPro_FreeUser() {
         mockEntitlements.setFree()
@@ -92,11 +71,6 @@ final class CapabilityServiceTests: XCTestCase {
     }
     
     // MARK: - Pro Capabilities Tests (Pro User)
-    
-    func testSendCustomAppManageAvailableForPro() {
-        mockEntitlements.setPro()
-        XCTAssertTrue(sut.canUse(.sendCustomAppManage))
-    }
     
     func testAnnotationsShapesAvailableForPro() {
         mockEntitlements.setPro()
@@ -121,7 +95,6 @@ final class CapabilityServiceTests: XCTestCase {
         XCTAssertTrue(sut.canUse(.annotationsShapes))
         XCTAssertTrue(sut.canUse(.annotationsNumbering))
         XCTAssertTrue(sut.canUse(.annotationsColors))
-        XCTAssertTrue(sut.canUse(.sendCustomAppManage))
     }
     
     func testProCapabilitiesWithYearlySubscription() {
@@ -130,7 +103,6 @@ final class CapabilityServiceTests: XCTestCase {
         XCTAssertTrue(sut.canUse(.annotationsShapes))
         XCTAssertTrue(sut.canUse(.annotationsNumbering))
         XCTAssertTrue(sut.canUse(.annotationsColors))
-        XCTAssertTrue(sut.canUse(.sendCustomAppManage))
     }
     
     func testProCapabilitiesWithLifetime() {
@@ -139,7 +111,6 @@ final class CapabilityServiceTests: XCTestCase {
         XCTAssertTrue(sut.canUse(.annotationsShapes))
         XCTAssertTrue(sut.canUse(.annotationsNumbering))
         XCTAssertTrue(sut.canUse(.annotationsColors))
-        XCTAssertTrue(sut.canUse(.sendCustomAppManage))
     }
     
     // MARK: - Unknown Capability Tests
@@ -161,13 +132,10 @@ final class CapabilityServiceTests: XCTestCase {
             .captureArea,
             .captureSave,
             .captureAutosave,
-            .sendSystemWhitelist,
-            .sendCustomAppFreePinnedOne,
             .annotationsArrow
         ]
         
         let expectedProKeys: [CapabilityKey] = [
-            .sendCustomAppManage,
             .annotationsShapes,
             .annotationsNumbering,
             .annotationsColors
@@ -211,8 +179,6 @@ final class CapabilityServiceTests: XCTestCase {
         XCTAssertTrue(sut.canUse(.captureArea))
         XCTAssertTrue(sut.canUse(.captureSave))
         XCTAssertTrue(sut.canUse(.captureAutosave))
-        XCTAssertTrue(sut.canUse(.sendSystemWhitelist))
-        XCTAssertTrue(sut.canUse(.sendCustomAppFreePinnedOne))
         XCTAssertTrue(sut.canUse(.annotationsArrow))
     }
     
@@ -225,7 +191,6 @@ final class CapabilityServiceTests: XCTestCase {
         mockEntitlements.setFree()
         
         // All Pro capabilities should be unavailable
-        XCTAssertFalse(sut.canUse(.sendCustomAppManage))
         XCTAssertFalse(sut.canUse(.annotationsShapes))
         XCTAssertFalse(sut.canUse(.annotationsNumbering))
         XCTAssertFalse(sut.canUse(.annotationsColors))

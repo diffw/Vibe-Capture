@@ -26,11 +26,16 @@
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ で送信";
 "modal.hint.cmd_s_to_save" = "⌘S 保存";
 "modal.button.copy_image" = "画像をコピー";
+"modal.button.copy_image_and_prompt" = "画像とプロンプトをコピー";
 "modal.button.copy_prompt" = "プロンプトをコピー";
 "modal.hint.enable_auto_send" = "ワンクリックでアプリに送信したい？";
 "modal.hint.enable_auto_send_to_app" = "%@ にワンクリックで送信したい？";
+"modal.hint.enable_copy_image_prompt" = "画像とプロンプトを一緒にコピーしますか？";
+"modal.button.enable_accessibility" = "有効にする →";
 "modal.button.enable_auto_send" = "有効化 →";
 "hud.image_copied" = "画像をコピーしました";
+"hud.image_prompt_copied" = "画像とプロンプトをコピーしました";
+"hud.copied" = "コピーしました";
 "hud.prompt_copied" = "プロンプトをコピーしました";
 "hud.configure_save_folder" = "自動保存を有効にするには、%@ をクリックして保存先フォルダを選択してください。";
 "hud.configure_save_folder_in_settings" = "自動保存を有効にするには、「設定」を開いて %@ をクリックしてください。";

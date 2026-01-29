@@ -16,8 +16,6 @@ final class CaptureManager {
             return
         }
         
-        // Record the current frontmost app before showing overlay
-        AppDetectionService.shared.recordCurrentAppAsPrevious()
         AppLog.log(.info, "capture", "Starting overlay selection")
 
         overlay.start { [weak self] rect, belowWindowID, cleanup in
@@ -67,27 +65,17 @@ final class CaptureManager {
         modal = nil
         
         let session = CaptureSession(image: image, prompt: "", createdAt: Date())
-        
-        // Get the target app (previous frontmost app)
-        let targetApp = AppDetectionService.shared.getTargetApp()
 
-        modal = CaptureModalWindowController(session: session, targetApp: targetApp) { [weak self] result in
+        modal = CaptureModalWindowController(session: session) { [weak self] result in
             self?.modal = nil  // Clear reference when modal closes
             switch result {
             case .cancelled:
                 AppLog.log(.info, "capture", "Modal result: cancelled")
                 break
-            case .pasted(_, _):
-                AppLog.log(.info, "capture", "Modal result: pasted")
-                // HUD is shown in the window controller
-                break
             case .saved:
                 AppLog.log(.info, "capture", "Modal result: saved")
                 // HUD is shown in the window controller
                 break
-            case .pasteFailed(let message):
-                AppLog.log(.warn, "capture", "Modal result: pasteFailed message=\(message)")
-                HUDService.shared.show(message: message, style: .error)
             case .saveFailed(let message):
                 AppLog.log(.warn, "capture", "Modal result: saveFailed message=\(message)")
                 HUDService.shared.show(message: message, style: .error)

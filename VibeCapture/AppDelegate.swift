@@ -63,7 +63,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // UI testing helper: open a capture modal with a synthetic image (no screen-recording permission needed).
         if args.contains("--uitesting-open-capture-modal") {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            let work = DispatchWorkItem { [weak self] in
                 guard let self else { return }
                 let size = NSSize(width: 900, height: 600)
                 let image = NSImage(size: size)
@@ -73,10 +73,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 image.unlockFocus()
 
                 let session = CaptureSession(image: image, prompt: "", createdAt: Date())
-                let modal = CaptureModalWindowController(session: session, targetApp: nil) { _ in }
+                let modal = CaptureModalWindowController(session: session) { _ in }
                 self.uiTestCaptureModal = modal
                 modal.show()
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: work)
         }
     }
 

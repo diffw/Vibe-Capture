@@ -26,11 +26,16 @@
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ per inviare";
 "modal.hint.cmd_s_to_save" = "⌘S to save";
 "modal.button.copy_image" = "Copy Image";
+"modal.button.copy_image_and_prompt" = "Copia immagine e prompt";
 "modal.button.copy_prompt" = "Copy Prompt";
 "modal.hint.enable_auto_send" = "Want to auto-send to apps?";
 "modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.hint.enable_copy_image_prompt" = "Vuoi copiare immagine e prompt insieme?";
+"modal.button.enable_accessibility" = "Abilita →";
 "modal.button.enable_auto_send" = "Enable →";
 "hud.image_copied" = "Image copied";
+"hud.image_prompt_copied" = "Image & Prompt copied";
+"hud.copied" = "Copied";
 "hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Aggiungi istruzioni (facoltativo)";
 "modal.menu.no_supported_apps" = "Nessuna app supportata in esecuzione";

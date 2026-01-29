@@ -26,11 +26,16 @@
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ 发送";
 "modal.hint.cmd_s_to_save" = "⌘S 保存";
 "modal.button.copy_image" = "复制图片";
+"modal.button.copy_image_and_prompt" = "复制图片和提示词";
 "modal.button.copy_prompt" = "复制指令";
 "modal.hint.enable_auto_send" = "想要一键发送到 App？";
 "modal.hint.enable_auto_send_to_app" = "想要一键发送到 %@？";
+"modal.hint.enable_copy_image_prompt" = "想要同时复制图片和提示词吗？";
+"modal.button.enable_accessibility" = "启用 →";
 "modal.button.enable_auto_send" = "启用 →";
 "hud.image_copied" = "图片已复制";
+"hud.image_prompt_copied" = "图片和提示词已复制";
+"hud.copied" = "已复制";
 "hud.prompt_copied" = "指令已复制";
 "hud.configure_save_folder" = "要启用自动保存，请点击 %@ 选择一次保存文件夹。";
 "hud.configure_save_folder_in_settings" = "要启用自动保存，请打开设置并点击 %@。";

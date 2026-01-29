@@ -2,9 +2,7 @@ import AppKit
 
 final class CaptureModalViewController: NSViewController, NSTextViewDelegate, AnnotationToolbarViewDelegate, AnnotationCanvasViewDelegate {
     var onClose: (() -> Void)?
-    var onPaste: ((String, TargetApp) -> Void)?
     var onSave: (() -> Void)?
-    var onCommandEnter: (() -> Void)?
 
     private let session: CaptureSession
     private let imageDisplayHeight: CGFloat
@@ -18,16 +16,15 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private let promptTextView = PromptTextView()
     private let placeholderLabel = NSTextField(labelWithString: "")
     
-    // Split button for Send
-    private let sendButton = RoundedHoverButton(title: "", target: nil, action: nil)
-    private let dropdownButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let saveButton = RoundedHoverButton(title: "", target: nil, action: nil)
+    private let copyButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let closeButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let copyPromptButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let escHintLabel = NSTextField(labelWithString: "")
     private let saveHintLabel = NSTextField(labelWithString: "⌘S to save")
-    private let sendHintLabel = NSTextField(labelWithString: "")
+    private let copyHintLabel = NSTextField(labelWithString: "")
     private let saveStack = NSStackView()
+    private let copyStack = NSStackView()
     private let copyPromptStack = NSStackView()
     
     // Accessibility hint banner (for basic mode)
@@ -42,6 +39,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     // Basic mode: avoid spamming folder configuration hint
     private var didShowConfigureSaveFolderHint = false
 
+    // Hover-to-reveal shortcut hints (labels above buttons)
+    private let hintHoverDelaySeconds: TimeInterval = 0.25
+    private var hintWorkItems: [String: DispatchWorkItem] = [:]
+
     // MARK: - Permission UX
     //
     // When opening System Settings for Accessibility, our capture modal (floating window)
@@ -53,37 +54,14 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     
     /// Whether we have Accessibility permission for auto-paste
     private var hasAccessibilityPermission: Bool {
-        AutoPasteService.shared.hasAccessibilityPermission
-    }
-    
-    /// Currently selected target app
-    private var selectedTargetApp: TargetApp?
-    private var appActivationObserver: NSObjectProtocol?
-    
-    /// Whether the current app is optimized (in whitelist)
-    private var isAppOptimized: Bool {
-        guard let app = selectedTargetApp else { return false }
-        return AppDetectionService.shared.isWhitelisted(app)
-    }
-    
-    /// Whether the current app is blacklisted (doesn't support paste)
-    private var isAppBlacklisted: Bool {
-        guard let app = selectedTargetApp else { return false }
-        return AppDetectionService.shared.isBlacklisted(app)
-    }
-    
-    /// Whether we have a valid target app to send to (whitelisted + not blacklisted)
-    private var canSendToApp: Bool {
-        guard let app = selectedTargetApp else { return false }
-        return AppDetectionService.shared.isWhitelisted(app) && !isAppBlacklisted
+        ClipboardAutoPasteService.shared.hasAccessibilityPermission
     }
     
     /// Brand color for active send button
     private let brandColor = NSColor(red: 1.0, green: 0.553, blue: 0.463, alpha: 1.0) // #FF8D76
 
-    init(session: CaptureSession, targetApp: TargetApp?) {
+    init(session: CaptureSession) {
         self.session = session
-        self.selectedTargetApp = targetApp
         // Calculate image display height based on aspect ratio
         self.imageDisplayHeight = Self.calculateImageHeight(for: session.image.size)
         super.init(nibName: nil, bundle: nil)
@@ -244,9 +222,6 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         promptTextView.autoresizingMask = [.width]
         promptTextView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
         promptTextView.textContainer?.widthTracksTextView = true
-        promptTextView.onCommandEnter = { [weak self] in
-            self?.onCommandEnter?()
-        }
         promptTextView.onTypingStarted = { [weak self] in
             // Hide placeholder immediately when typing starts
             self?.placeholderLabel.isHidden = true
@@ -286,28 +261,6 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         let clickGesture = NSClickGestureRecognizer(target: self, action: #selector(placeholderClicked))
         placeholderLabel.addGestureRecognizer(clickGesture)
 
-        // Setup Send button (main button)
-        sendButton.target = self
-        sendButton.action = #selector(sendPressed)
-        sendButton.imagePosition = .imageLeading
-        sendButton.imageScaling = .scaleProportionallyDown
-        sendButton.imageHugsTitle = true
-        sendButton.fixedHeight = 32
-        sendButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
-        sendButton.layer?.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        updateSendButtonTitle()
-        updateButtonStyles()
-
-        // Setup Dropdown button (arrow)
-        dropdownButton.image = makeTemplateIcon(named: "arrow-down-s-line", size: 12, fallbackSystemName: "chevron.down")
-        dropdownButton.imagePosition = .imageOnly
-        dropdownButton.fixedHeight = 32
-        dropdownButton.contentInsets = NSEdgeInsets(top: 6, left: 10, bottom: 6, right: 10)
-        dropdownButton.setContentHuggingPriority(.required, for: .horizontal)
-        dropdownButton.target = self
-        dropdownButton.action = #selector(dropdownClicked)
-        dropdownButton.layer?.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-
         // Setup Save button
         saveButton.target = self
         saveButton.action = #selector(saveMenuItemClicked)
@@ -318,11 +271,16 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         saveButton.fixedHeight = 32
         saveButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
 
-        // Create a container for the split button (Send + Dropdown)
-        let splitButtonContainer = NSStackView(views: [sendButton, dropdownButton])
-        splitButtonContainer.orientation = .horizontal
-        splitButtonContainer.spacing = 1
-        splitButtonContainer.distribution = .fill
+        // Setup Copy button (Copy & Arm)
+        copyButton.target = self
+        copyButton.action = #selector(copyPressed)
+        copyButton.imagePosition = .imageLeading
+        copyButton.imageScaling = .scaleProportionallyDown
+        copyButton.imageHugsTitle = true
+        copyButton.imageTitleSpacing = 8
+        copyButton.fixedHeight = 32
+        copyButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        copyButton.toolTip = "Copy & Arm (next ⌘V)"
 
         // Setup Close button
         closeButton.title = L("modal.button.close")
@@ -351,13 +309,20 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
         // Shortcut hint labels (above buttons)
         escHintLabel.stringValue = L("modal.hint.esc_to_close")
-        escHintLabel.textColor = .tertiaryLabelColor
+        escHintLabel.textColor = .secondaryLabelColor
         escHintLabel.font = NSFont.systemFont(ofSize: 11)
-        saveHintLabel.textColor = .tertiaryLabelColor
+        saveHintLabel.textColor = .secondaryLabelColor
         saveHintLabel.font = NSFont.systemFont(ofSize: 11)
-        sendHintLabel.textColor = .tertiaryLabelColor
-        sendHintLabel.font = NSFont.systemFont(ofSize: 11)
+        copyHintLabel.textColor = .secondaryLabelColor
+        copyHintLabel.font = NSFont.systemFont(ofSize: 11)
+        
+        // Default hidden (reserve layout to avoid jumping)
+        escHintLabel.alphaValue = 0
+        saveHintLabel.alphaValue = 0
+        copyHintLabel.alphaValue = 0
 
+        // Copy hint label (text only; visibility is hover-driven)
+        copyHintLabel.stringValue = "⌘C to Copy"
         let closeStack = NSStackView(views: [escHintLabel, closeButton])
         closeStack.orientation = .vertical
         closeStack.alignment = .leading
@@ -368,10 +333,17 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         saveStack.spacing = 4
         saveStack.addArrangedSubview(saveHintLabel)
         saveStack.addArrangedSubview(saveButton)
+
+        copyStack.orientation = .vertical
+        copyStack.alignment = .centerX
+        copyStack.spacing = 4
+        copyStack.addArrangedSubview(copyHintLabel)
+        copyStack.addArrangedSubview(copyButton)
+        copyStack.isHidden = false
         
         // Copy Prompt stack (only visible in basic mode with prompt text)
         let copyPromptHintLabel = NSTextField(labelWithString: "")
-        copyPromptHintLabel.textColor = .tertiaryLabelColor
+        copyPromptHintLabel.textColor = .secondaryLabelColor
         copyPromptHintLabel.font = NSFont.systemFont(ofSize: 11)
         copyPromptStack.orientation = .vertical
         copyPromptStack.alignment = .centerX
@@ -380,13 +352,8 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         copyPromptStack.addArrangedSubview(copyPromptButton)
         copyPromptStack.isHidden = true  // Hidden by default
 
-        let sendStack = NSStackView(views: [sendHintLabel, splitButtonContainer])
-        sendStack.orientation = .vertical
-        sendStack.alignment = .centerX
-        sendStack.spacing = 4
-
-        // Layout: [Close stack] [spacer] [Save stack] [Copy Prompt stack] [Send stack]
-        let buttonsRow = NSStackView(views: [closeStack, NSView(), saveStack, copyPromptStack, sendStack])
+        // Layout: [Close stack] [spacer] [Save stack] [Copy stack] [Copy Prompt stack]
+        let buttonsRow = NSStackView(views: [closeStack, NSView(), saveStack, copyStack, copyPromptStack])
         buttonsRow.orientation = .horizontal
         buttonsRow.alignment = .bottom
         buttonsRow.spacing = 12
@@ -462,9 +429,6 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             accessibilityHintView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             accessibilityHintView.topAnchor.constraint(equalTo: buttonsRow.bottomAnchor, constant: 12),
 
-            dropdownButton.widthAnchor.constraint(equalToConstant: 32),
-            dropdownButton.heightAnchor.constraint(equalTo: sendButton.heightAnchor),
-
             // Placeholder label inside prompt area
             // Match textContainerInset (8) + textContainer lineFragmentPadding (5) = 13
             placeholderLabel.leadingAnchor.constraint(equalTo: promptScrollView.leadingAnchor, constant: 13),
@@ -478,11 +442,19 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         updateBottomConstraints()
 
         updatePlaceholderVisibility()
-        startAppActivationObserver()
+        updateSendButtonTitle()
+        updateButtonStyles()
+
+        // Hover tracking to reveal hints (with slight delay)
+        addHintTracking(to: closeButton, key: "close")
+        addHintTracking(to: saveButton, key: "save")
+        addHintTracking(to: copyButton, key: "copy")
     }
 
     deinit {
-        stopAppActivationObserver()
+        for item in hintWorkItems.values { item.cancel() }
+        hintWorkItems.removeAll()
+
         if let didBecomeActiveObserver {
             NotificationCenter.default.removeObserver(didBecomeActiveObserver)
             self.didBecomeActiveObserver = nil
@@ -493,15 +465,6 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         promptTextView.string
     }
     
-    /// Get the currently selected target app
-    var currentTargetApp: TargetApp? {
-        selectedTargetApp
-    }
-    
-    var canSendToCurrentTargetApp: Bool {
-        canSendToApp
-    }
-
     func focusPrompt() {
         let beforeResponder = view.window?.firstResponder
         view.window?.makeFirstResponder(promptTextView)
@@ -528,33 +491,6 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             AppLog.log(.debug, "CaptureModal", "viewDidLayout updated textFrame=\(promptTextView.frame)")
 #endif
         }
-    }
-
-    private func startAppActivationObserver() {
-        guard appActivationObserver == nil else { return }
-        appActivationObserver = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didActivateApplicationNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.updateTargetAppFromFrontmost()
-        }
-        updateTargetAppFromFrontmost()
-    }
-
-    private func stopAppActivationObserver() {
-        if let observer = appActivationObserver {
-            NSWorkspace.shared.notificationCenter.removeObserver(observer)
-            appActivationObserver = nil
-        }
-    }
-
-    private func updateTargetAppFromFrontmost() {
-        let targetApp = AppDetectionService.shared.getTargetApp()
-        guard targetApp != selectedTargetApp else { return }
-        selectedTargetApp = targetApp
-        updateSendButtonTitle()
-        updateButtonStyles()
     }
 
     // MARK: - Accessibility Hint Banner Setup
@@ -594,7 +530,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         accessibilityHintLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // "Enable →" CTA text (pure text; entire banner is clickable via gesture)
-        accessibilityHintCTA.stringValue = L("modal.button.enable_auto_send")
+        accessibilityHintCTA.stringValue = L("modal.button.enable_accessibility")
         accessibilityHintCTA.font = NSFont.systemFont(ofSize: 12, weight: .bold)
         accessibilityHintCTA.textColor = .labelColor  // Same as label text
         accessibilityHintCTA.lineBreakMode = .byTruncatingTail
@@ -626,16 +562,76 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     
     // Handle hover for accessibility hint banner
     override func mouseEntered(with event: NSEvent) {
-        if let userInfo = event.trackingArea?.userInfo as? [String: String],
-           userInfo["view"] == "accessibilityHint" {
+        guard let userInfo = event.trackingArea?.userInfo as? [String: String] else { return }
+        if userInfo["view"] == "accessibilityHint" {
             NSCursor.pointingHand.push()
+            return
+        }
+        if let hint = userInfo["hint"] {
+            scheduleShowHint(for: hint)
         }
     }
     
     override func mouseExited(with event: NSEvent) {
-        if let userInfo = event.trackingArea?.userInfo as? [String: String],
-           userInfo["view"] == "accessibilityHint" {
+        guard let userInfo = event.trackingArea?.userInfo as? [String: String] else { return }
+        if userInfo["view"] == "accessibilityHint" {
             NSCursor.pop()
+            return
+        }
+        if let hint = userInfo["hint"] {
+            cancelShowHint(for: hint)
+            hideHint(for: hint)
+        }
+    }
+
+    private func addHintTracking(to view: NSView, key: String) {
+        let area = NSTrackingArea(
+            rect: .zero,
+            options: [.mouseEnteredAndExited, .activeInActiveApp, .inVisibleRect],
+            owner: self,
+            userInfo: ["hint": key]
+        )
+        view.addTrackingArea(area)
+    }
+
+    private func label(for hint: String) -> NSTextField? {
+        switch hint {
+        case "close": return escHintLabel
+        case "save": return saveHintLabel
+        case "copy": return copyHintLabel
+        default: return nil
+        }
+    }
+
+    private func scheduleShowHint(for hint: String) {
+        cancelShowHint(for: hint)
+        let item = DispatchWorkItem { [weak self] in
+            self?.showHint(for: hint)
+        }
+        hintWorkItems[hint] = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + hintHoverDelaySeconds, execute: item)
+    }
+
+    private func cancelShowHint(for hint: String) {
+        hintWorkItems[hint]?.cancel()
+        hintWorkItems[hint] = nil
+    }
+
+    private func showHint(for hint: String) {
+        guard let label = label(for: hint) else { return }
+        NSAnimationContext.runAnimationGroup { ctx in
+            ctx.duration = 0.12
+            ctx.allowsImplicitAnimation = true
+            label.animator().alphaValue = 1
+        }
+    }
+
+    private func hideHint(for hint: String) {
+        guard let label = label(for: hint) else { return }
+        NSAnimationContext.runAnimationGroup { ctx in
+            ctx.duration = 0.08
+            ctx.allowsImplicitAnimation = true
+            label.animator().alphaValue = 0
         }
     }
     
@@ -650,7 +646,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             window.orderBack(nil)
         }
 
-        AutoPasteService.shared.requestAccessibilityPermission()
+        ClipboardAutoPasteService.shared.requestAccessibilityPermission()
         // Open System Settings
         PermissionsUI.openAccessibilitySettings()
     }
@@ -676,20 +672,6 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
     // MARK: - Button Actions
 
-    @objc private func sendPressed() {
-        if hasAccessibilityPermission {
-            // Full mode: auto-send to target app
-            if canSendToApp, let targetApp = selectedTargetApp {
-                onPaste?(promptTextView.string, targetApp)
-            } else {
-                onSave?()
-            }
-        } else {
-            // Basic mode: copy image to clipboard
-            copyImageToClipboard()
-        }
-    }
-    
     @objc private func copyPromptPressed() {
         let prompt = promptTextView.string.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !prompt.isEmpty else { return }
@@ -701,6 +683,42 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         HUDService.shared.show(message: L("hud.prompt_copied"), style: .success, duration: 1.0)
     }
     
+    /// Copy action shared by button + keyboard shortcut.
+    /// - Parameter forceCloseAfterCopy: when true, always closes the modal if a copy happened.
+    /// - Returns: true if we copied/armed successfully; false if blocked (e.g. needs permission).
+    @discardableResult
+    func performCopyAction(forceCloseAfterCopy: Bool) -> Bool {
+        // Render image with annotations
+        let finalImage = AnnotationRenderService.render(
+            image: session.image,
+            annotations: annotations
+        )
+
+        let prompt = promptTextView.string.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Basic mode: copy rules unchanged (always copy image only)
+        guard hasAccessibilityPermission else {
+            copyImageToClipboard()
+            onClose?()
+            return true
+        }
+
+        // Full mode:
+        // - No prompt => Copy Image
+        // - With prompt => Copy Image & Prompt (Copy & Arm)
+        guard !prompt.isEmpty else {
+            copyImageToClipboard()
+            onClose?()
+            return true
+        }
+
+        ClipboardAutoPasteService.shared.prepare(text: prompt, images: [finalImage])
+        ClipboardAutoPasteService.shared.arm()
+        HUDService.shared.show(message: L("hud.image_prompt_copied"), style: .success, duration: 1.0)
+        onClose?()
+        return true
+    }
+
     private func copyImageToClipboard() {
         // Render image with annotations
         let finalImage = AnnotationRenderService.render(
@@ -749,130 +767,22 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             onClose?()
         }
     }
+
+    @objc private func copyPressed() {
+        // Button behavior: copy then close modal.
+        performCopyAction(forceCloseAfterCopy: true)
+    }
     
     @objc private func closePressed() {
         onClose?()
     }
     
-    // MARK: - Dropdown Click
-    
-    @objc private func dropdownClicked() {
-        showAppSelectionMenu()
-    }
-    
     @objc private func placeholderClicked() {
         view.window?.makeFirstResponder(promptTextView)
-    }
-
-    // MARK: - App Selection Menu
-
-    private func showAppSelectionMenu() {
-        let menu = NSMenu()
-        
-        // Get running whitelisted apps
-        let runningApps = AppDetectionService.shared.getRunningWhitelistedApps()
-        
-        if runningApps.isEmpty {
-            let noAppsItem = NSMenuItem(title: L("modal.menu.no_supported_apps"), action: nil, keyEquivalent: "")
-            noAppsItem.isEnabled = false
-            menu.addItem(noAppsItem)
-        } else {
-            for app in runningApps {
-                // Use "Send to AppName" format and send directly on click
-                let item = NSMenuItem(title: L("modal.menu.send_to_app", app.displayName), action: #selector(appMenuItemClicked(_:)), keyEquivalent: "")
-                item.target = self
-                item.representedObject = app
-                if let icon = app.icon {
-                    let resizedIcon = resizeImage(icon, to: NSSize(width: 16, height: 16))
-                    item.image = resizedIcon
-                }
-                menu.addItem(item)
-            }
-        }
-        
-        // Add separator and Save option
-        menu.addItem(.separator())
-        
-        let saveItem = NSMenuItem(title: L("modal.menu.save_image"), action: #selector(saveMenuItemClicked), keyEquivalent: "")
-        saveItem.target = self
-        saveItem.image = makeTemplateIcon(named: "download-line", size: 16, fallbackSystemName: "square.and.arrow.down")
-        menu.addItem(saveItem)
-        
-        // Add separator and "Add to Send List..." option
-        menu.addItem(.separator())
-        
-        let addAppItem = NSMenuItem(title: L("modal.menu.add_to_send_list"), action: #selector(addToSendListClicked), keyEquivalent: "")
-        addAppItem.target = self
-        addAppItem.image = makeTemplateIcon(named: "add-circle-line", size: 16, fallbackSystemName: "plus.circle")
-        menu.addItem(addAppItem)
-        
-        // Manual boundary detection for floating/borderless windows
-        guard let window = dropdownButton.window,
-              let screen = window.screen ?? NSScreen.main else {
-            menu.popUp(positioning: nil, at: .zero, in: dropdownButton)
-            return
-        }
-        
-        let buttonFrame = dropdownButton.convert(dropdownButton.bounds, to: nil)
-        let screenFrame = window.convertToScreen(buttonFrame)
-        
-        // Calculate available space below button
-        let spaceBelow = screenFrame.minY - screen.visibleFrame.minY
-        
-        // Estimate menu height (~22pt per item, ~11pt per separator)
-        let separatorCount = menu.items.filter { $0.isSeparatorItem }.count
-        let regularItemCount = menu.items.count - separatorCount
-        let estimatedMenuHeight = CGFloat(regularItemCount) * 22 + CGFloat(separatorCount) * 11
-        
-        if spaceBelow < estimatedMenuHeight {
-            // Not enough space below → pop up above button
-            menu.popUp(positioning: menu.items.last,
-                       at: NSPoint(x: 0, y: dropdownButton.bounds.height),
-                       in: dropdownButton)
-        } else {
-            // Normal: pop up below button
-            menu.popUp(positioning: nil, at: .zero, in: dropdownButton)
-        }
-    }
-    
-    @objc private func addToSendListClicked() {
-        guard let window = view.window else { return }
-        let panelController = AddAppPanelController(onAppAdded: nil)
-        panelController.showAsSheet(relativeTo: window)
     }
     
     @objc private func saveMenuItemClicked() {
         onSave?()
-    }
-    
-    @objc private func appMenuItemClicked(_ sender: NSMenuItem) {
-        guard let app = sender.representedObject as? TargetApp else { return }
-        
-        // If we don't have Accessibility permission, don't close the modal.
-        // Instead, guide the user to enable permission first.
-        if !hasAccessibilityPermission {
-            selectedTargetApp = app
-            updateSendButtonTitle()
-            updateButtonStyles()
-            
-            HUDService.shared.show(message: L("permission.accessibility.message"), style: .info, duration: 1.6)
-            enableAutoSendPressed()
-            return
-        }
-        
-        // Full mode: directly send to the selected app
-        onPaste?(promptTextView.string, app)
-    }
-    
-    private func resizeImage(_ image: NSImage, to size: NSSize) -> NSImage {
-        let newImage = NSImage(size: size)
-        newImage.lockFocus()
-        image.draw(in: NSRect(origin: .zero, size: size),
-                   from: NSRect(origin: .zero, size: image.size),
-                   operation: .sourceOver,
-                   fraction: 1.0)
-        newImage.unlockFocus()
-        return newImage
     }
 
     private func makeTemplateIcon(named name: String, size: CGFloat, fallbackSystemName: String? = nil) -> NSImage? {
@@ -900,69 +810,33 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private func updateSendButtonTitle() {
         closeButton.image = makeTemplateIcon(named: "close-line", size: 12, fallbackSystemName: "xmark")
         saveButton.image = makeTemplateIcon(named: "download-line", size: 14, fallbackSystemName: "square.and.arrow.down")
+        copyButton.image = makeTemplateIcon(named: "file-copy-line", size: 14, fallbackSystemName: "doc.on.doc")
         copyPromptButton.image = makeTemplateIcon(named: "file-copy-line", size: 14, fallbackSystemName: "doc.on.doc")
-        
+
+        closeButton.title = L("modal.button.close")
+        saveButton.title = L("modal.button.save_image")
+        escHintLabel.stringValue = L("modal.hint.esc_to_close")
+
         let hasPromptText = !promptTextView.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        
-        // Update accessibility hint banner visibility and text
+        if hasAccessibilityPermission {
+            copyButton.title = hasPromptText ? L("modal.button.copy_image_and_prompt") : L("modal.button.copy_image")
+        } else {
+            // Basic mode: keep copy rules unchanged (copy image only)
+            copyButton.title = L("modal.button.copy_image")
+        }
+        copyHintLabel.stringValue = "⌘C to Copy"
+
+        // Basic mode: allow copying prompt separately
+        copyPromptButton.title = L("modal.button.copy_prompt")
+        copyPromptStack.isHidden = hasAccessibilityPermission || !hasPromptText
+        copyStack.isHidden = false
+
+        // Banner copy
         accessibilityHintView.isHidden = hasAccessibilityPermission
         updateBottomConstraints()
         if !hasAccessibilityPermission {
-            // Update hint label with current app name
-            if let app = selectedTargetApp {
-                accessibilityHintLabel.stringValue = L("modal.hint.enable_auto_send_to_app", app.displayName)
-            } else {
-                accessibilityHintLabel.stringValue = L("modal.hint.enable_auto_send")
-            }
-        }
-        
-        if hasAccessibilityPermission {
-            // ===== FULL MODE (with Accessibility) =====
-            // Hide Copy Prompt button in full mode
-            copyPromptStack.isHidden = true
-            
-            if canSendToApp, let app = selectedTargetApp {
-                closeButton.title = L("modal.button.close")
-                saveButton.title = L("modal.button.save_image")
-                escHintLabel.stringValue = L("modal.hint.esc_to_close")
-
-                sendButton.title = L("modal.button.send_to_app", app.displayName)
-                if let icon = app.icon {
-                    sendButton.image = resizeImage(icon, to: NSSize(width: 16, height: 16))
-                } else {
-                    sendButton.image = nil
-                }
-                saveStack.isHidden = false
-                sendHintLabel.stringValue = L("modal.hint.cmd_enter_to_send")
-            } else {
-                // When no valid target app, primary action is Save Image
-                closeButton.title = L("modal.button.close")
-                saveButton.title = L("modal.button.save_image")
-                escHintLabel.stringValue = L("modal.hint.esc_to_close")
-
-                sendButton.title = L("modal.button.save_image")
-                sendButton.image = makeTemplateIcon(named: "download-line", size: 14, fallbackSystemName: "square.and.arrow.down")
-                saveStack.isHidden = true
-                sendHintLabel.stringValue = L("modal.hint.cmd_s_to_save")
-            }
-        } else {
-            // ===== BASIC MODE (no Accessibility) =====
-            closeButton.title = L("modal.button.close")
-            saveButton.title = L("modal.button.save_image")
-            escHintLabel.stringValue = L("modal.hint.esc_to_close")
-            saveStack.isHidden = false
-            
-            // Primary button is "Copy Image"
-            sendButton.title = L("modal.button.copy_image")
-            sendButton.image = makeTemplateIcon(named: "file-copy-line", size: 14, fallbackSystemName: "doc.on.doc")
-            sendHintLabel.stringValue = ""
-            
-            // Copy Prompt button (same style as Copy Image)
-            copyPromptButton.title = L("modal.button.copy_prompt")
-            copyPromptButton.image = makeTemplateIcon(named: "file-copy-line", size: 14, fallbackSystemName: "doc.on.doc")
-            
-            // Show Copy Prompt button only when there's prompt text
-            copyPromptStack.isHidden = !hasPromptText
+            accessibilityHintLabel.stringValue = L("modal.hint.enable_copy_image_prompt")
+            accessibilityHintCTA.stringValue = L("modal.button.enable_accessibility")
         }
     }
     
@@ -992,26 +866,13 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             titleColor: .labelColor
         )
 
-        sendButton.style = primary
-        dropdownButton.style = primary
         closeButton.style = closeStyle
-        copyPromptButton.style = primary  // Same style as Copy Image
-
-        if hasAccessibilityPermission {
-            // Full mode
-            if canSendToApp {
-                saveButton.style = secondary
-            } else {
-                saveButton.style = primary
-            }
-        } else {
-            // Basic mode: Save is secondary, Copy buttons are primary
-            saveButton.style = secondary
-        }
+        saveButton.style = secondary
+        copyButton.style = primary
+        copyPromptButton.style = primary
         
-        sendButton.isEnabled = true
-        dropdownButton.isEnabled = true
         saveButton.isEnabled = true
+        copyButton.isEnabled = true
         closeButton.isEnabled = true
         copyPromptButton.isEnabled = true
     }

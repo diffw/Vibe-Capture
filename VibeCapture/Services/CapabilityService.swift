@@ -17,11 +17,6 @@ extension CapabilityKey {
     static let captureSave = CapabilityKey(rawValue: "cap.capture.save")
     static let captureAutosave = CapabilityKey(rawValue: "cap.capture.autosave")
 
-    // Send
-    static let sendSystemWhitelist = CapabilityKey(rawValue: "cap.send.systemWhitelist")
-    static let sendCustomAppFreePinnedOne = CapabilityKey(rawValue: "cap.send.customApp.freePinnedOne")
-    static let sendCustomAppManage = CapabilityKey(rawValue: "cap.send.customApp.manage")
-
     // Annotations
     static let annotationsArrow = CapabilityKey(rawValue: "cap.annotations.arrow")
     static let annotationsShapes = CapabilityKey(rawValue: "cap.annotations.shapes")
@@ -47,9 +42,6 @@ final class CapabilityService: CapabilityServiceProtocol {
         .captureArea: .free,
         .captureSave: .free,
         .captureAutosave: .free,
-        .sendSystemWhitelist: .free,
-        .sendCustomAppFreePinnedOne: .free,
-        .sendCustomAppManage: .pro,
         .annotationsArrow: .free,
         .annotationsShapes: .pro,
         .annotationsNumbering: .pro,

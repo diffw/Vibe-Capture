@@ -64,6 +64,9 @@
 /* [Context: Modal - Basic Mode] Copy Image button */
 "modal.button.copy_image" = "Copy Image";
 
+/* [Context: Modal] Copy Image & Prompt button (requires Accessibility) */
+"modal.button.copy_image_and_prompt" = "Copy Image & Prompt";
+
 /* [Context: Modal - Basic Mode] Copy Prompt button */
 "modal.button.copy_prompt" = "Copy Prompt";
 
@@ -73,11 +76,23 @@
 /* [Context: Modal - Basic Mode] Enable auto-send hint with app name */
 "modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
 
+/* [Context: Modal - Basic Mode] Enable copying image+prompt together hint */
+"modal.hint.enable_copy_image_prompt" = "Want to copy image and prompt together?";
+
+/* [Context: Modal - Basic Mode] Enable Accessibility button */
+"modal.button.enable_accessibility" = "Enable →";
+
 /* [Context: Modal - Basic Mode] Enable auto-send button */
 "modal.button.enable_auto_send" = "Enable →";
 
 /* [Context: HUD] Image copied */
 "hud.image_copied" = "Image copied";
+
+/* [Context: HUD] Image & Prompt copied (Copy & Arm) */
+"hud.image_prompt_copied" = "Image & Prompt copied";
+
+/* [Context: HUD] Copied (generic) */
+"hud.copied" = "Copied";
 
 /* [Context: HUD] Prompt copied */
 "hud.prompt_copied" = "Prompt copied";

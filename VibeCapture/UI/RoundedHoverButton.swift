@@ -38,6 +38,10 @@ final class RoundedHoverButton: NSButton {
         didSet { invalidateIntrinsicContentSize() }
     }
 
+    override var title: String {
+        didSet { updateAppearance() }
+    }
+
     private var trackingArea: NSTrackingArea?
     private var isHovered = false
     private var isPressed = false

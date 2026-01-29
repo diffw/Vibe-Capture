@@ -32,14 +32,13 @@
 		A1B2C3D4E5F60718293A4D12 /* KeyCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */; };
 		A1B2C3D4E5F60718293A4D13 /* NSImage+PNG.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */; };
 		A1B2C3D4E5F60718293A4D14 /* PermissionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */; };
-		A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */; };
-		A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */; };
+		A1B2C3D4E5F60718293A4D80 /* ClipboardAutoPasteCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */; };
+		A1B2C3D4E5F60718293A4D81 /* ClipboardAutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */; };
 		A1B2C3D4E5F60718293A4D20 /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C20 /* Annotation.swift */; };
 		A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */; };
 		A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */; };
 		A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */; };
 		A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */; };
-		A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */; };
 		A1B2C3D4E5F60718293A4D30 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */; };
 		A1B2C3D4E5F60718293A4D31 /* RoundedHoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */; };
 		A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */; };
@@ -85,11 +84,10 @@
 		B1B2C3D4E5F60718293AC020 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */; };
 		B1B2C3D4E5F60718293AC021 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */; };
 		B1B2C3D4E5F60718293AC022 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */; };
-		B1B2C3D4E5F60718293AC023 /* VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC013 /* VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift */; };
+		B1B2C3D4E5F60718293AC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */; };
 		B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */; };
 		B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */; };
 		B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */; };
-		B1B2C3D4E5F60718293AC027 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC016 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift */; };
 		B1B2C3D4E5F60718293AC028 /* VibeCap.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */; };
 		B1B2C3D4E5F60718293AC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */; };
 /* End PBXBuildFile section */
@@ -140,14 +138,13 @@
 		A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCombo.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PNG.swift"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsUI.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetectionService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPasteService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardAutoPasteCore.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardAutoPasteService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C20 /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationCanvasView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationToolbarView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusableScrollView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAppPanelController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedHoverButton.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewService.swift; sourceTree = "<group>"; };
@@ -191,10 +188,9 @@
 		B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift; sourceTree = "<group>"; };
-		B1B2C3D4E5F60718293ABC013 /* VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift; sourceTree = "<group>"; };
-		B1B2C3D4E5F60718293ABC016 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VibeCapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -288,8 +284,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */,
-				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
-				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
+				A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */,
+				A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */,
 				A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
 				A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */,
@@ -316,7 +312,6 @@
 		A1B2C3D4E5F60718293A4B63 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */,
 				A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */,
 				A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */,
 				A1B2C3D4E5F60718293A4C0E /* CaptureModalViewController.swift */,
@@ -409,10 +404,9 @@
 				B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */,
 				B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */,
 				B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */,
-				B1B2C3D4E5F60718293ABC013 /* VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift */,
+				B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */,
 				B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */,
 				B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */,
-				B1B2C3D4E5F60718293ABC016 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift */,
 				B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */,
 				B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */,
 			);
@@ -571,7 +565,6 @@
 				A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */,
-				A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */,
 				A1B2C3D4E5F60718293A4D36 /* main.swift in Sources */,
@@ -579,8 +572,8 @@
 				A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D04 /* ShortcutManager.swift in Sources */,
 				A1B2C3D4E5F60718293A4D05 /* CaptureSession.swift in Sources */,
-				A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */,
-				A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D80 /* ClipboardAutoPasteCore.swift in Sources */,
+				A1B2C3D4E5F60718293A4D81 /* ClipboardAutoPasteService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D06 /* ClipboardService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D07 /* HUDService.swift in Sources */,
@@ -617,11 +610,10 @@
 				B1B2C3D4E5F60718293AC020 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC021 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC022 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift in Sources */,
-				B1B2C3D4E5F60718293AC023 /* VibeCapture/Tests/VibeCaptureTests/SettingsStoreTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */,
 				B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */,
-				B1B2C3D4E5F60718293AC027 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockSettingsStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
