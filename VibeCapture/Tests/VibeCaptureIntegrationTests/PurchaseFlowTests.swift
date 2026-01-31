@@ -96,7 +96,7 @@ final class PurchaseFlowTests: XCTestCase {
         
         switch result {
         case .success(let verification):
-            let transaction = try XCTUnwrap(verification.payloadValue as? Transaction)
+            let transaction = try verification.payloadValue
             XCTAssertEqual(transaction.productID, EntitlementsService.ProductID.monthly)
             await transaction.finish()
         case .userCancelled, .pending:
@@ -115,7 +115,7 @@ final class PurchaseFlowTests: XCTestCase {
         
         let result = try await monthly.purchase()
         if case .success(let verification) = result {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -136,7 +136,7 @@ final class PurchaseFlowTests: XCTestCase {
         
         switch result {
         case .success(let verification):
-            let transaction = try XCTUnwrap(verification.payloadValue as? Transaction)
+            let transaction = try verification.payloadValue
             XCTAssertEqual(transaction.productID, EntitlementsService.ProductID.yearly)
             await transaction.finish()
         case .userCancelled, .pending:
@@ -154,7 +154,7 @@ final class PurchaseFlowTests: XCTestCase {
         
         let result = try await yearly.purchase()
         if case .success(let verification) = result {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -174,7 +174,7 @@ final class PurchaseFlowTests: XCTestCase {
         
         switch result {
         case .success(let verification):
-            let transaction = try XCTUnwrap(verification.payloadValue as? Transaction)
+            let transaction = try verification.payloadValue
             XCTAssertEqual(transaction.productID, EntitlementsService.ProductID.lifetime)
             await transaction.finish()
         case .userCancelled, .pending:
@@ -192,7 +192,7 @@ final class PurchaseFlowTests: XCTestCase {
         
         let result = try await lifetime.purchase()
         if case .success(let verification) = result {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -210,7 +210,7 @@ final class PurchaseFlowTests: XCTestCase {
         let monthly = try XCTUnwrap(monthlyProducts.first)
         let monthlyResult = try await monthly.purchase()
         if case .success(let verification) = monthlyResult {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -219,7 +219,7 @@ final class PurchaseFlowTests: XCTestCase {
         let lifetime = try XCTUnwrap(lifetimeProducts.first)
         let lifetimeResult = try await lifetime.purchase()
         if case .success(let verification) = lifetimeResult {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -236,7 +236,7 @@ final class PurchaseFlowTests: XCTestCase {
         let monthly = try XCTUnwrap(monthlyProducts.first)
         let monthlyResult = try await monthly.purchase()
         if case .success(let verification) = monthlyResult {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -245,7 +245,7 @@ final class PurchaseFlowTests: XCTestCase {
         let yearly = try XCTUnwrap(yearlyProducts.first)
         let yearlyResult = try await yearly.purchase()
         if case .success(let verification) = yearlyResult {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -277,7 +277,7 @@ final class PurchaseFlowTests: XCTestCase {
         let lifetime = try XCTUnwrap(products.first)
         let result = try await lifetime.purchase()
         if case .success(let verification) = result {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -317,7 +317,7 @@ final class PurchaseFlowTests: XCTestCase {
         let lifetime = try XCTUnwrap(products.first)
         let result = try await lifetime.purchase()
         if case .success(let verification) = result {
-            let transaction = try verification.payloadValue as! Transaction
+            let transaction = try verification.payloadValue
             await transaction.finish()
         }
         
@@ -374,7 +374,7 @@ final class PurchaseFlowTests: XCTestCase {
         for product in products {
             let result = try await product.purchase()
             if case .success(let verification) = result {
-                let transaction = try verification.payloadValue as! Transaction
+                let transaction = try verification.payloadValue
                 await transaction.finish()
             }
         }

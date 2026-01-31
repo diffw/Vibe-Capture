@@ -31,7 +31,7 @@ final class MockEntitlementsService: EntitlementsServiceProtocol {
             try? await Task.sleep(nanoseconds: UInt64(refreshDelay * 1_000_000_000))
         }
         
-        if let error = refreshError {
+        if refreshError != nil {
             // Simulate optimistic offline: don't change status on error
             status.lastRefreshedAt = Date()
             return
