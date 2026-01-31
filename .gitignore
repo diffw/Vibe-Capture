@@ -6,13 +6,20 @@ build/
 *.xcuserstate
 xcuserdata/
 *.xcworkspace/xcuserdata/
+.derivedData/
 
 # Build cache
 dist/.clang-module-cache/
 dist/.swift-module-cache/
 
-# Build artifacts
-dist/
+# SwiftPM
+.build/
+
+# Cursor (workspace rules)
+.cursor/rules/
+
+# Local-only workflow scripts
+scripts/setup-cursor-workflow.sh
 
 
 

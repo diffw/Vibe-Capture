@@ -29,16 +29,16 @@
 ## 2. App 标识与 Product IDs（用于 App Store Connect + 代码）
 
 ### 2.1 Bundle Identifier（从工程文件读取）
-- **Build Settings 最终生效（SSOT）**：`com.luke.vibecapture`
+- **Build Settings 最终生效（SSOT）**：`com.nanwang.vibecap`
 
 > 说明：`Info.plist` 里可能存在不同的 `CFBundleIdentifier` 字面量，但 App Store / 签名 / 最终包体通常以 `PRODUCT_BUNDLE_IDENTIFIER` 为准。
 
 ### 2.2 Product IDs（业界通用命名规范）
 > 规则：`<bundleId>.pro.<period>`
 
-- **Monthly**：`com.luke.vibecapture.pro.monthly`
-- **Yearly**：`com.luke.vibecapture.pro.yearly`
-- **Lifetime**：`com.luke.vibecapture.pro.lifetime`
+- **Monthly**：`com.nanwang.vibecap.pro.monthly`
+- **Yearly**：`com.nanwang.vibecap.pro.yearly.v1`
+- **Lifetime**：`com.nanwang.vibecap.pro.lifetime`
 
 ---
 

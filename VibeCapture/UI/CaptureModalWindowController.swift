@@ -8,27 +8,25 @@ final class KeyableWindow: NSWindow {
 
 enum CaptureModalResult {
     case cancelled
-    case pasted(toApp: String, didSave: Bool)
     case saved
-    case pasteFailed(message: String)
     case saveFailed(message: String)
 }
 
 final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     private let session: CaptureSession
     private let onResult: (CaptureModalResult) -> Void
-    private let targetApp: TargetApp?
 
     private var didFinish = false
     private var keyMonitor: Any?
+    
+    private static var didShowAutoSaveNoFolderHint = false
 
     private let viewController: CaptureModalViewController
 
-    init(session: CaptureSession, targetApp: TargetApp?, onResult: @escaping (CaptureModalResult) -> Void) {
+    init(session: CaptureSession, onResult: @escaping (CaptureModalResult) -> Void) {
         self.session = session
-        self.targetApp = targetApp
         self.onResult = onResult
-        self.viewController = CaptureModalViewController(session: session, targetApp: targetApp)
+        self.viewController = CaptureModalViewController(session: session)
 
         // Calculate window size based on image aspect ratio (like macOS Screenshot preview)
         let windowSize = Self.calculateWindowSize(for: session.image.size)
@@ -40,6 +38,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
             defer: false
         )
 
+        window.setAccessibilityIdentifier("captureModal.window")
         window.isMovableByWindowBackground = true
         window.backgroundColor = .clear
         window.isOpaque = false
@@ -63,19 +62,8 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         viewController.onClose = { [weak self] in
             self?.finish(.cancelled)
         }
-        viewController.onPaste = { [weak self] prompt, targetApp in
-            self?.pasteAndClose(prompt: prompt, targetApp: targetApp)
-        }
         viewController.onSave = { [weak self] in
             self?.saveScreenshot()
-        }
-        viewController.onCommandEnter = { [weak self] in
-            guard let self,
-                  let targetApp = self.viewController.currentTargetApp,
-                  self.viewController.canSendToCurrentTargetApp else {
-                return
-            }
-            self.pasteAndClose(prompt: self.viewController.promptText, targetApp: targetApp)
         }
     }
 
@@ -84,11 +72,21 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     func show() {
         guard let window else { return }
 
-        // Calculate the correct window size before showing
-        let contentSize = Self.calculateWindowSize(for: session.image.size)
-        window.setContentSize(contentSize)
+        // Use aspect-ratio logic for width; derive height from Auto Layout (fittingSize)
+        let initialSize = Self.calculateWindowSize(for: session.image.size)
+        let contentWidth = initialSize.width
 
-        // Force layout to get accurate frame size
+        // Ensure constraints are installed before fitting
+        _ = viewController.view
+
+        // Establish width first (height is a placeholder)
+        window.setContentSize(NSSize(width: contentWidth, height: initialSize.height))
+        window.layoutIfNeeded()
+
+        // Ask Auto Layout what height is required for this width
+        let fittingSize = viewController.view.fittingSize
+        let finalHeight = (fittingSize.height.isFinite && fittingSize.height > 0) ? fittingSize.height : initialSize.height
+        window.setContentSize(NSSize(width: contentWidth, height: finalHeight))
         window.layoutIfNeeded()
 
         NSApp.activate(ignoringOtherApps: true)
@@ -138,13 +136,19 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
                     return nil
                 }
             }
-            if event.modifierFlags.contains(.command), (event.keyCode == 36 || event.keyCode == 76) { // ⌘↩︎
-                // Trigger paste via the onCommandEnter callback (which checks whitelist)
-                self.viewController.onCommandEnter?()
-                return nil
-            }
             if event.modifierFlags.contains(.command), event.keyCode == 1 { // ⌘S
                 self.saveScreenshot()
+                return nil
+            }
+            if event.modifierFlags.contains(.command),
+               event.charactersIgnoringModifiers?.lowercased() == "c" { // ⌘C
+                // Requirement (2C):
+                // - If prompt text view has a selection, let default Copy work.
+                // - Otherwise, trigger our Copy behavior.
+                if let tv = window.firstResponder as? NSTextView, tv.selectedRange().length > 0 {
+                    return event
+                }
+                self.viewController.performCopyAction(forceCloseAfterCopy: true)
                 return nil
             }
             return event
@@ -157,47 +161,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    private func pasteAndClose(prompt: String, targetApp: TargetApp) {
-        let appName = targetApp.displayName
-
-        // Preflight: We need Accessibility permission to simulate ⌘+V.
-        // If missing, prompt the user and keep the modal open so they can retry.
-        guard AutoPasteService.shared.hasAccessibilityPermission else {
-            AutoPasteService.shared.requestAccessibilityPermission()
-            NSApp.activate(ignoringOtherApps: true)
-            HUDService.shared.show(message: L("permission.accessibility.message"), style: .error, duration: 3.5)
-            return
-        }
-        
-        // Composite annotations onto the image
-        let annotations = viewController.annotations
-        let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
-
-        // Close the modal immediately so it doesn't interfere with target app
-        finish(.pasted(toApp: appName, didSave: false))
-
-        // Use AutoPasteService to paste image + text to target app
-        AutoPasteService.shared.pasteToApp(image: finalImage, text: prompt, targetApp: targetApp) { success, errorMessage in
-            if success {
-                HUDService.shared.show(message: L("hud.pasted_to_app", appName), style: .success)
-            } else if let errorMessage {
-                HUDService.shared.show(message: errorMessage, style: .error)
-            }
-
-            // Attempt auto-save (if enabled)
-            DispatchQueue.main.async {
-                do {
-                    let saved = try ScreenshotSaveService.shared.saveIfEnabled(image: finalImage)
-                    if saved {
-                        HUDService.shared.show(message: L("hud.saved"), style: .success)
-                    }
-                } catch {
-                    HUDService.shared.show(message: error.localizedDescription, style: .error)
-                }
-            }
-        }
-    }
-    
     private func saveScreenshot() {
         // Composite annotations onto the image
         let annotations = viewController.annotations
@@ -241,28 +204,9 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     private static let padding: CGFloat = 16
     private static let spacing: CGFloat = 12
     
-    /// Write debug log to desktop
-    private static func writeLog(_ message: String) {
-        let desktop = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop/vibecap_debug.log")
-        let timestamp = ISO8601DateFormatter().string(from: Date())
-        let line = "[\(timestamp)] \(message)\n"
-        if let data = line.data(using: .utf8) {
-            if FileManager.default.fileExists(atPath: desktop.path) {
-                if let handle = try? FileHandle(forWritingTo: desktop) {
-                    handle.seekToEndOfFile()
-                    handle.write(data)
-                    handle.closeFile()
-                }
-            } else {
-                try? data.write(to: desktop)
-            }
-        }
-    }
-    
     /// Calculate max window dimensions based on screen size (similar to Mac Screenshot behavior)
     private static func calculateMaxDimensions() -> (maxWidth: CGFloat, maxImageHeight: CGFloat) {
         guard let screen = NSScreen.main else {
-            writeLog("WC: No main screen, using fallback (800, 400)")
             return (800, 400)  // Fallback
         }
         
@@ -276,8 +220,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         let maxWindowHeight = screenFrame.height * 0.90
         let uiChromeHeight = promptAreaHeight + buttonsRowHeight + toolbarHeight + padding * 2 + spacing * 2 + 36
         let maxImageHeight = maxWindowHeight - uiChromeHeight
-        
-        writeLog("WC: Screen=\(screenFrame.width)x\(screenFrame.height), maxWidth=\(maxWidth), maxImageHeight=\(maxImageHeight)")
         
         return (max(maxWidth, 400), max(maxImageHeight, 300))
     }
@@ -338,9 +280,6 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         // Total: image container + 12px spacing + prompt + buttons + padding
         let finalWindowHeight = imageContainerHeight + spacing + promptAreaHeight + buttonsRowHeight + padding + spacing
 
-        writeLog("WC: imageSize=\(imageSize.width)x\(imageSize.height), maxImageWidth=\(maxImageWidth), maxImageHeight=\(maxImageHeight)")
-        writeLog("WC: imageDisplay=\(imageDisplayWidth)x\(imageDisplayHeight), finalWindow=\(finalWindowWidth)x\(finalWindowHeight)")
-        
         return NSSize(width: finalWindowWidth, height: finalWindowHeight)
     }
 }

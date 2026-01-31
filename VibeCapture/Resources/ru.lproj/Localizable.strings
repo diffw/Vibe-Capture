@@ -24,6 +24,19 @@
 "modal.button.close" = "Закрыть";
 "modal.hint.esc_to_close" = "ESC — закрыть";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ — отправить";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_image_and_prompt" = "Скопировать изображение и промпт";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.hint.enable_copy_image_prompt" = "Хотите копировать изображение и промпт вместе?";
+"modal.button.enable_accessibility" = "Включить →";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.image_prompt_copied" = "Изображение и промпт скопированы";
+"hud.copied" = "Скопировано";
+"hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Добавьте инструкции (необязательно)";
 "modal.menu.no_supported_apps" = "Нет запущенных поддерживаемых приложений";
 "modal.menu.send_to_app" = "Отправить в %@";
@@ -144,6 +157,7 @@
 "app.unknown" = "Неизвестно";
 
 "preview.button.show_in_finder" = "Показать в Finder";
+
 /* ===== IAP / Pro ===== */
 "settings.pro.section_title" = "Pro";
 "settings.pro.action.upgrade" = "Upgrade to Pro…";
@@ -178,7 +192,9 @@
 "paywall.status.success" = "Success!";
 
 "gating.customApp.confirm.title" = "Add this app?";
-"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
 "gating.customApp.confirm.confirm" = "Add App";
 "gating.customApp.notCounted.title" = "Already supported";
 "gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
@@ -206,6 +222,9 @@
 "paywall.legal.terms" = "Условия";
 "paywall.legal.privacy" = "Конфиденциальность";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
 "paywall.plan.per_year" = "в год";
 "paywall.plan.per_month" = "в месяц";
 "paywall.plan.one_time" = "разовый платёж";
@@ -216,3 +235,55 @@
 
 "paywall.cta.title_with_savings" = "Скидка %@ на Pro";
 "paywall.cta.subtitle_yearly_equivalent" = "Ежегодная оплата · ≈ %@ / мес.";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Вы Pro";
+"paywall.pro_status.type" = "План: %@";
+"paywall.pro_status.renews" = "Продление: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Начните бесплатно";
+"paywall.step1.subtitle_trial" = "Попробуйте VibeCap бесплатно на вашем Mac. Платите только если решите продолжить, отмена в любое время.";
+"paywall.step1.trial_badge" = "14 дней бесплатно";
+"paywall.step1.cta_trial" = "Начать бесплатный период";
+"paywall.step1.price_with_trial" = "14 дней бесплатно, затем %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Перейти на Pro";
+"paywall.step1.subtitle_no_trial" = "Платите только если решите продолжить, отмена в любое время.";
+"paywall.step1.cta_no_trial" = "Перейти на Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Выберите план";
+"paywall.plan_modal.monthly_subtitle" = "Платите по мере использования";
+"paywall.plan_modal.yearly_subtitle" = "Лучшая цена";
+"paywall.plan_modal.lifetime_subtitle" = "Без подписки";
+"paywall.plan_modal.badge_popular" = "ПОПУЛЯРНЫЙ";
+"paywall.plan_modal.paid_once" = "разовый платёж";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Начать бесплатный период";
+"paywall.plan_modal.cta_buy_now" = "Купить сейчас";
+"paywall.plan_modal.cta_subscribe" = "Подписаться за %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Подписаться сейчас";

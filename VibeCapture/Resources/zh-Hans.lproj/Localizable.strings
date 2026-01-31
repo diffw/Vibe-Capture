@@ -24,6 +24,21 @@
 "modal.button.close" = "关闭";
 "modal.hint.esc_to_close" = "ESC 关闭";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ 发送";
+"modal.hint.cmd_s_to_save" = "⌘S 保存";
+"modal.button.copy_image" = "复制图片";
+"modal.button.copy_image_and_prompt" = "复制图片和提示词";
+"modal.button.copy_prompt" = "复制指令";
+"modal.hint.enable_auto_send" = "想要一键发送到 App？";
+"modal.hint.enable_auto_send_to_app" = "想要一键发送到 %@？";
+"modal.hint.enable_copy_image_prompt" = "想要同时复制图片和提示词吗？";
+"modal.button.enable_accessibility" = "启用 →";
+"modal.button.enable_auto_send" = "启用 →";
+"hud.image_copied" = "图片已复制";
+"hud.image_prompt_copied" = "图片和提示词已复制";
+"hud.copied" = "已复制";
+"hud.prompt_copied" = "指令已复制";
+"hud.configure_save_folder" = "要启用自动保存，请点击 %@ 选择一次保存文件夹。";
+"hud.configure_save_folder_in_settings" = "要启用自动保存，请打开设置并点击 %@。";
 "modal.placeholder.add_instructions" = "添加说明（可选）";
 "modal.menu.no_supported_apps" = "没有支持的应用在运行";
 "modal.menu.send_to_app" = "发送到 %@";
@@ -146,6 +161,7 @@
 /* ===== 预览 ===== */
 
 "preview.button.show_in_finder" = "在 Finder 中显示";
+
 /* ===== IAP / Pro ===== */
 "settings.pro.section_title" = "Pro";
 "settings.pro.action.upgrade" = "升级到 Pro…";
@@ -165,7 +181,7 @@
 "paywall.option.monthly" = "按月";
 "paywall.option.yearly" = "按年";
 "paywall.option.lifetime" = "买断";
-"paywall.error.generic" = "购买失败，请重试。";
+"paywall.error.generic" = "出现问题，请重试。";
 
 "menu.upgrade" = "升级…";
 "paywall.window_title" = "升级";
@@ -180,7 +196,9 @@
 "paywall.status.success" = "成功！";
 
 "gating.customApp.confirm.title" = "添加这个应用？";
-"gating.customApp.confirm.message" = "免费用户只能添加 1 个自定义应用，并且添加后无法移除。\n\n添加：%@";
+"gating.customApp.confirm.message" = "免费用户只能添加 1 个自定义应用，并且添加后无法移除。
+
+添加：%@";
 "gating.customApp.confirm.confirm" = "添加应用";
 "gating.customApp.notCounted.title" = "已支持";
 "gating.customApp.notCounted.message" = "该应用已在系统白名单中，不会占用你的免费自定义应用名额。";
@@ -208,6 +226,9 @@
 "paywall.legal.terms" = "条款";
 "paywall.legal.privacy" = "隐私";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "订阅将自动续费，除非在当前订阅期结束前 24 小时取消。可随时在 App Store → 账户 → 订阅 中管理或取消。";
+
 "paywall.plan.per_year" = "每年";
 "paywall.plan.per_month" = "每月";
 "paywall.plan.one_time" = "一次性";
@@ -218,3 +239,55 @@
 
 "paywall.cta.title_with_savings" = "升级 Pro 立省 %@";
 "paywall.cta.subtitle_yearly_equivalent" = "按年计费 · 约 %@ / 月";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "完整标注工具";
+"paywall.feature.annotations.subtitle" = "圆形、矩形、编号和自定义颜色。";
+
+"paywall.feature.send_list.title" = "无限发送列表";
+"paywall.feature.send_list.subtitle" = "随意添加应用到发送列表，无数量限制。";
+
+"paywall.badge.best_value" = "最划算";
+"paywall.badge.save_percent" = "省 %@%%";
+
+"paywall.unit.month" = "月";
+"paywall.unit.year" = "年";
+
+"paywall.cta.subscribe_monthly" = "订阅 %@ / 月";
+"paywall.cta.subscribe_yearly" = "订阅 %@ / 年";
+"paywall.cta.unlock_lifetime" = "一次买断 %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "你已是 Pro";
+"paywall.pro_status.type" = "方案：%@";
+"paywall.pro_status.renews" = "续费日期：%@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "免费开始";
+"paywall.step1.subtitle_trial" = "在 Mac 上免费试用 VibeCap。满意后再付费，可随时取消。";
+"paywall.step1.trial_badge" = "14 天免费";
+"paywall.step1.cta_trial" = "开始免费试用";
+"paywall.step1.price_with_trial" = "14 天免费，之后 %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "升级到 Pro";
+"paywall.step1.subtitle_no_trial" = "满意后再付费，可随时取消。";
+"paywall.step1.cta_no_trial" = "升级到 Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "选择方案";
+"paywall.plan_modal.monthly_subtitle" = "按需付费";
+"paywall.plan_modal.yearly_subtitle" = "最优惠";
+"paywall.plan_modal.lifetime_subtitle" = "无需订阅";
+"paywall.plan_modal.badge_popular" = "最受欢迎";
+"paywall.plan_modal.paid_once" = "一次付清";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "开始免费试用";
+"paywall.plan_modal.cta_buy_now" = "立即购买";
+"paywall.plan_modal.cta_subscribe" = "订阅 %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "立即订阅";

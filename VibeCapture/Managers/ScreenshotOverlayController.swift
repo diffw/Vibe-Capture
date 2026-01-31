@@ -1,7 +1,9 @@
 import AppKit
 
 final class ScreenshotOverlayController {
-    typealias Completion = (CGRect?, CGWindowID?) -> Void
+    /// Completion callback receives: selection rect, overlay window ID, and a cleanup callback.
+    /// The cleanup callback MUST be called after screenshot capture is complete to close overlay windows.
+    typealias Completion = (CGRect?, CGWindowID?, @escaping () -> Void) -> Void
 
     private var windows: [OverlayWindow] = []
     private var completion: Completion?
@@ -134,12 +136,24 @@ final class ScreenshotOverlayController {
         isFinishing = true
 
         let completion = self.completion
+        
+        // IMPORTANT: Get overlay window ID while windows are still on screen.
+        // This ID is passed to CGWindowListCreateImage with .optionOnScreenBelowWindow,
+        // which captures only windows below the overlay, effectively excluding it.
+        // This is the standard technique used by professional screenshot tools to avoid
+        // capturing their own UI elements.
+        let overlayWindowID: CGWindowID? = windows.first.map { CGWindowID($0.windowNumber) }
+        
+        AppLog.log(.debug, "overlay", "finish; rect=\(rect.map { "\($0)" } ?? "nil"), overlayWindowID=\(overlayWindowID ?? 0)")
 
-        // Defer completion + teardown to the next runloop tick.
-        DispatchQueue.main.async { [weak self] in
-            AppLog.log(.debug, "overlay", "finish async; rect=\(rect.map { "\($0)" } ?? "nil")")
-            self?.stop()
-            completion?(rect, nil)
+        // Pass a cleanup callback to the completion handler.
+        // The caller MUST invoke this callback after screenshot capture is complete.
+        // This ensures the overlay windows remain visible during capture so that
+        // .optionOnScreenBelowWindow can properly exclude them.
+        completion?(rect, overlayWindowID) { [weak self] in
+            DispatchQueue.main.async {
+                self?.stop()
+            }
         }
     }
 

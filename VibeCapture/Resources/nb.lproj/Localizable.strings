@@ -24,6 +24,19 @@
 "modal.button.close" = "Lukk";
 "modal.hint.esc_to_close" = "ESC for å lukke";
 "modal.hint.cmd_enter_to_send" = "⌘↩︎ for å sende";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_image_and_prompt" = "Kopier bilde og prompt";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.hint.enable_copy_image_prompt" = "Vil du kopiere bilde og prompt sammen?";
+"modal.button.enable_accessibility" = "Aktiver →";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.image_prompt_copied" = "Image & Prompt copied";
+"hud.copied" = "Copied";
+"hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Legg til instruksjoner (valgfritt)";
 "modal.menu.no_supported_apps" = "Ingen støttede apper kjører";
 "modal.menu.send_to_app" = "Send til %@";
@@ -144,6 +157,7 @@
 "app.unknown" = "Ukjent";
 
 "preview.button.show_in_finder" = "Vis i Finder";
+
 /* ===== IAP / Pro ===== */
 "settings.pro.section_title" = "Pro";
 "settings.pro.action.upgrade" = "Upgrade to Pro…";
@@ -178,7 +192,9 @@
 "paywall.status.success" = "Success!";
 
 "gating.customApp.confirm.title" = "Add this app?";
-"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
 "gating.customApp.confirm.confirm" = "Add App";
 "gating.customApp.notCounted.title" = "Already supported";
 "gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
@@ -206,6 +222,9 @@
 "paywall.legal.terms" = "Vilkår";
 "paywall.legal.privacy" = "Personvern";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
 "paywall.plan.per_year" = "per år";
 "paywall.plan.per_month" = "per måned";
 "paywall.plan.one_time" = "engangskjøp";
@@ -216,3 +235,55 @@
 
 "paywall.cta.title_with_savings" = "Spar %@ på Pro";
 "paywall.cta.subtitle_yearly_equivalent" = "Årlig fakturering · ≈ %@ / måned";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Du er Pro";
+"paywall.pro_status.type" = "Plan: %@";
+"paywall.pro_status.renews" = "Fornyes: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Start gratis";
+"paywall.step1.subtitle_trial" = "Prøv VibeCap gratis på din Mac. Betal bare hvis du velger å fortsette, avbryt når som helst.";
+"paywall.step1.trial_badge" = "14 dager gratis";
+"paywall.step1.cta_trial" = "Start gratis prøveperiode";
+"paywall.step1.price_with_trial" = "14 dager gratis, deretter %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Oppgrader til Pro";
+"paywall.step1.subtitle_no_trial" = "Betal bare hvis du velger å fortsette, avbryt når som helst.";
+"paywall.step1.cta_no_trial" = "Oppgrader til Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Velg din plan";
+"paywall.plan_modal.monthly_subtitle" = "Betal etter behov";
+"paywall.plan_modal.yearly_subtitle" = "Beste verdi";
+"paywall.plan_modal.lifetime_subtitle" = "Ingen abonnement";
+"paywall.plan_modal.badge_popular" = "POPULÆR";
+"paywall.plan_modal.paid_once" = "engangsbetaling";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Start gratis prøveperiode";
+"paywall.plan_modal.cta_buy_now" = "Kjøp nå";
+"paywall.plan_modal.cta_subscribe" = "Abonner for %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Abonner nå";

@@ -1,4 +1,6 @@
 import AppKit
+import ImageIO
+import UniformTypeIdentifiers
 
 enum SaveError: LocalizedError {
     case noFolderSelected
@@ -24,6 +26,21 @@ final class ScreenshotSaveService {
     static let shared = ScreenshotSaveService()
     private init() {}
 
+    /// Save to an already-resolved (security-scoped) folder URL.
+    /// - Important: This never prompts (safe for background queues / auto-save).
+    func saveToKnownFolderAndReturnURL(cgImage: CGImage, folderURL: URL) throws -> URL {
+        guard let data = pngData(from: cgImage) else { throw SaveError.imageEncodingFailed }
+        return try writePNGData(data, to: folderURL)
+    }
+
+    /// Convenience wrapper for UI-thread callers.
+    func saveToKnownFolderAndReturnURL(image: NSImage, folderURL: URL) throws -> URL {
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            throw SaveError.imageEncodingFailed
+        }
+        return try saveToKnownFolderAndReturnURL(cgImage: cgImage, folderURL: folderURL)
+    }
+
     /// Saves a PNG file to the user-chosen folder (security-scoped).
     /// Returns true if saved, false if saving is disabled or user cancelled folder selection.
     func saveIfEnabled(image: NSImage) throws -> Bool {
@@ -45,32 +62,29 @@ final class ScreenshotSaveService {
 
     /// Core save logic: save to configured folder, or prompt user to choose
     private func saveToFolderAndReturnURL(image: NSImage) throws -> URL? {
-        guard let data = image.pngData() else { throw SaveError.imageEncodingFailed }
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil),
+              let data = pngData(from: cgImage)
+        else { throw SaveError.imageEncodingFailed }
 
         let folderURL: URL
-        if let existing = try resolveFolderURLFromBookmark() {
-            folderURL = existing
+        let existingFolderURL: URL?
+        do {
+            existingFolderURL = try resolveFolderURLFromBookmark()
+        } catch {
+            // If the bookmark is stale/invalid, treat it as "not configured" and re-prompt.
+            AppLog.log(.warn, "save", "Failed to resolve save folder bookmark, will prompt user. error=\(error.localizedDescription)")
+            existingFolderURL = nil
+        }
+
+        if let existingFolderURL {
+            folderURL = existingFolderURL
         } else {
             guard let chosen = chooseFolder() else { return nil }
             folderURL = chosen
             try storeBookmark(for: folderURL)
         }
 
-        var didStart = false
-        didStart = folderURL.startAccessingSecurityScopedResource()
-        defer {
-            if didStart { folderURL.stopAccessingSecurityScopedResource() }
-        }
-
-        let filename = Self.defaultFilename()
-        let url = uniqueURL(in: folderURL, filename: filename)
-
-        do {
-            try data.write(to: url, options: [.atomic])
-            return url
-        } catch {
-            throw SaveError.writeFailed(error)
-        }
+        return try writePNGData(data, to: folderURL)
     }
 
     func chooseAndStoreFolder() throws -> URL? {
@@ -100,6 +114,24 @@ final class ScreenshotSaveService {
         let response = panel.runModal()
         guard response == .OK, let url = panel.url else { return nil }
         return url
+    }
+
+    private func writePNGData(_ data: Data, to folderURL: URL) throws -> URL {
+        var didStart = false
+        didStart = folderURL.startAccessingSecurityScopedResource()
+        defer {
+            if didStart { folderURL.stopAccessingSecurityScopedResource() }
+        }
+
+        let filename = Self.defaultFilename()
+        let url = uniqueURL(in: folderURL, filename: filename)
+
+        do {
+            try data.write(to: url, options: [.atomic])
+            return url
+        } catch {
+            throw SaveError.writeFailed(error)
+        }
     }
 
     private func storeBookmark(for folderURL: URL) throws {
@@ -154,6 +186,18 @@ final class ScreenshotSaveService {
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyyMMdd-HHmmss"
         return "VC \(f.string(from: now)).png"
+    }
+
+    private func pngData(from cgImage: CGImage) -> Data? {
+        let data = NSMutableData()
+        guard let dest = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil) else {
+            return nil
+        }
+        CGImageDestinationAddImage(dest, cgImage, nil)
+        guard CGImageDestinationFinalize(dest) else {
+            return nil
+        }
+        return data as Data
     }
 }
 

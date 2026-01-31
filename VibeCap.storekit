@@ -15,22 +15,22 @@
   ],
   "products" : [
     {
-      "displayPrice" : "19.99",
+      "displayPrice" : "24.99",
       "familyShareable" : false,
       "internalID" : "9E5F560A",
       "localizations" : [
         {
-          "description" : "Unlock all Pro features with a one-time purchase.\nUnlock all Pro features with a one-time purchase.\nUnlock all Pro features with a one-time purchase.",
+          "description" : "Unlock all Pro features with a one-time purchase.",
           "displayName" : "VibeCap Pro (Lifetime)",
           "locale" : "en_US"
         },
         {
           "description" : "一次性购买，永久解锁全部专业功能。",
-          "displayName" : "VibeCap 专业版（永久）",
+          "displayName" : "VibeCap 专业版（买断）",
           "locale" : "zh_Hans"
         }
       ],
-      "productID" : "com.luke.vibecapture.pro.lifetime",
+      "productID" : "com.nanwang.vibecap.pro.lifetime",
       "referenceName" : "VibeCap Pro Lifetime",
       "type" : "NonConsumable"
     }
@@ -68,20 +68,26 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "75ABDA2F",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "MONTHLY_INTRO_14D",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
           "localizations" : [
             {
-              "description" : "Unlock Pro features with a yearly subscription.",
-              "displayName" : "VibeCap Pro (Yearly)",
+              "description" : "Unlock Pro features with a monthly subscription.",
+              "displayName" : "VibeCap Pro (Monthly)",
               "locale" : "en_US"
             },
             {
-              "description" : "按年订阅后即可解锁 VibeCap 的全部专业功能。",
-              "displayName" : "VibeCap 专业版（年度）",
+              "description" : "订阅后即可解锁 VibeCap 的全部专业功能。",
+              "displayName" : "VibeCap 专业版（月度）",
               "locale" : "zh_Hans"
             }
           ],
-          "productID" : "com.luke.vibecapture.pro.monthly",
+          "productID" : "com.nanwang.vibecap.pro.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "VibeCap Pro Monthly",
           "subscriptionGroupID" : "F44B065E",
@@ -97,24 +103,30 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "19.99",
+          "displayPrice" : "17.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "4236B64C",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "YEARLY_INTRO_14D",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
           "localizations" : [
             {
-              "description" : "Unlock Pro features with a monthly subscription.",
-              "displayName" : "VibeCap Pro (Monthly)",
+              "description" : "Unlock Pro features with a yearly subscription.",
+              "displayName" : "VibeCap Pro (Yearly)",
               "locale" : "en_US"
             },
             {
               "description" : "订阅后即可解锁 VibeCap 的全部专业功能。",
-              "displayName" : "VibeCap 专业版（月度）",
+              "displayName" : "VibeCap 专业版（年度）",
               "locale" : "zh_Hans"
             }
           ],
-          "productID" : "com.luke.vibecapture.pro.yearly",
+          "productID" : "com.nanwang.vibecap.pro.yearly.v1",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "VibeCap Pro Yearly",
           "subscriptionGroupID" : "F44B065E",

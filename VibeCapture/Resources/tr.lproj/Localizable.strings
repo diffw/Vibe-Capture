@@ -24,6 +24,19 @@
 "modal.button.close" = "Kapat";
 "modal.hint.esc_to_close" = "Kapatmak için ESC";
 "modal.hint.cmd_enter_to_send" = "Göndermek için ⌘↩︎";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_image_and_prompt" = "Görsel ve istemi kopyala";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.hint.enable_copy_image_prompt" = "Görseli ve istemi birlikte kopyalamak ister misiniz?";
+"modal.button.enable_accessibility" = "Etkinleştir →";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.image_prompt_copied" = "Görsel ve istem kopyalandı";
+"hud.copied" = "Kopyalandı";
+"hud.prompt_copied" = "Prompt copied";
 "modal.placeholder.add_instructions" = "Talimat ekle (isteğe bağlı)";
 "modal.menu.no_supported_apps" = "Desteklenen uygulama çalışmıyor";
 "modal.menu.send_to_app" = "%@ Uygulamasına Gönder";
@@ -144,6 +157,7 @@
 "app.unknown" = "Bilinmiyor";
 
 "preview.button.show_in_finder" = "Finder'da Göster";
+
 /* ===== IAP / Pro ===== */
 "settings.pro.section_title" = "Pro";
 "settings.pro.action.upgrade" = "Upgrade to Pro…";
@@ -178,7 +192,9 @@
 "paywall.status.success" = "Success!";
 
 "gating.customApp.confirm.title" = "Add this app?";
-"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
 "gating.customApp.confirm.confirm" = "Add App";
 "gating.customApp.notCounted.title" = "Already supported";
 "gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
@@ -206,6 +222,9 @@
 "paywall.legal.terms" = "Koşullar";
 "paywall.legal.privacy" = "Gizlilik";
 
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
 "paywall.plan.per_year" = "yılda";
 "paywall.plan.per_month" = "ayda";
 "paywall.plan.one_time" = "tek sefer";
@@ -216,3 +235,55 @@
 
 "paywall.cta.title_with_savings" = "Pro'da %@ indirim";
 "paywall.cta.subtitle_yearly_equivalent" = "Yıllık ödeme · ≈ %@ / ay";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Pro'sun";
+"paywall.pro_status.type" = "Plan: %@";
+"paywall.pro_status.renews" = "Yenileme: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Ücretsiz başla";
+"paywall.step1.subtitle_trial" = "VibeCap'i Mac'inde ücretsiz dene. Sadece devam etmek istersen öde, istediğin zaman iptal et.";
+"paywall.step1.trial_badge" = "14 gün ücretsiz";
+"paywall.step1.cta_trial" = "Ücretsiz denemeyi başlat";
+"paywall.step1.price_with_trial" = "14 gün ücretsiz, sonra %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Pro'ya yükselt";
+"paywall.step1.subtitle_no_trial" = "Sadece devam etmek istersen öde, istediğin zaman iptal et.";
+"paywall.step1.cta_no_trial" = "Pro'ya yükselt";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Planını seç";
+"paywall.plan_modal.monthly_subtitle" = "Kullandıkça öde";
+"paywall.plan_modal.yearly_subtitle" = "En iyi değer";
+"paywall.plan_modal.lifetime_subtitle" = "Abonelik yok";
+"paywall.plan_modal.badge_popular" = "POPÜLER";
+"paywall.plan_modal.paid_once" = "tek ödeme";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Ücretsiz denemeyi başlat";
+"paywall.plan_modal.cta_buy_now" = "Şimdi satın al";
+"paywall.plan_modal.cta_subscribe" = "%@/%@ abone ol";
+"paywall.plan_modal.cta_subscribe_generic" = "Şimdi abone ol";

@@ -2,12 +2,16 @@ import AppKit
 import StoreKit
 
 /// Purchase + restore helpers for StoreKit 2.
+@MainActor
 final class PurchaseService {
     static let shared = PurchaseService()
 
     private init() {}
 
     private var productsByID: [String: Product] = [:]
+
+    /// Cached trial eligibility status (refreshed when products load)
+    private(set) var isEligibleForTrial: Bool = false
 
     func loadProductsIfNeeded() async throws {
         if !productsByID.isEmpty { return }
@@ -22,14 +26,78 @@ final class PurchaseService {
             map[p.id] = p
         }
         productsByID = map
+
+        // Check trial eligibility (based on yearly subscription)
+        await refreshTrialEligibility()
+    }
+
+    /// Force refresh products and trial eligibility
+    func refreshProducts() async throws {
+        productsByID = [:]
+        try await loadProductsIfNeeded()
+    }
+
+    /// Check if user is eligible for introductory offer (free trial)
+    func refreshTrialEligibility() async {
+        // Check eligibility for yearly subscription (primary trial product)
+        if let yearly = productsByID[EntitlementsService.ProductID.yearly] {
+            isEligibleForTrial = await yearly.subscription?.isEligibleForIntroOffer ?? false
+        } else if let monthly = productsByID[EntitlementsService.ProductID.monthly] {
+            isEligibleForTrial = await monthly.subscription?.isEligibleForIntroOffer ?? false
+        } else {
+            isEligibleForTrial = false
+        }
+    }
+
+    /// Check trial eligibility for a specific product
+    func isEligibleForTrial(productID: String) async -> Bool {
+        guard let product = productsByID[productID],
+              let subscription = product.subscription else {
+            return false
+        }
+        return await subscription.isEligibleForIntroOffer
+    }
+
+    /// Get introductory offer info for a product (if eligible)
+    func introductoryOffer(for productID: String) async -> Product.SubscriptionOffer? {
+        guard let product = productsByID[productID],
+              let subscription = product.subscription,
+              await subscription.isEligibleForIntroOffer else {
+            return nil
+        }
+        return subscription.introductoryOffer
+    }
+
+    /// Get trial duration in days for a product (if has free trial)
+    func trialDays(for productID: String) async -> Int? {
+        guard let offer = await introductoryOffer(for: productID),
+              offer.paymentMode == .freeTrial else {
+            return nil
+        }
+        // Convert period to days
+        let period = offer.period
+        switch period.unit {
+        case .day: return period.value
+        case .week: return period.value * 7
+        case .month: return period.value * 30
+        case .year: return period.value * 365
+        @unknown default: return nil
+        }
     }
 
     func product(id: String) -> Product? {
         productsByID[id]
     }
 
+    func allProducts() -> [Product] {
+        return [
+            productsByID[EntitlementsService.ProductID.monthly],
+            productsByID[EntitlementsService.ProductID.yearly],
+            productsByID[EntitlementsService.ProductID.lifetime],
+        ].compactMap { $0 }
+    }
+
     /// Minimal purchase picker used by Settings until Paywall UI lands.
-    @MainActor
     func presentUpgradeOptions(from window: NSWindow?) {
         Task {
             do {
@@ -70,7 +138,6 @@ final class PurchaseService {
         }
     }
 
-    @MainActor
     func restorePurchases(from window: NSWindow?) {
         Task {
             do {
@@ -82,7 +149,6 @@ final class PurchaseService {
         }
     }
 
-    @MainActor
     func openManageSubscriptions(from window: NSWindow?) {
         // macOS: open Apple-managed subscriptions page.
         // (StoreKit does not currently provide a native "Manage Subscriptions" sheet API on macOS in our toolchain.)
@@ -91,9 +157,43 @@ final class PurchaseService {
         }
     }
 
+    // MARK: - Purchase
+
+    enum PurchaseResult {
+        case success
+        case cancelled
+        case pending
+        case failed(String)
+    }
+
+    /// Public purchase method for PaywallWindowController
+    func purchase(productID: String) async -> PurchaseResult {
+        guard let product = productsByID[productID] else {
+            return .failed(L("paywall.error.generic"))
+        }
+
+        do {
+            let result = try await product.purchase()
+            switch result {
+            case .success(let verification):
+                let transaction = try EntitlementsService.verify(verification)
+                await transaction.finish()
+                await EntitlementsService.shared.refreshEntitlements()
+                return .success
+            case .userCancelled:
+                return .cancelled
+            case .pending:
+                return .pending
+            @unknown default:
+                return .failed(L("paywall.error.generic"))
+            }
+        } catch {
+            return .failed(L("paywall.error.generic"))
+        }
+    }
+
     // MARK: - Private
 
-    @MainActor
     private func handlePurchaseSelection(
         response: NSApplication.ModalResponse,
         yearly: Product?,
@@ -114,29 +214,16 @@ final class PurchaseService {
             return // Cancel or unexpected
         }
         let product = candidates[buttonIndex]
-        await purchase(product: product, from: window)
+        _ = await purchase(productID: product.id)
     }
 
-    @MainActor
     private func purchase(product: Product, from window: NSWindow?) async {
-        do {
-            let result = try await product.purchase()
-            switch result {
-            case .success(let verification):
-                let transaction = try EntitlementsService.verify(verification)
-                await transaction.finish()
-                await EntitlementsService.shared.refreshEntitlements()
-            case .userCancelled, .pending:
-                break
-            @unknown default:
-                break
-            }
-        } catch {
-            showErrorAlert(from: window, message: L("paywall.error.generic"))
+        let result = await purchase(productID: product.id)
+        if case .failed(let message) = result {
+            showErrorAlert(from: window, message: message)
         }
     }
 
-    @MainActor
     private func showErrorAlert(from window: NSWindow?, message: String) {
         let alert = NSAlert()
         alert.alertStyle = .warning

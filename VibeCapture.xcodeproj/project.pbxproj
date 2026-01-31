@@ -11,7 +11,7 @@
 		A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */; };
 		A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B82 /* Carbon.framework */; };
 		A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */; };
-		A1B2C3D4E5F60718293A4B94 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */; };
+		A1B2C3D4E5F60718293A4B95 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */; };
 		A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */; };
 		A1B2C3D4E5F60718293A4D02 /* CaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C04 /* CaptureManager.swift */; };
 		A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C05 /* ScreenshotOverlayController.swift */; };
@@ -32,14 +32,13 @@
 		A1B2C3D4E5F60718293A4D12 /* KeyCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */; };
 		A1B2C3D4E5F60718293A4D13 /* NSImage+PNG.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */; };
 		A1B2C3D4E5F60718293A4D14 /* PermissionsUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */; };
-		A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */; };
-		A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */; };
+		A1B2C3D4E5F60718293A4D80 /* ClipboardAutoPasteCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */; };
+		A1B2C3D4E5F60718293A4D81 /* ClipboardAutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */; };
 		A1B2C3D4E5F60718293A4D20 /* Annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C20 /* Annotation.swift */; };
 		A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */; };
 		A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */; };
 		A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */; };
 		A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */; };
-		A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */; };
 		A1B2C3D4E5F60718293A4D30 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */; };
 		A1B2C3D4E5F60718293A4D31 /* RoundedHoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */; };
 		A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */; };
@@ -74,29 +73,52 @@
 		A1B2C3D4E5F60718293A4D57 /* download-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C57 /* download-line.svg */; };
 		A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */; };
 		A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */; };
-		A1B2C3D4E5F60718293A4D30 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */; };
-		A1B2C3D4E5F60718293A4D31 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */; };
-		A1B2C3D4E5F60718293A4D32 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */; };
-		A1B2C3D4E5F60718293A4D33 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */; };
-		A1B2C3D4E5F60718293A4D35 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */; };
-		A1B2C3D4E5F60718293A4D36 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C36 /* main.swift */; };
-		A1B2C3D4E5F60718293A4D95 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C95 /* Resources */; };
+		A1B2C3D4E5F60718293A4D5A /* file-copy-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */; };
+		A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */; };
+		A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */; };
+		A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */; };
+		A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */; };
+		B1B2C3D4E5F60718293AC010 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE000 /* XCTest.framework */; };
+		B1B2C3D4E5F60718293AC011 /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */; };
+		B1B2C3D4E5F60718293AC012 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE000 /* XCTest.framework */; };
+		B1B2C3D4E5F60718293AC020 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */; };
+		B1B2C3D4E5F60718293AC021 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */; };
+		B1B2C3D4E5F60718293AC022 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */; };
+		B1B2C3D4E5F60718293AC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */; };
+		B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */; };
+		B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */; };
+		B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */; };
+		B1B2C3D4E5F60718293AC028 /* VibeCap.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */; };
+		B1B2C3D4E5F60718293AC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B1B2C3D4E5F60718293AF010 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F60718293A4B5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B2C3D4E5F60718293A4B70;
+			remoteInfo = VibeCap;
+		};
+		B1B2C3D4E5F60718293AF011 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F60718293A4B5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B2C3D4E5F60718293A4B70;
+			remoteInfo = VibeCap;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = "Vibe Capture.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60718293A4B79 /* VibeCap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = VibeCap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A4B80 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B82 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C02 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCapture.entitlements; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C36 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C04 /* CaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C05 /* ScreenshotOverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotOverlayController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C06 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
@@ -116,14 +138,13 @@
 		A1B2C3D4E5F60718293A4C14 /* KeyCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCombo.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C15 /* NSImage+PNG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PNG.swift"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C16 /* PermissionsUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsUI.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetectionService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoPasteService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardAutoPasteCore.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardAutoPasteService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C20 /* Annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Annotation.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationCanvasView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationToolbarView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusableScrollView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAppPanelController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedHoverButton.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewService.swift; sourceTree = "<group>"; };
@@ -158,26 +179,25 @@
 		A1B2C3D4E5F60718293A4C57 /* download-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "download-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "add-circle-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "arrow-down-s-line.svg"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallWindowController.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C36 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4C95 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
-		A3DCB2FE2F2335D3003B887D /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "file-copy-line.svg"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallWindowController.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift; sourceTree = "<group>"; };
+		B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VibeCapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B2C3D4E5F60718293ABD001 /* VibeCapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VibeCapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B2C3D4E5F60718293ABE000 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKitTest.framework; path = System/Library/Frameworks/StoreKitTest.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
-
-/* Begin PBXResourcesBuildPhase section */
-		A1B2C3D4E5F60718293A4B95 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1B2C3D4E5F60718293A4D95 /* Resources in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A1B2C3D4E5F60718293A4B72 /* Frameworks */ = {
@@ -188,7 +208,24 @@
 				A1B2C3D4E5F60718293A4B91 /* CoreGraphics.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B92 /* Carbon.framework in Frameworks */,
 				A1B2C3D4E5F60718293A4B93 /* ServiceManagement.framework in Frameworks */,
-				A1B2C3D4E5F60718293A4B94 /* StoreKit.framework in Frameworks */,
+				A1B2C3D4E5F60718293A4B95 /* StoreKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC010 /* XCTest.framework in Frameworks */,
+				B1B2C3D4E5F60718293AC011 /* StoreKitTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC012 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,8 +235,9 @@
 		A1B2C3D4E5F60718293A4B5D = {
 			isa = PBXGroup;
 			children = (
-				A3DCB2FE2F2335D3003B887D /* VibeCap.storekit */,
+				A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */,
 				A1B2C3D4E5F60718293A4B5E /* VibeCapture */,
+				B1B2C3D4E5F60718293ABF000 /* Tests */,
 				A1B2C3D4E5F60718293A4B66 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B65 /* Products */,
 			);
@@ -209,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A4C01 /* AppDelegate.swift */,
-				A1B2C3D4E5F60718293A4C95 /* Resources */,
 				A1B2C3D4E5F60718293A4C36 /* main.swift */,
 				A1B2C3D4E5F60718293A4C02 /* Info.plist */,
 				A1B2C3D4E5F60718293A4C03 /* VibeCapture.entitlements */,
@@ -247,17 +284,16 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60718293A4C23 /* AnnotationRenderService.swift */,
-				A1B2C3D4E5F60718293A4C17 /* AppDetectionService.swift */,
-				A1B2C3D4E5F60718293A4C18 /* AutoPasteService.swift */,
+				A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */,
+				A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */,
+				A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */,
 				A1B2C3D4E5F60718293A4C08 /* ClipboardService.swift */,
-				A1B2C3D4E5F60718293A4C30 /* EntitlementsService.swift */,
-				A1B2C3D4E5F60718293A4C31 /* CapabilityService.swift */,
-				A1B2C3D4E5F60718293A4C35 /* LocalizationManager.swift */,
-				A1B2C3D4E5F60718293A4C32 /* PurchaseService.swift */,
+				A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */,
 				A1B2C3D4E5F60718293A4C09 /* HUDService.swift */,
 				A1B2C3D4E5F60718293A4C37 /* AppLog.swift */,
 				A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */,
 				A1B2C3D4E5F60718293A4C0A /* LaunchAtLoginService.swift */,
+				A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */,
 				A1B2C3D4E5F60718293A4C0B /* ScreenCaptureService.swift */,
 				A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */,
 				A1B2C3D4E5F60718293A4C0C /* ScreenshotSaveService.swift */,
@@ -276,7 +312,6 @@
 		A1B2C3D4E5F60718293A4B63 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60718293A4C27 /* AddAppPanelController.swift */,
 				A1B2C3D4E5F60718293A4C21 /* AnnotationCanvasView.swift */,
 				A1B2C3D4E5F60718293A4C22 /* AnnotationToolbarView.swift */,
 				A1B2C3D4E5F60718293A4C0E /* CaptureModalViewController.swift */,
@@ -284,7 +319,7 @@
 				A1B2C3D4E5F60718293A4C35 /* DraggableImageView.swift */,
 				A1B2C3D4E5F60718293A4C24 /* FocusableScrollView.swift */,
 				A1B2C3D4E5F60718293A4C0F /* CaptureModalWindowController.swift */,
-				A1B2C3D4E5F60718293A4C33 /* PaywallWindowController.swift */,
+				A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */,
 				A1B2C3D4E5F60718293A4C10 /* PromptTextView.swift */,
 				A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */,
 				A1B2C3D4E5F60718293A4C33 /* ScreenshotPreviewPanelController.swift */,
@@ -308,7 +343,9 @@
 		A1B2C3D4E5F60718293A4B65 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */,
+				A1B2C3D4E5F60718293A4B79 /* VibeCap.app */,
+				B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */,
+				B1B2C3D4E5F60718293ABD001 /* VibeCapUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,7 +357,9 @@
 				A1B2C3D4E5F60718293A4B81 /* CoreGraphics.framework */,
 				A1B2C3D4E5F60718293A4B82 /* Carbon.framework */,
 				A1B2C3D4E5F60718293A4B83 /* ServiceManagement.framework */,
-				A1B2C3D4E5F60718293A4B84 /* StoreKit.framework */,
+				A1B2C3D4E5F60718293A4B85 /* StoreKit.framework */,
+				B1B2C3D4E5F60718293ABE000 /* XCTest.framework */,
+				B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -334,6 +373,7 @@
 				A1B2C3D4E5F60718293A4C57 /* download-line.svg */,
 				A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */,
 				A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */,
+				A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */,
 				A1B2C3D4E5F60718293A4C43 /* cs.lproj */,
 				A1B2C3D4E5F60718293A4C44 /* da.lproj */,
 				A1B2C3D4E5F60718293A4C45 /* de.lproj */,
@@ -358,15 +398,29 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		B1B2C3D4E5F60718293ABF000 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */,
+				B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */,
+				B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */,
+				B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */,
+				B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */,
+				B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */,
+				B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */,
+				B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A1B2C3D4E5F60718293A4B70 /* Vibe Capture */ = {
+		A1B2C3D4E5F60718293A4B70 /* VibeCap */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A1B2C3D4E5F60718293A4B74 /* Build configuration list for PBXNativeTarget "Vibe Capture" */;
+			buildConfigurationList = A1B2C3D4E5F60718293A4B74 /* Build configuration list for PBXNativeTarget "VibeCap" */;
 			buildPhases = (
 				A1B2C3D4E5F60718293A4B71 /* Sources */,
-				A1B2C3D4E5F60718293A4B95 /* Resources */,
 				A1B2C3D4E5F60718293A4B72 /* Frameworks */,
 				A1B2C3D4E5F60718293A4B84 /* Resources */,
 			);
@@ -374,10 +428,45 @@
 			);
 			dependencies = (
 			);
-			name = "Vibe Capture";
-			productName = "Vibe Capture";
-			productReference = A1B2C3D4E5F60718293A4B79 /* Vibe Capture.app */;
+			name = VibeCap;
+			productName = VibeCap;
+			productReference = A1B2C3D4E5F60718293A4B79 /* VibeCap.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B1B2C3D4E5F60718293ABA000 /* VibeCapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1B2C3D4E5F60718293AC110 /* Build configuration list for PBXNativeTarget "VibeCapTests" */;
+			buildPhases = (
+				B1B2C3D4E5F60718293ABB00 /* Sources */,
+				B1B2C3D4E5F60718293ABB10 /* Frameworks */,
+				B1B2C3D4E5F60718293ABB20 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1B2C3D4E5F60718293AF020 /* PBXTargetDependency */,
+			);
+			name = VibeCapTests;
+			productName = VibeCapTests;
+			productReference = B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B1B2C3D4E5F60718293ABA001 /* VibeCapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1B2C3D4E5F60718293AC111 /* Build configuration list for PBXNativeTarget "VibeCapUITests" */;
+			buildPhases = (
+				B1B2C3D4E5F60718293ABB01 /* Sources */,
+				B1B2C3D4E5F60718293ABB11 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1B2C3D4E5F60718293AF021 /* PBXTargetDependency */,
+			);
+			name = VibeCapUITests;
+			productName = VibeCapUITests;
+			productReference = B1B2C3D4E5F60718293ABD001 /* VibeCapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -393,6 +482,14 @@
 					A1B2C3D4E5F60718293A4B70 = {
 						CreatedOnToolsVersion = 15.0;
 					};
+					B1B2C3D4E5F60718293ABA000 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A1B2C3D4E5F60718293A4B70;
+					};
+					B1B2C3D4E5F60718293ABA001 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A1B2C3D4E5F60718293A4B70;
+					};
 				};
 			};
 			buildConfigurationList = A1B2C3D4E5F60718293A4B73 /* Build configuration list for PBXProject "VibeCapture" */;
@@ -407,7 +504,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A1B2C3D4E5F60718293A4B70 /* Vibe Capture */,
+				A1B2C3D4E5F60718293A4B70 /* VibeCap */,
+				B1B2C3D4E5F60718293ABA000 /* VibeCapTests */,
+				B1B2C3D4E5F60718293ABA001 /* VibeCapUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -423,6 +522,7 @@
 				A1B2C3D4E5F60718293A4D57 /* download-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */,
+				A1B2C3D4E5F60718293A4D5A /* file-copy-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D43 /* cs.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D44 /* da.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D45 /* de.lproj in Resources */,
@@ -446,6 +546,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1B2C3D4E5F60718293ABB20 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC028 /* VibeCap.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -457,7 +565,6 @@
 				A1B2C3D4E5F60718293A4D21 /* AnnotationCanvasView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D22 /* AnnotationToolbarView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D24 /* FocusableScrollView.swift in Sources */,
-				A1B2C3D4E5F60718293A4D27 /* AddAppPanelController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D23 /* AnnotationRenderService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D01 /* AppDelegate.swift in Sources */,
 				A1B2C3D4E5F60718293A4D36 /* main.swift in Sources */,
@@ -465,14 +572,10 @@
 				A1B2C3D4E5F60718293A4D03 /* ScreenshotOverlayController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D04 /* ShortcutManager.swift in Sources */,
 				A1B2C3D4E5F60718293A4D05 /* CaptureSession.swift in Sources */,
-				A1B2C3D4E5F60718293A4D15 /* AppDetectionService.swift in Sources */,
-				A1B2C3D4E5F60718293A4D16 /* AutoPasteService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D80 /* ClipboardAutoPasteCore.swift in Sources */,
+				A1B2C3D4E5F60718293A4D81 /* ClipboardAutoPasteService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D06 /* ClipboardService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */,
-				A1B2C3D4E5F60718293A4D30 /* EntitlementsService.swift in Sources */,
-				A1B2C3D4E5F60718293A4D31 /* CapabilityService.swift in Sources */,
-				A1B2C3D4E5F60718293A4D35 /* LocalizationManager.swift in Sources */,
-				A1B2C3D4E5F60718293A4D32 /* PurchaseService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D07 /* HUDService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D37 /* AppLog.swift in Sources */,
 				A1B2C3D4E5F60718293A4D30 /* LocalizationManager.swift in Sources */,
@@ -484,7 +587,6 @@
 				A1B2C3D4E5F60718293A4D0D /* CaptureModalWindowController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D34 /* CountdownCloseButton.swift in Sources */,
 				A1B2C3D4E5F60718293A4D35 /* DraggableImageView.swift in Sources */,
-				A1B2C3D4E5F60718293A4D33 /* PaywallWindowController.swift in Sources */,
 				A1B2C3D4E5F60718293A4D0E /* PromptTextView.swift in Sources */,
 				A1B2C3D4E5F60718293A4D31 /* RoundedHoverButton.swift in Sources */,
 				A1B2C3D4E5F60718293A4D33 /* ScreenshotPreviewPanelController.swift in Sources */,
@@ -494,10 +596,49 @@
 				A1B2C3D4E5F60718293A4D12 /* KeyCombo.swift in Sources */,
 				A1B2C3D4E5F60718293A4D13 /* NSImage+PNG.swift in Sources */,
 				A1B2C3D4E5F60718293A4D14 /* PermissionsUI.swift in Sources */,
+				A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */,
+				A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC020 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC021 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC022 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */,
+				B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */,
+				B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1B2C3D4E5F60718293ABB01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B2C3D4E5F60718293AC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B1B2C3D4E5F60718293AF020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B2C3D4E5F60718293A4B70 /* VibeCap */;
+			targetProxy = B1B2C3D4E5F60718293AF010 /* PBXContainerItemProxy */;
+		};
+		B1B2C3D4E5F60718293AF021 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B2C3D4E5F60718293A4B70 /* VibeCap */;
+			targetProxy = B1B2C3D4E5F60718293AF011 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A1B2C3D4E5F60718293A4B75 /* Debug */ = {
@@ -590,13 +731,16 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = VibeCapture/VibeCapture.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				INFOPLIST_FILE = VibeCapture/Info.plist;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture;
-				PRODUCT_NAME = "Vibe Capture";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanwang.vibecap;
+				PRODUCT_NAME = VibeCap;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -608,15 +752,72 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = VibeCapture/VibeCapture.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				INFOPLIST_FILE = VibeCapture/Info.plist;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.luke.vibecapture;
-				PRODUCT_NAME = "Vibe Capture";
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanwang.vibecap;
+				PRODUCT_NAME = VibeCap;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B1B2C3D4E5F60718293AC100 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanwang.vibecap.tests;
+				PRODUCT_NAME = VibeCapTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VibeCap.app/Contents/MacOS/VibeCap";
+			};
+			name = Debug;
+		};
+		B1B2C3D4E5F60718293AC101 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanwang.vibecap.tests;
+				PRODUCT_NAME = VibeCapTests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VibeCap.app/Contents/MacOS/VibeCap";
+			};
+			name = Release;
+		};
+		B1B2C3D4E5F60718293AC102 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanwang.vibecap.uitests;
+				PRODUCT_NAME = VibeCapUITests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = VibeCap;
+			};
+			name = Debug;
+		};
+		B1B2C3D4E5F60718293AC103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanwang.vibecap.uitests;
+				PRODUCT_NAME = VibeCapUITests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = VibeCap;
 			};
 			name = Release;
 		};
@@ -632,11 +833,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A1B2C3D4E5F60718293A4B74 /* Build configuration list for PBXNativeTarget "Vibe Capture" */ = {
+		A1B2C3D4E5F60718293A4B74 /* Build configuration list for PBXNativeTarget "VibeCap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1B2C3D4E5F60718293A4B77 /* Debug */,
 				A1B2C3D4E5F60718293A4B78 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1B2C3D4E5F60718293AC110 /* Build configuration list for PBXNativeTarget "VibeCapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B2C3D4E5F60718293AC100 /* Debug */,
+				B1B2C3D4E5F60718293AC101 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1B2C3D4E5F60718293AC111 /* Build configuration list for PBXNativeTarget "VibeCapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B2C3D4E5F60718293AC102 /* Debug */,
+				B1B2C3D4E5F60718293AC103 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
