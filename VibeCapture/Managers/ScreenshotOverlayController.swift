@@ -1,9 +1,9 @@
 import AppKit
 
 final class ScreenshotOverlayController {
-    /// Completion callback receives: selection rect, overlay window ID, and a cleanup callback.
-    /// The cleanup callback MUST be called after screenshot capture is complete to close overlay windows.
-    typealias Completion = (CGRect?, CGWindowID?, @escaping () -> Void) -> Void
+    /// Completion callback receives: selection rect, start screen displayID, and a cleanup callback.
+    /// The cleanup callback MUST be called to close overlay windows.
+    typealias Completion = (CGRect?, CGDirectDisplayID?, @escaping () -> Void) -> Void
 
     private var windows: [OverlayWindow] = []
     private var completion: Completion?
@@ -16,7 +16,7 @@ final class ScreenshotOverlayController {
     private var isFinishing = false
     private var globalKeyMonitor: Any?
 
-    func start(completion: @escaping Completion) {
+    func start(frozenBackgroundsByDisplayID: [CGDirectDisplayID: NSImage], completion: @escaping Completion) {
         AppLog.log(.info, "overlay", "start")
         stop()
 
@@ -25,9 +25,12 @@ final class ScreenshotOverlayController {
 
         // Create one overlay window per screen (macOS can't render a single window across multiple displays)
         for screen in NSScreen.screens {
+            let displayID = ScreenCaptureService.displayID(for: screen)
+            let frozenBackground = displayID.flatMap { frozenBackgroundsByDisplayID[$0] }
             let win = OverlayWindow(contentRect: screen.frame, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
             win.setFrame(screen.frame, display: true)
             win.controller = self
+            win.overlayView.frozenBackgroundImage = frozenBackground
             windows.append(win)
         }
 
@@ -136,21 +139,12 @@ final class ScreenshotOverlayController {
         isFinishing = true
 
         let completion = self.completion
-        
-        // IMPORTANT: Get overlay window ID while windows are still on screen.
-        // This ID is passed to CGWindowListCreateImage with .optionOnScreenBelowWindow,
-        // which captures only windows below the overlay, effectively excluding it.
-        // This is the standard technique used by professional screenshot tools to avoid
-        // capturing their own UI elements.
-        let overlayWindowID: CGWindowID? = windows.first.map { CGWindowID($0.windowNumber) }
-        
-        AppLog.log(.debug, "overlay", "finish; rect=\(rect.map { "\($0)" } ?? "nil"), overlayWindowID=\(overlayWindowID ?? 0)")
+
+        let startDisplayID = startScreen.flatMap { ScreenCaptureService.displayID(for: $0) }
+        AppLog.log(.debug, "overlay", "finish; rect=\(rect.map { "\($0)" } ?? "nil"), startDisplayID=\(startDisplayID.map(String.init) ?? "nil")")
 
         // Pass a cleanup callback to the completion handler.
-        // The caller MUST invoke this callback after screenshot capture is complete.
-        // This ensures the overlay windows remain visible during capture so that
-        // .optionOnScreenBelowWindow can properly exclude them.
-        completion?(rect, overlayWindowID) { [weak self] in
+        completion?(rect, startDisplayID) { [weak self] in
             DispatchQueue.main.async {
                 self?.stop()
             }
@@ -252,6 +246,10 @@ final class OverlayWindow: NSPanel {
 }
 
 final class OverlayView: NSView {
+    var frozenBackgroundImage: NSImage? {
+        didSet { needsDisplay = true }
+    }
+
     var selectionRect: CGRect? {
         didSet { needsDisplay = true }
     }
@@ -329,16 +327,33 @@ final class OverlayView: NSView {
 
         guard let ctx = NSGraphicsContext.current?.cgContext else { return }
 
+        if let frozenBackgroundImage {
+            frozenBackgroundImage.draw(
+                in: bounds,
+                from: .zero,
+                operation: .sourceOver,
+                fraction: 1.0,
+                respectFlipped: true,
+                hints: nil
+            )
+        }
+
+        // Dim the screen but keep the selection area undimmed so the user sees the
+        // exact pixels that will be captured.
+        ctx.saveGState()
         ctx.setFillColor(NSColor.black.withAlphaComponent(0.45).cgColor)
-        ctx.fill(bounds)
+        if let selectionRect {
+            let path = CGMutablePath()
+            path.addRect(bounds)
+            path.addRect(selectionRect)
+            ctx.addPath(path)
+            ctx.drawPath(using: .eoFill)
+        } else {
+            ctx.fill(bounds)
+        }
+        ctx.restoreGState()
 
         if let selectionRect {
-            // Cut out selected area.
-            ctx.saveGState()
-            ctx.setBlendMode(.clear)
-            ctx.fill(selectionRect)
-            ctx.restoreGState()
-
             // Border.
             ctx.setStrokeColor(NSColor.white.withAlphaComponent(0.9).cgColor)
             ctx.setLineWidth(2)

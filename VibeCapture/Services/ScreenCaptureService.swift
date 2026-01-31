@@ -15,7 +15,24 @@ enum ScreenCaptureError: LocalizedError {
     }
 }
 
+struct FrozenScreenSnapshot {
+    let displayID: CGDirectDisplayID
+    let screenFramePoints: CGRect
+    let backingScaleFactor: CGFloat
+    let cgImage: CGImage
+
+    var nsImage: NSImage {
+        NSImage(cgImage: cgImage, size: screenFramePoints.size)
+    }
+}
+
 final class ScreenCaptureService {
+    static func displayID(for screen: NSScreen) -> CGDirectDisplayID? {
+        // NSScreenNumber is documented as the CGDirectDisplayID for the screen.
+        let key = NSDeviceDescriptionKey("NSScreenNumber")
+        return screen.deviceDescription[key] as? CGDirectDisplayID
+    }
+
     func ensurePermissionOrRequest() -> Bool {
         let span = AppLog.span("capture", "ensurePermissionOrRequest")
         defer { span.end(.info) }
@@ -30,6 +47,48 @@ final class ScreenCaptureService {
         let ok = CGPreflightScreenCaptureAccess()
         AppLog.log(.info, "capture", "CGPreflight after request = \(ok)")
         return ok
+    }
+
+    func captureFrozenSnapshot(for screen: NSScreen) throws -> FrozenScreenSnapshot {
+        let screenFrame = screen.frame
+        let displayID = Self.displayID(for: screen)
+
+        let span = AppLog.span("capture", "captureFrozenSnapshot", meta: [
+            "has_display_id": (displayID != nil),
+            "w": Int(screenFrame.width),
+            "h": Int(screenFrame.height),
+        ])
+        defer { span.end(.info) }
+
+        guard let displayID else {
+            AppLog.log(.error, "capture", "captureFrozenSnapshot failed: missing displayID")
+            throw ScreenCaptureError.captureFailed
+        }
+
+        guard CGPreflightScreenCaptureAccess() else {
+            AppLog.log(.error, "capture", "captureFrozenSnapshot denied: no screen recording permission")
+            throw ScreenCaptureError.permissionDenied
+        }
+
+        let cgRect = Self.cocoaToQuartzGlobalRect(screenFrame)
+        AppLog.log(.debug, "capture", "CGWindowListCreateImage (freeze) rect=\(cgRect) option=.optionOnScreenOnly")
+
+        guard let cgImage = CGWindowListCreateImage(
+            cgRect,
+            .optionOnScreenOnly,
+            kCGNullWindowID,
+            [.bestResolution]
+        ) else {
+            AppLog.log(.error, "capture", "CGWindowListCreateImage (freeze) returned nil")
+            throw ScreenCaptureError.captureFailed
+        }
+
+        return FrozenScreenSnapshot(
+            displayID: displayID,
+            screenFramePoints: screenFrame,
+            backingScaleFactor: screen.backingScaleFactor,
+            cgImage: cgImage
+        )
     }
 
     func capture(rect: CGRect, belowWindowID: CGWindowID?) throws -> NSImage {
