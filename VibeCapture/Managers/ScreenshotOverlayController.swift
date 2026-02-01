@@ -145,9 +145,9 @@ final class ScreenshotOverlayController {
 
         // Pass a cleanup callback to the completion handler.
         completion?(rect, startDisplayID) { [weak self] in
-            DispatchQueue.main.async {
-                self?.stop()
-            }
+            // Freeze-first no longer depends on keeping overlay on-screen for capture,
+            // so we can stop synchronously to avoid the overlay stealing focus from the modal.
+            self?.stop()
         }
     }
 
