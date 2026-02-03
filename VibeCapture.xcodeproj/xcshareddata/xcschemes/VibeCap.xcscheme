@@ -70,6 +70,12 @@
             ReferencedContainer = "container:VibeCapture.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--debug-show-onboarding"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <StoreKitConfigurationFileReference
          identifier = "../../VibeCap.storekit">
       </StoreKitConfigurationFileReference>

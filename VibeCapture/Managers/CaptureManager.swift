@@ -18,9 +18,8 @@ final class CaptureManager {
         }
         isStartingCapture = true
 
-        guard captureService.ensurePermissionOrRequest() else {
-            AppLog.log(.warn, "capture", "Screen recording permission missing; showing permission alert")
-            PermissionsUI.showScreenRecordingPermissionAlert()
+        guard ScreenRecordingGate.ensureOrShowModal() else {
+            AppLog.log(.warn, "capture", "Screen recording permission missing; showing gate modal")
             isStartingCapture = false
             return
         }

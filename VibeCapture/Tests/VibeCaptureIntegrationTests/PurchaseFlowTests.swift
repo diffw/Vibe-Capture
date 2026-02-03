@@ -44,6 +44,18 @@ final class PurchaseFlowTests: XCTestCase {
         entitlementsService = nil
         try super.tearDownWithError()
     }
+
+    private func refreshEntitlementsEventually(timeoutSeconds: TimeInterval = 2.0) async {
+        let start = Date()
+        while Date().timeIntervalSince(start) < timeoutSeconds {
+            await entitlementsService.refreshEntitlements()
+            if entitlementsService.isPro {
+                return
+            }
+            try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s
+        }
+        await entitlementsService.refreshEntitlements()
+    }
     
     // MARK: - Product Loading Tests
     
@@ -153,12 +165,19 @@ final class PurchaseFlowTests: XCTestCase {
         let yearly = try XCTUnwrap(products.first)
         
         let result = try await yearly.purchase()
-        if case .success(let verification) = result {
+        switch result {
+        case .success(let verification):
             let transaction = try verification.payloadValue
             await transaction.finish()
+        case .userCancelled, .pending:
+            XCTFail("Expected successful purchase")
+            return
+        @unknown default:
+            XCTFail("Unknown purchase result")
+            return
         }
-        
-        await entitlementsService.refreshEntitlements()
+
+        await refreshEntitlementsEventually()
         
         XCTAssertTrue(entitlementsService.isPro)
         XCTAssertEqual(entitlementsService.status.source, .yearly)

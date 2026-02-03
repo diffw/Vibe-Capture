@@ -15,6 +15,58 @@
 /* [Context: Menu Bar] System default language option */
 "menu.language.system_default" = "System Default";
 
+/* ===== Onboarding ===== */
+
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+
+"onboarding.status.granted" = "Granted ✓";
+"onboarding.status.not_granted" = "Not granted";
+
+"onboarding.cta.skip" = "Skip";
+"onboarding.cta.restart" = "Restart VibeCap";
+"onboarding.cta.continue" = "Continue";
+"onboarding.cta.granted" = "Granted";
+
+"onboarding.error.title" = "Action needed";
+
+"onboarding.01.title" = "Capture.\nPrompt.\nCopy & Paste.";
+"onboarding.01.body" = "Your screenshots,\nAI-ready in one click.";
+"onboarding.01.detail" = "From everyday AI work like ChatGPT\nto vibe coding with tools like Cursor and more.";
+"onboarding.01.cta" = "Get Started";
+
+"onboarding.02.title" = "Enable Screen Recording";
+"onboarding.02.body" = "Screen Recording permission is required to capture screenshots on macOS.";
+"onboarding.02.body.bold" = "Without it, the app won’t work.";
+"onboarding.02.cta.allow" = "Allow access";
+
+"onboarding.03.title" = "Enable Accessibility";
+"onboarding.03.body" = "VibeCap needs accessibility permissions to detect active windows and handle shortcuts. This enables the magic of context-aware capturing.";
+"onboarding.03.cta.allow" = "Allow access";
+
+"onboarding.04.title" = "Preferences";
+"onboarding.04.body" = "Customize where to save and how to capture.";
+"onboarding.04.cta.continue" = "Continue";
+"onboarding.04.save_location" = "SAVE LOCATION";
+"onboarding.04.global_shortcut" = "GLOBAL SHORTCUT";
+"onboarding.04.shortcut_row_title" = "Capture Screen";
+"onboarding.04.browse" = "Browse…";
+"onboarding.04.hint" = "You can change these later in Settings.";
+
+// Step 05 placeholder (replaced when paywall UI lands)
+"onboarding.05.title" = "Start Free";
+"onboarding.05.subtitle" = "Experience the full power of VibeCap free for 14 days.";
+"onboarding.05.cta.trial" = "Start Your Free Trial";
+"onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
+"onboarding.05.pricing.then" = "Then %@/year";
+
+"onboarding.05.feature1.title" = "Full annotated feature";
+"onboarding.05.feature1.body" = "Annotate quickly and keep context.";
+"onboarding.05.feature2.title" = "Save queue";
+"onboarding.05.feature2.body" = "Never lose a capture mid-flow.";
+"onboarding.05.feature3.title" = "Keep screenshot clear";
+"onboarding.05.feature3.body" = "Make screenshots readable instantly.";
+
 /* ===== App Menu ===== */
 
 /* [Context: App Menu] Quit VibeCap */
@@ -126,6 +178,7 @@
 
 /* [Context: Settings] Recording shortcut state */
 "settings.shortcut.recording" = "Type shortcut…";
+"settings.shortcut.recording_short" = "Type…";
 
 /* [Context: Settings] Shortcut help text */
 "settings.shortcut.help" = "Click to record. Press Esc to cancel.";
@@ -141,6 +194,13 @@
 
 /* [Context: Settings] Launch at login checkbox */
 "settings.login.checkbox" = "Launch at Login";
+
+/* [Context: Settings] Permissions section title */
+"settings.permissions.section_title" = "Permissions";
+"settings.permissions.screen_recording.title" = "Screen Recording";
+"settings.permissions.screen_recording.open" = "Open";
+"settings.permissions.accessibility.title" = "Accessibility";
+"settings.permissions.accessibility.open" = "Open";
 
 /* [Context: Settings] Send list section title */
 "settings.send_list.title" = "Added Apps";

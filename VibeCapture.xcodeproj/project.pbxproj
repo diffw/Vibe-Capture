@@ -74,12 +74,33 @@
 		A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */; };
 		A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */; };
 		A1B2C3D4E5F60718293A4D5A /* file-copy-line.svg in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */; };
+		D0A500000000000000000001 /* logo-brown.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000002 /* logo-brown.svg */; };
+		D0A500000000000000000002 /* logo-blue.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000003 /* logo-blue.svg */; };
+		D0A500000000000000000003 /* system-settings.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000004 /* system-settings.png */; };
+		D0A500000000000000000004 /* icon-folder.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000005 /* icon-folder.svg */; };
+		D0A500000000000000000005 /* icon-shortcut.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000006 /* icon-shortcut.svg */; };
+		D0A500000000000000000006 /* paywall-card-bg.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000007 /* paywall-card-bg.png */; };
+		D0A500000000000000000007 /* bullet-circle.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000008 /* bullet-circle.svg */; };
+		D0A500000000000000000008 /* pro-badge.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000009 /* pro-badge.svg */; };
+		D0A500000000000000000009 /* logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A40000000000000000000A /* logo.svg */; };
 		A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */; };
 		A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */; };
 		A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */; };
 		A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C63 /* PaywallWindowController.swift */; };
 		A1B2C3D4E5F60718293A4D80 /* ClipboardAutoPasteCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */; };
 		A1B2C3D4E5F60718293A4D81 /* ClipboardAutoPasteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */; };
+		D0A100000000000000000001 /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000001 /* OnboardingStep.swift */; };
+		D0A100000000000000000002 /* OnboardingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000002 /* OnboardingStore.swift */; };
+		D0A100000000000000000009 /* OnboardingAutoAdvance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000009 /* OnboardingAutoAdvance.swift */; };
+		D0A100000000000000000003 /* AppRelauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000003 /* AppRelauncher.swift */; };
+		D0A100000000000000000004 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000004 /* OnboardingWindowController.swift */; };
+		D0A100000000000000000005 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000005 /* OnboardingViewController.swift */; };
+		D0A100000000000000000006 /* OnboardingPaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000006 /* OnboardingPaywallView.swift */; };
+		D0A100000000000000000007 /* ScreenRecordingGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000007 /* ScreenRecordingGate.swift */; };
+		D0A100000000000000000008 /* ScreenRecordingGateWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A000000000000000000008 /* ScreenRecordingGateWindowController.swift */; };
+		D0A10000000000000000000C /* SVGImageFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A00000000000000000000C /* SVGImageFallback.swift */; };
+		D0A20000000000000000000A /* VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A00000000000000000000A /* VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift */; };
+		D0A20000000000000000000B /* VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A00000000000000000000B /* VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift */; };
 		B1B2C3D4E5F60718293AC010 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE000 /* XCTest.framework */; };
 		B1B2C3D4E5F60718293AC011 /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE001 /* StoreKitTest.framework */; };
 		B1B2C3D4E5F60718293AC012 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABE000 /* XCTest.framework */; };
@@ -181,6 +202,15 @@
 		A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "add-circle-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "arrow-down-s-line.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "file-copy-line.svg"; sourceTree = "<group>"; };
+		D0A400000000000000000002 /* logo-brown.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "logo-brown.svg"; sourceTree = "<group>"; };
+		D0A400000000000000000003 /* logo-blue.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "logo-blue.svg"; sourceTree = "<group>"; };
+		D0A400000000000000000004 /* system-settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "system-settings.png"; sourceTree = "<group>"; };
+		D0A400000000000000000005 /* icon-folder.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "icon-folder.svg"; sourceTree = "<group>"; };
+		D0A400000000000000000006 /* icon-shortcut.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "icon-shortcut.svg"; sourceTree = "<group>"; };
+		D0A400000000000000000007 /* paywall-card-bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "paywall-card-bg.png"; sourceTree = "<group>"; };
+		D0A400000000000000000008 /* bullet-circle.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "bullet-circle.svg"; sourceTree = "<group>"; };
+		D0A400000000000000000009 /* pro-badge.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "pro-badge.svg"; sourceTree = "<group>"; };
+		D0A40000000000000000000A /* logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "logo.svg"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
@@ -188,6 +218,18 @@
 		A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = VibeCap.storekit; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C80 /* ClipboardAutoPasteCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardAutoPasteCore.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C81 /* ClipboardAutoPasteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardAutoPasteService.swift; sourceTree = "<group>"; };
+		D0A000000000000000000001 /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStep.swift; sourceTree = "<group>"; };
+		D0A000000000000000000002 /* OnboardingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStore.swift; sourceTree = "<group>"; };
+		D0A000000000000000000009 /* OnboardingAutoAdvance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAutoAdvance.swift; sourceTree = "<group>"; };
+		D0A000000000000000000003 /* AppRelauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRelauncher.swift; sourceTree = "<group>"; };
+		D0A000000000000000000004 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
+		D0A000000000000000000005 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		D0A000000000000000000006 /* OnboardingPaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPaywallView.swift; sourceTree = "<group>"; };
+		D0A000000000000000000007 /* ScreenRecordingGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingGate.swift; sourceTree = "<group>"; };
+		D0A000000000000000000008 /* ScreenRecordingGateWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecordingGateWindowController.swift; sourceTree = "<group>"; };
+		D0A00000000000000000000C /* SVGImageFallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVGImageFallback.swift; sourceTree = "<group>"; };
+		D0A00000000000000000000A /* VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift; sourceTree = "<group>"; };
+		D0A00000000000000000000B /* VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC010 /* VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/CapabilityServiceTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift; sourceTree = "<group>"; };
@@ -257,6 +299,7 @@
 				A1B2C3D4E5F60718293A4B67 /* Resources */,
 				A1B2C3D4E5F60718293A4B5F /* Managers */,
 				A1B2C3D4E5F60718293A4B60 /* Models */,
+				D0A300000000000000000001 /* Onboarding */,
 				A1B2C3D4E5F60718293A4B61 /* Services */,
 				A1B2C3D4E5F60718293A4B62 /* Settings */,
 				A1B2C3D4E5F60718293A4B63 /* UI */,
@@ -345,6 +388,23 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		D0A300000000000000000001 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				D0A000000000000000000001 /* OnboardingStep.swift */,
+				D0A000000000000000000002 /* OnboardingStore.swift */,
+				D0A000000000000000000009 /* OnboardingAutoAdvance.swift */,
+				D0A000000000000000000003 /* AppRelauncher.swift */,
+				D0A000000000000000000004 /* OnboardingWindowController.swift */,
+				D0A000000000000000000005 /* OnboardingViewController.swift */,
+				D0A000000000000000000006 /* OnboardingPaywallView.swift */,
+				D0A000000000000000000007 /* ScreenRecordingGate.swift */,
+				D0A000000000000000000008 /* ScreenRecordingGateWindowController.swift */,
+				D0A00000000000000000000C /* SVGImageFallback.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		A1B2C3D4E5F60718293A4B65 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -379,6 +439,7 @@
 				A1B2C3D4E5F60718293A4C58 /* add-circle-line.svg */,
 				A1B2C3D4E5F60718293A4C59 /* arrow-down-s-line.svg */,
 				A1B2C3D4E5F60718293A4C5A /* file-copy-line.svg */,
+				D0A400000000000000000001 /* Onboarding */,
 				A1B2C3D4E5F60718293A4C43 /* cs.lproj */,
 				A1B2C3D4E5F60718293A4C44 /* da.lproj */,
 				A1B2C3D4E5F60718293A4C45 /* de.lproj */,
@@ -403,6 +464,22 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		D0A400000000000000000001 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				D0A400000000000000000002 /* logo-brown.svg */,
+				D0A400000000000000000003 /* logo-blue.svg */,
+				D0A400000000000000000004 /* system-settings.png */,
+				D0A400000000000000000005 /* icon-folder.svg */,
+				D0A400000000000000000006 /* icon-shortcut.svg */,
+				D0A400000000000000000007 /* paywall-card-bg.png */,
+				D0A400000000000000000008 /* bullet-circle.svg */,
+				D0A400000000000000000009 /* pro-badge.svg */,
+				D0A40000000000000000000A /* logo.svg */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		B1B2C3D4E5F60718293ABF000 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -411,6 +488,8 @@
 				B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */,
 				B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */,
 				F83885F58F9948EA8A031CE0 /* VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift */,
+				D0A00000000000000000000A /* VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift */,
+				D0A00000000000000000000B /* VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift */,
 				B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */,
 				B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */,
 				B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */,
@@ -529,6 +608,15 @@
 				A1B2C3D4E5F60718293A4D58 /* add-circle-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D59 /* arrow-down-s-line.svg in Resources */,
 				A1B2C3D4E5F60718293A4D5A /* file-copy-line.svg in Resources */,
+				D0A500000000000000000001 /* logo-brown.svg in Resources */,
+				D0A500000000000000000002 /* logo-blue.svg in Resources */,
+				D0A500000000000000000003 /* system-settings.png in Resources */,
+				D0A500000000000000000004 /* icon-folder.svg in Resources */,
+				D0A500000000000000000005 /* icon-shortcut.svg in Resources */,
+				D0A500000000000000000006 /* paywall-card-bg.png in Resources */,
+				D0A500000000000000000007 /* bullet-circle.svg in Resources */,
+				D0A500000000000000000008 /* pro-badge.svg in Resources */,
+				D0A500000000000000000009 /* logo.svg in Resources */,
 				A1B2C3D4E5F60718293A4D43 /* cs.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D44 /* da.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D45 /* de.lproj in Resources */,
@@ -607,6 +695,16 @@
 				A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D63 /* PaywallWindowController.swift in Sources */,
+				D0A100000000000000000001 /* OnboardingStep.swift in Sources */,
+				D0A100000000000000000002 /* OnboardingStore.swift in Sources */,
+				D0A100000000000000000009 /* OnboardingAutoAdvance.swift in Sources */,
+				D0A100000000000000000003 /* AppRelauncher.swift in Sources */,
+				D0A100000000000000000004 /* OnboardingWindowController.swift in Sources */,
+				D0A100000000000000000005 /* OnboardingViewController.swift in Sources */,
+				D0A100000000000000000006 /* OnboardingPaywallView.swift in Sources */,
+				D0A100000000000000000007 /* ScreenRecordingGate.swift in Sources */,
+				D0A100000000000000000008 /* ScreenRecordingGateWindowController.swift in Sources */,
+				D0A10000000000000000000C /* SVGImageFallback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -619,6 +717,8 @@
 				B1B2C3D4E5F60718293AC022 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift in Sources */,
 				3D7003699AAC4CAE899A5C2F /* VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift in Sources */,
+				D0A20000000000000000000A /* VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift in Sources */,
+				D0A20000000000000000000B /* VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */,
 				B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */,

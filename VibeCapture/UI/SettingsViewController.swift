@@ -3,6 +3,14 @@ import AppKit
 final class SettingsViewController: NSViewController {
     private let shortcutRecorder = ShortcutRecorderView()
 
+    // Permissions section
+    private let permissionsTitleLabel = NSTextField(labelWithString: "")
+    private let screenRecordingStatusLabel = NSTextField(labelWithString: "")
+    private let screenRecordingButton = NSButton(title: "", target: nil, action: nil)
+    private let accessibilityStatusLabel = NSTextField(labelWithString: "")
+    private let accessibilityButton = NSButton(title: "", target: nil, action: nil)
+    private var permissionsObserver: Any?
+
     // Save section
     private let saveCheckbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     private let saveFolderLabel = NSTextField(labelWithString: "")
@@ -27,6 +35,25 @@ final class SettingsViewController: NSViewController {
 
         shortcutRecorder.onChange = { [weak self] combo in
             self?.applyShortcut(combo)
+        }
+
+        // Permissions section
+        permissionsTitleLabel.stringValue = L("settings.permissions.section_title")
+        permissionsTitleLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
+
+        screenRecordingButton.title = L("settings.permissions.screen_recording.open")
+        screenRecordingButton.target = self
+        screenRecordingButton.action = #selector(openScreenRecordingSettings)
+        screenRecordingButton.bezelStyle = .rounded
+
+        accessibilityButton.title = L("settings.permissions.accessibility.open")
+        accessibilityButton.target = self
+        accessibilityButton.action = #selector(openAccessibilitySettings)
+        accessibilityButton.bezelStyle = .rounded
+
+        [screenRecordingStatusLabel, accessibilityStatusLabel].forEach { label in
+            label.textColor = .secondaryLabelColor
+            label.font = NSFont.systemFont(ofSize: 12)
         }
 
         // Pro section
@@ -78,6 +105,31 @@ final class SettingsViewController: NSViewController {
         saveSection.orientation = .vertical
         saveSection.spacing = 6
 
+        // Permissions rows
+        let screenRecordingRow = NSStackView(views: [
+            NSTextField(labelWithString: L("settings.permissions.screen_recording.title")),
+            NSView(),
+            screenRecordingStatusLabel,
+            screenRecordingButton
+        ])
+        screenRecordingRow.orientation = .horizontal
+        screenRecordingRow.alignment = .centerY
+        screenRecordingRow.spacing = 8
+
+        let accessibilityRow = NSStackView(views: [
+            NSTextField(labelWithString: L("settings.permissions.accessibility.title")),
+            NSView(),
+            accessibilityStatusLabel,
+            accessibilityButton
+        ])
+        accessibilityRow.orientation = .horizontal
+        accessibilityRow.alignment = .centerY
+        accessibilityRow.spacing = 8
+
+        let permissionsSection = NSStackView(views: [permissionsTitleLabel, screenRecordingRow, accessibilityRow])
+        permissionsSection.orientation = .vertical
+        permissionsSection.spacing = 6
+
         // Pro section layout
         let proButtonsRow = NSStackView(views: [upgradeButton, restoreButton, manageButton, NSView()])
         proButtonsRow.orientation = .horizontal
@@ -89,6 +141,8 @@ final class SettingsViewController: NSViewController {
         
         let stack = NSStackView(views: [
             shortcutRecorder,
+            divider(),
+            permissionsSection,
             divider(),
             saveSection,
             divider(),
@@ -110,12 +164,15 @@ final class SettingsViewController: NSViewController {
         ])
 
         refreshSaveFolderLabel()
+        refreshPermissionStatus()
         refreshProStatus()
         startProStatusObserver()
+        startPermissionsObserver()
     }
 
     deinit {
         stopProStatusObserver()
+        stopPermissionsObserver()
     }
 
     private func divider() -> NSBox {
@@ -196,6 +253,42 @@ final class SettingsViewController: NSViewController {
         alert.informativeText = message
         alert.addButton(withTitle: L("button.ok"))
         alert.runModal()
+    }
+
+    // MARK: - Permissions
+
+    private func startPermissionsObserver() {
+        guard permissionsObserver == nil else { return }
+        permissionsObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.refreshPermissionStatus()
+        }
+    }
+
+    private func stopPermissionsObserver() {
+        if let permissionsObserver {
+            NotificationCenter.default.removeObserver(permissionsObserver)
+            self.permissionsObserver = nil
+        }
+    }
+
+    private func refreshPermissionStatus() {
+        let sr = ScreenRecordingGate.hasPermission()
+        screenRecordingStatusLabel.stringValue = sr ? L("onboarding.status.granted") : L("onboarding.status.not_granted")
+
+        let ax = ClipboardAutoPasteService.shared.hasAccessibilityPermission
+        accessibilityStatusLabel.stringValue = ax ? L("onboarding.status.granted") : L("onboarding.status.not_granted")
+    }
+
+    @objc private func openScreenRecordingSettings() {
+        PermissionsUI.openScreenRecordingSettings()
+    }
+
+    @objc private func openAccessibilitySettings() {
+        PermissionsUI.openAccessibilitySettings()
     }
 
     // MARK: - Pro / IAP

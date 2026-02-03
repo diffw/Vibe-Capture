@@ -4,8 +4,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let captureManager = CaptureManager()
     private var settingsWindowController: SettingsWindowController?
+    private var onboardingWindowController: OnboardingWindowController?
     private var didBecomeActiveObserver: Any?
     private var uiTestCaptureModal: CaptureModalWindowController?
+    private var shouldForceShowOnboarding = false
+    private var shouldResetOnboardingAtLaunch = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppLog.bootstrap()
@@ -15,6 +18,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let didSet = NSApp.setActivationPolicy(.accessory)
         let afterPolicy = NSApp.activationPolicy()
         NSLog("VibeCapture launch: activationPolicy before=%{public}@ after=%{public}@ didSet=%{public}@", "\(beforePolicy)", "\(afterPolicy)", "\(didSet)")
+
+        // Read launch args early so menus can include debug items.
+        let args = ProcessInfo.processInfo.arguments
+        let isUITesting = args.contains(where: { $0.hasPrefix("--uitesting-") })
+        shouldForceShowOnboarding = args.contains("--debug-show-onboarding") || args.contains("--show-onboarding")
+        shouldResetOnboardingAtLaunch = args.contains("--reset-onboarding") || args.contains("--debug-reset-onboarding")
 
         setupStatusItem()
         setupMainMenu()
@@ -35,7 +44,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         // UI testing helpers (launch-arg gated).
-        let args = ProcessInfo.processInfo.arguments
         if args.contains("--force-free") || args.contains("--free-mode") {
             EntitlementsService.shared.setStatus(
                 ProStatus(tier: .free, source: .none, lastRefreshedAt: Date())
@@ -78,6 +86,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 modal.show()
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: work)
+        }
+
+        // Onboarding: show on first launch (unless UI testing launch args are present).
+        if !isUITesting {
+            if shouldForceShowOnboarding {
+                showOnboarding(force: true, reset: shouldResetOnboardingAtLaunch)
+            } else {
+                showOnboardingIfNeeded()
+            }
         }
     }
 
@@ -147,9 +164,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: L("menu.capture_area"), action: #selector(captureArea(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: L("menu.upgrade"), action: #selector(openUpgrade(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: L("menu.settings"), action: #selector(openSettings(_:)), keyEquivalent: ""))
+        // Avoid validateUserInterfaceItem surprises in a menu bar app.
+        menu.autoenablesItems = false
+        let captureItem = NSMenuItem(title: L("menu.capture_area"), action: #selector(captureArea(_:)), keyEquivalent: "")
+        captureItem.target = self
+        menu.addItem(captureItem)
+
+        let upgradeItem = NSMenuItem(title: L("menu.upgrade"), action: #selector(openUpgrade(_:)), keyEquivalent: "")
+        upgradeItem.target = self
+        menu.addItem(upgradeItem)
+
+        let settingsItem = NSMenuItem(title: L("menu.settings"), action: #selector(openSettings(_:)), keyEquivalent: "")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        // Debug utilities (only shown when explicitly enabled via launch args).
+        if shouldForceShowOnboarding {
+            menu.addItem(.separator())
+            let showOnboardingItem = NSMenuItem(title: "Show Onboarding (Debug)", action: #selector(showOnboardingDebug(_:)), keyEquivalent: "")
+            showOnboardingItem.target = self
+            menu.addItem(showOnboardingItem)
+
+            let resetAndShowOnboardingItem = NSMenuItem(title: "Reset + Show Onboarding (Debug)", action: #selector(resetAndShowOnboardingDebug(_:)), keyEquivalent: "")
+            resetAndShowOnboardingItem.target = self
+            menu.addItem(resetAndShowOnboardingItem)
+        }
         menu.addItem(.separator())
         
         // Language submenu
@@ -162,6 +201,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
         let quitItem = NSMenuItem(title: L("menu.quit"), action: #selector(quit(_:)), keyEquivalent: "q")
         quitItem.keyEquivalentModifierMask = [.command]
+        quitItem.target = self
         menu.addItem(quitItem)
 
         statusItem.menu = menu
@@ -193,11 +233,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc private func setSystemLanguage(_ sender: Any?) {
+        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
         LocalizationManager.shared.setLanguageOverride(nil)
         showRestartAlert()
     }
     
     @objc private func setLanguage(_ sender: NSMenuItem) {
+        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
         guard let code = sender.representedObject as? String else { return }
         LocalizationManager.shared.setLanguageOverride(code)
         showRestartAlert()
@@ -216,23 +258,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
-            // Restart the app
-            let url = URL(fileURLWithPath: Bundle.main.bundlePath)
-            let configuration = NSWorkspace.OpenConfiguration()
-            configuration.createsNewApplicationInstance = true
-            NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, _ in
-                DispatchQueue.main.async {
-                    NSApp.terminate(nil)
-                }
-            }
+            AppRelauncher.restart()
         }
     }
 
     @objc private func captureArea(_ sender: Any?) {
+        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
         captureManager.startCapture()
     }
 
     @objc private func openSettings(_ sender: Any?) {
+        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
         if settingsWindowController == nil {
             settingsWindowController = SettingsWindowController()
         }
@@ -240,11 +276,88 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openUpgrade(_ sender: Any?) {
+        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
         PaywallWindowController.shared.show()
     }
 
     @objc private func quit(_ sender: Any?) {
         NSApp.terminate(nil)
+    }
+
+    // MARK: - Onboarding
+
+    private func showOnboardingIfNeeded() {
+        let store = OnboardingStore.shared
+        if store.shouldResumeAfterRestart {
+            showOnboarding(force: true, reset: false)
+            return
+        }
+        // Auto-show only on first run; if user dismissed, don't auto-show again.
+        guard !store.isFlowCompleted else { return }
+        guard store.dismissedAt == nil else { return }
+        showOnboarding(force: false, reset: false)
+    }
+
+    private func showOnboarding(force: Bool, reset: Bool) {
+        let store = OnboardingStore.shared
+        if reset {
+            store.resetForDebug()
+        }
+        if !force, store.isFlowCompleted { return }
+        store.markStartedIfNeeded()
+
+        if onboardingWindowController == nil {
+            onboardingWindowController = OnboardingWindowController()
+        }
+        onboardingWindowController?.show(startingAt: store.step)
+    }
+
+    @objc private func showOnboardingDebug(_ sender: Any?) {
+        HUDService.shared.show(message: "Debug: Show Onboarding", style: .info, duration: 0.7)
+        // Defer until after NSMenu tracking finishes.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.showOnboarding(force: true, reset: false)
+            self.debugReportOnboardingWindowState()
+        }
+    }
+
+    @objc private func resetAndShowOnboardingDebug(_ sender: Any?) {
+        HUDService.shared.show(message: "Debug: Reset + Show Onboarding", style: .info, duration: 0.9)
+        // Defer until after NSMenu tracking finishes.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.showOnboarding(force: true, reset: true)
+            self.debugReportOnboardingWindowState()
+        }
+    }
+
+    /// If onboarding isn't finished, intercept menu actions and show onboarding instead.
+    /// This is used as a fallback after system-driven "Quit & Reopen".
+    private func interceptMenuActionToResumeOnboardingIfNeeded() -> Bool {
+        let store = OnboardingStore.shared
+        // If onboarding has been started but not completed, resume it on any menu action.
+        guard !store.isFlowCompleted else { return false }
+        guard store.startedAt != nil else { return false }
+
+        // Defer until after NSMenu tracking finishes.
+        DispatchQueue.main.async { [weak self] in
+            self?.showOnboarding(force: true, reset: false)
+        }
+        return true
+    }
+
+    private func debugReportOnboardingWindowState() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self else { return }
+            guard let window = self.onboardingWindowController?.window else {
+                HUDService.shared.show(message: "Debug: onboarding window=nil", style: .error, duration: 1.2)
+                return
+            }
+            let frame = window.frame
+            let frameDesc = "(\(Int(frame.origin.x)),\(Int(frame.origin.y)) \(Int(frame.size.width))×\(Int(frame.size.height)))"
+            HUDService.shared.show(message: "Debug: onboarding visible=\(window.isVisible) frame=\(frameDesc)", style: .info, duration: 1.4)
+        }
     }
 }
 
