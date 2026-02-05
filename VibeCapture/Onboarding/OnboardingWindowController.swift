@@ -59,11 +59,13 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
     }
 
     func show(startingAt step: OnboardingStep) {
+        AppLog.log(.info, "onboarding", "OnboardingWindowController.show startingAt=\(step.rawValue)")
         let normalized = OnboardingAutoAdvance.normalizeStartStep(
             stored: step,
             screenRecordingGranted: ScreenRecordingGate.hasPermission(),
             accessibilityGranted: ClipboardAutoPasteService.shared.hasAccessibilityPermission
         )
+        AppLog.log(.info, "onboarding", "OnboardingWindowController.show normalizedStart=\(normalized.rawValue) screenRecordingGranted=\(ScreenRecordingGate.hasPermission()) accessibilityGranted=\(ClipboardAutoPasteService.shared.hasAccessibilityPermission)")
         onboardingVC.start(at: normalized)
         guard let window else { return }
 

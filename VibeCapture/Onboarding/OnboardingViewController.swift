@@ -527,12 +527,12 @@ final class OnboardingViewController: NSViewController {
     // MARK: - Actions
 
     @objc private func primaryPressed() {
+        AppLog.log(.info, "onboarding", "primaryPressed step=\(currentStep.rawValue)")
         switch currentStep {
         case .welcome:
             advance()
         case .screenRecording:
             // Let System Settings be clickable (don't stay above it).
-            store.shouldResumeAfterRestart = true
             view.window?.orderBack(nil)
             PermissionsUI.openScreenRecordingSettings()
             pollTick()
@@ -580,6 +580,8 @@ final class OnboardingViewController: NSViewController {
     @objc private func restartPressed() {
         store.step = currentStep
         store.shouldResumeAfterRestart = true
+        store.writeResumeMarker(minimumStep: currentStep)
+        AppLog.log(.info, "onboarding", "restartPressed \(store.debugSnapshot())")
         AppRelauncher.restart()
     }
 

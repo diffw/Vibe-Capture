@@ -208,6 +208,7 @@ private final class ScreenRecordingGateViewController: NSViewController {
     }
 
     @objc private func allowPressed() {
+        AppLog.log(.info, "permissions", "Gate allowPressed preflight=\(CGPreflightScreenCaptureAccess())")
         // Let System Settings be clickable (don't stay above it).
         view.window?.level = .normal
         view.window?.orderBack(nil)

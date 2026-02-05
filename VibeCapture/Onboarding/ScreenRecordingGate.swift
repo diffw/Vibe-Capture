@@ -9,7 +9,9 @@ enum ScreenRecordingGate {
     /// Returns true if permission is granted; otherwise shows a modal-like window and returns false.
     @discardableResult
     static func ensureOrShowModal() -> Bool {
-        guard hasPermission() else {
+        let ok = hasPermission()
+        AppLog.log(.info, "permissions", "ScreenRecordingGate.ensureOrShowModal preflight=\(ok)")
+        guard ok else {
             ScreenRecordingGateWindowController.shared.show()
             return false
         }

@@ -287,8 +287,17 @@ final class OnboardingPaywallView: NSView {
                 ctaButton.isEnabled = true
             case .pending:
                 ctaButton.isEnabled = true
-            case .failed:
+            case .failed(let message):
                 ctaButton.isEnabled = true
+                let alert = NSAlert()
+                alert.alertStyle = .warning
+                alert.messageText = message
+                alert.addButton(withTitle: L("button.ok"))
+                if let window {
+                    alert.beginSheetModal(for: window, completionHandler: nil)
+                } else {
+                    alert.runModal()
+                }
             }
         }
     }

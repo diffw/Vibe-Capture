@@ -12,7 +12,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppLog.bootstrap()
-        AppLog.log(.info, "app", "launch bundle_id=\(Bundle.main.bundleIdentifier ?? "nil") log_path=\(AppLog.logURL().path)")
+        AppLog.log(
+            .info,
+            "app",
+            "launch pid=\(ProcessInfo.processInfo.processIdentifier) bundle_id=\(Bundle.main.bundleIdentifier ?? "nil") bundle_path=\(Bundle.main.bundlePath) log_path=\(AppLog.logURL().path) args=\(ProcessInfo.processInfo.arguments.joined(separator: " "))"
+        )
 
         let beforePolicy = NSApp.activationPolicy()
         let didSet = NSApp.setActivationPolicy(.accessory)
@@ -178,6 +182,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsItem.target = self
         menu.addItem(settingsItem)
 
+        // Diagnostics (always available; helps debug permission + onboarding relaunch issues).
+        menu.addItem(.separator())
+        let diagnosticsItem = NSMenuItem(title: "Diagnostics", action: nil, keyEquivalent: "")
+        let diagnosticsMenu = NSMenu()
+        diagnosticsMenu.autoenablesItems = false
+        let openLogsItem = NSMenuItem(title: "Open Log File", action: #selector(openLogFile(_:)), keyEquivalent: "")
+        openLogsItem.target = self
+        diagnosticsMenu.addItem(openLogsItem)
+        let copyLogsItem = NSMenuItem(title: "Copy Recent Logs", action: #selector(copyRecentLogs(_:)), keyEquivalent: "")
+        copyLogsItem.target = self
+        diagnosticsMenu.addItem(copyLogsItem)
+        diagnosticsMenu.addItem(.separator())
+        let copyStateItem = NSMenuItem(title: "Copy Onboarding State", action: #selector(copyOnboardingState(_:)), keyEquivalent: "")
+        copyStateItem.target = self
+        diagnosticsMenu.addItem(copyStateItem)
+        let logStateItem = NSMenuItem(title: "Log Onboarding Diagnostics", action: #selector(logOnboardingDiagnostics(_:)), keyEquivalent: "")
+        logStateItem.target = self
+        diagnosticsMenu.addItem(logStateItem)
+        diagnosticsItem.submenu = diagnosticsMenu
+        menu.addItem(diagnosticsItem)
+
         // Debug utilities (only shown when explicitly enabled via launch args).
         if shouldForceShowOnboarding {
             menu.addItem(.separator())
@@ -288,13 +313,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func showOnboardingIfNeeded() {
         let store = OnboardingStore.shared
-        if store.shouldResumeAfterRestart {
+        let markerStep = store.consumeResumeMarkerIfPresent()
+        if let markerStep {
+            // Apply minimum step from the marker (more durable than UserDefaults on fast termination).
+            if store.step.index < markerStep.index {
+                store.step = markerStep
+            }
+        }
+
+        let shouldResume = store.shouldResumeAfterRestart || (markerStep != nil)
+        if shouldResume {
+            AppLog.log(.info, "onboarding", "showOnboardingIfNeeded: resuming after restart \(store.debugSnapshot())")
             showOnboarding(force: true, reset: false)
+            // One-shot: once we resumed after a system-driven restart, clear the flag.
+            store.shouldResumeAfterRestart = false
             return
         }
         // Auto-show only on first run; if user dismissed, don't auto-show again.
         guard !store.isFlowCompleted else { return }
         guard store.dismissedAt == nil else { return }
+        AppLog.log(.info, "onboarding", "showOnboardingIfNeeded: first-run auto-show \(store.debugSnapshot())")
         showOnboarding(force: false, reset: false)
     }
 
@@ -309,6 +347,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if onboardingWindowController == nil {
             onboardingWindowController = OnboardingWindowController()
         }
+        AppLog.log(.info, "onboarding", "showOnboarding force=\(force) reset=\(reset) startingAt=\(store.step.rawValue) \(store.debugSnapshot())")
         onboardingWindowController?.show(startingAt: store.step)
     }
 
@@ -340,6 +379,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard !store.isFlowCompleted else { return false }
         guard store.startedAt != nil else { return false }
 
+        AppLog.log(.info, "onboarding", "interceptMenuActionToResumeOnboardingIfNeeded: intercepting menu action \(store.debugSnapshot())")
         // Defer until after NSMenu tracking finishes.
         DispatchQueue.main.async { [weak self] in
             self?.showOnboarding(force: true, reset: false)
@@ -358,6 +398,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let frameDesc = "(\(Int(frame.origin.x)),\(Int(frame.origin.y)) \(Int(frame.size.width))×\(Int(frame.size.height)))"
             HUDService.shared.show(message: "Debug: onboarding visible=\(window.isVisible) frame=\(frameDesc)", style: .info, duration: 1.4)
         }
+    }
+
+    // MARK: - Diagnostics actions
+
+    @objc private func openLogFile(_ sender: Any?) {
+        NSWorkspace.shared.open(AppLog.logURL())
+    }
+
+    @objc private func copyRecentLogs(_ sender: Any?) {
+        let text = AppLog.tail(maxBytes: 48_000)
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        pb.setString(text, forType: .string)
+        HUDService.shared.show(message: "Copied recent logs", style: .info, duration: 0.8)
+    }
+
+    @objc private func copyOnboardingState(_ sender: Any?) {
+        let store = OnboardingStore.shared
+        let text =
+            "bundle_path=\(Bundle.main.bundlePath)\n" +
+            "screenRecordingGranted=\(ScreenRecordingGate.hasPermission()) accessibilityGranted=\(ClipboardAutoPasteService.shared.hasAccessibilityPermission)\n" +
+            store.debugSnapshot() + "\n"
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        pb.setString(text, forType: .string)
+        HUDService.shared.show(message: "Copied onboarding state", style: .info, duration: 0.8)
+    }
+
+    @objc private func logOnboardingDiagnostics(_ sender: Any?) {
+        let store = OnboardingStore.shared
+        AppLog.log(
+            .info,
+            "onboarding",
+            "diagnostics bundle_path=\(Bundle.main.bundlePath) screenRecordingGranted=\(ScreenRecordingGate.hasPermission()) accessibilityGranted=\(ClipboardAutoPasteService.shared.hasAccessibilityPermission) \(store.debugSnapshot())"
+        )
+        HUDService.shared.show(message: "Logged diagnostics", style: .info, duration: 0.8)
     }
 }
 

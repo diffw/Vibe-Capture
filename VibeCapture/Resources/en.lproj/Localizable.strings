@@ -457,6 +457,7 @@
 "paywall.option.yearly" = "Yearly";
 "paywall.option.lifetime" = "Lifetime";
 "paywall.error.generic" = "Something went wrong. Please try again.";
+"paywall.error.payments_disabled" = "In-App Purchases are disabled on this Mac. Please enable purchases in Screen Time settings, then try again.";
 
 /* [Context: Menu] Upgrade entry */
 "menu.upgrade" = "Upgrade…";

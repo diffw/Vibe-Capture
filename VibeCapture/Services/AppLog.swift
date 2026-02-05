@@ -97,6 +97,27 @@ enum AppLog {
         }
     }
 
+    /// Returns the last `maxBytes` of the log file (best-effort).
+    static func tail(maxBytes: Int = 32_000) -> String {
+        bootstrap()
+        let url = logURL()
+        guard FileManager.default.fileExists(atPath: url.path) else { return "" }
+        do {
+            let handle = try FileHandle(forReadingFrom: url)
+            defer { try? handle.close() }
+
+            let end = try handle.seekToEnd()
+            let size = Int(end)
+            let startOffset = max(0, size - maxBytes)
+            try handle.seek(toOffset: UInt64(startOffset))
+            let data = try handle.readToEnd() ?? Data()
+            return String(data: data, encoding: .utf8) ?? ""
+        } catch {
+            // Best-effort
+            return "[AppLog] tail failed: \(error)"
+        }
+    }
+
     /// Measures duration of a scope and logs it at end.
     static func span(_ category: String, _ name: String, meta: [String: CustomStringConvertible] = [:]) -> Span {
         Span(category: category, name: name, meta: meta)

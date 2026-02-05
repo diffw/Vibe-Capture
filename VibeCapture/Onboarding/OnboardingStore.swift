@@ -4,6 +4,7 @@ final class OnboardingStore {
     static let shared = OnboardingStore()
 
     private let defaults: UserDefaults
+    private static let iso = ISO8601DateFormatter()
 
     enum Key {
         static let step = "onboarding.step"
@@ -59,6 +60,75 @@ final class OnboardingStore {
             // Best-effort flush: system-driven "Quit & Reopen" can terminate quickly.
             defaults.synchronize()
         }
+    }
+
+    // MARK: - Resume marker (file-backed, survives fast termination)
+    //
+    // Rationale:
+    // macOS "Quit & Reopen" after TCC changes can terminate the app quickly. UserDefaults writes
+    // are best-effort; in rare cases they may not persist before exit. We therefore also write a
+    // small marker file in Application Support as an additional durable signal to resume onboarding.
+
+    private static func resumeMarkerURL() -> URL {
+        let base: URL
+        if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            base = appSupport
+        } else {
+            base = FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent("Library/Application Support", isDirectory: true)
+        }
+        return base
+            .appendingPathComponent("VibeCap", isDirectory: true)
+            .appendingPathComponent("Onboarding", isDirectory: true)
+            .appendingPathComponent("resume_after_restart.json", isDirectory: false)
+    }
+
+    /// Persist a durable "resume onboarding after restart" marker.
+    /// This is a supplement to `shouldResumeAfterRestart`.
+    func writeResumeMarker(minimumStep: OnboardingStep, now: Date = Date()) {
+        do {
+            let url = Self.resumeMarkerURL()
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            let payload: [String: Any] = [
+                "ts": Self.iso.string(from: now),
+                "minimumStep": minimumStep.rawValue,
+                "bundleID": Bundle.main.bundleIdentifier ?? "",
+                "bundlePath": Bundle.main.bundlePath,
+            ]
+            let data = try JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted, .sortedKeys])
+            try data.write(to: url, options: [.atomic])
+        } catch {
+            // Best-effort: never fail critical flows due to diagnostics.
+            AppLog.log(.warn, "onboarding", "Failed to write resume marker: \(error)")
+        }
+    }
+
+    /// Returns the marker's minimum step (if any) and deletes the marker file.
+    func consumeResumeMarkerIfPresent() -> OnboardingStep? {
+        let url = Self.resumeMarkerURL()
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        do {
+            let data = try Data(contentsOf: url)
+            let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            let raw = obj?["minimumStep"] as? String
+            if let raw, let step = OnboardingStep(rawValue: raw) {
+                return step
+            }
+        } catch {
+            AppLog.log(.warn, "onboarding", "Failed to read resume marker: \(error)")
+        }
+        return nil
+    }
+
+    func debugSnapshot() -> String {
+        let step = self.step.rawValue
+        let flowCompleted = isFlowCompleted
+        let resume = shouldResumeAfterRestart
+        let started = startedAt?.description(with: .current) ?? "nil"
+        let dismissed = dismissedAt?.description(with: .current) ?? "nil"
+        return "step=\(step) flowCompleted=\(flowCompleted) shouldResumeAfterRestart=\(resume) startedAt=\(started) dismissedAt=\(dismissed)"
     }
 
     func markStartedIfNeeded(now: Date = Date()) {

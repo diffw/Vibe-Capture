@@ -172,22 +172,45 @@ final class PurchaseService {
             return .failed(L("paywall.error.generic"))
         }
 
+        let span = AppLog.span("iap", "purchase", meta: [
+            "productID": productID,
+            "type": String(describing: product.type),
+            "displayPrice": product.displayPrice,
+            "bundleID": Bundle.main.bundleIdentifier ?? "nil",
+            "bundlePath": Bundle.main.bundlePath,
+        ])
+        defer { span.end(.info) }
+
+        AppLog.log(.info, "iap", "AppStore.canMakePayments=\(AppStore.canMakePayments)")
+
+        // If the system disallows payments (Screen Time / restrictions), fail fast with a clear message.
+        // (StoreKit can otherwise present confusing UI, sometimes with missing confirmation buttons.)
+        if !AppStore.canMakePayments {
+            AppLog.log(.warn, "iap", "AppStore.canMakePayments=false; blocking purchase")
+            return .failed(L("paywall.error.payments_disabled"))
+        }
+
         do {
             let result = try await product.purchase()
             switch result {
             case .success(let verification):
                 let transaction = try EntitlementsService.verify(verification)
+                AppLog.log(.info, "iap", "purchase success productID=\(transaction.productID) originalID=\(transaction.originalID) expires=\(transaction.expirationDate?.description ?? "nil")")
                 await transaction.finish()
                 await EntitlementsService.shared.refreshEntitlements()
                 return .success
             case .userCancelled:
+                AppLog.log(.info, "iap", "purchase cancelled by user")
                 return .cancelled
             case .pending:
+                AppLog.log(.info, "iap", "purchase pending")
                 return .pending
             @unknown default:
+                AppLog.log(.warn, "iap", "purchase unknown result")
                 return .failed(L("paywall.error.generic"))
             }
         } catch {
+            AppLog.log(.error, "iap", "purchase threw error=\(String(describing: error))")
             return .failed(L("paywall.error.generic"))
         }
     }
