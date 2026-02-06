@@ -476,7 +476,9 @@
 
 /* ===== Gating: Custom App (Free) ===== */
 "gating.customApp.confirm.title" = "Add this app?";
-"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.\n\nAdd: %@";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
 "gating.customApp.confirm.confirm" = "Add App";
 "gating.customApp.notCounted.title" = "Already supported";
 "gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
@@ -563,6 +565,7 @@
 "paywall.plan_modal.lifetime_subtitle" = "No subscription";
 "paywall.plan_modal.badge_popular" = "MOST POPULAR";
 "paywall.plan_modal.paid_once" = "paid once";
+"paywall.plan_modal.trial_hint" = "Cancel anytime during the %d-day free trial.";
 
 /* CTA buttons */
 "paywall.plan_modal.cta_start_trial" = "Start Free Trial";

@@ -262,6 +262,9 @@ final class OnboardingViewController: NSViewController {
     private let store = OnboardingStore.shared
 
     private var currentStep: OnboardingStep = .welcome
+
+    /// Exposes the active step so the window controller can decide how to handle closing.
+    var visibleStep: OnboardingStep { currentStep }
     private var pollTimer: Timer?
 
     // MARK: - Figma step views
@@ -595,27 +598,54 @@ final class OnboardingViewController: NSViewController {
         alert.addButton(withTitle: L("button.ok"))
         alert.beginSheetModal(for: view.window ?? NSApp.keyWindow ?? NSWindow(), completionHandler: nil)
     }
+
 }
 
 // MARK: - Figma helpers / views
 
 private enum OnboardingFigma {
+    private static var inlineCache: [String: NSImage] = [:]
+    private static let inlineSVG: [String: String] = [
+        "arrow-right-long-line": """
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1.99974 13.0001L1.9996 11.0002L18.1715 11.0002L14.2218 7.05044L15.636 5.63623L22 12.0002L15.636 18.3642L14.2218 16.9499L18.1716 13.0002L1.99974 13.0001Z"></path></svg>
+"""
+    ]
     static let primary = NSColor(srgbRed: 115.0 / 255.0, green: 69.0 / 255.0, blue: 46.0 / 255.0, alpha: 1.0) // #73452E
     static let secondary = NSColor(srgbRed: 139.0 / 255.0, green: 107.0 / 255.0, blue: 92.0 / 255.0, alpha: 1.0) // #8B6B5C
     static let border = NSColor(srgbRed: 229.0 / 255.0, green: 231.0 / 255.0, blue: 235.0 / 255.0, alpha: 1.0) // #E5E7EB
     static let pillBg = NSColor(srgbRed: 249.0 / 255.0, green: 250.0 / 255.0, blue: 251.0 / 255.0, alpha: 1.0) // #F9FAFB
 
     static func image(named assetName: String, ext: String) -> NSImage? {
-        // Prefer structured subdirectory lookup (what Xcode typically preserves).
-        if let url = Bundle.main.url(forResource: assetName, withExtension: ext, subdirectory: "Onboarding") {
-            return SVGImageFallback.image(contentsOf: url)
+        // Try likely bundles and subdirectories to ensure resources are found even when moved.
+        var bundles: [Bundle] = [
+            Bundle(for: OnboardingWelcomeStepView.self),
+            Bundle.main
+        ]
+        #if SWIFT_PACKAGE
+        bundles.append(.module)
+        #endif
+        let subdirs = ["Onboarding", "Resources/Onboarding", nil]
+
+        for bundle in bundles {
+            for sub in subdirs {
+                let url = bundle.url(forResource: assetName, withExtension: ext, subdirectory: sub)
+                if let url, let img = SVGImageFallback.image(contentsOf: url) {
+                    return img
+                }
+            }
         }
-        // Fallbacks: flat resources or folder-reference style bundles.
-        if let url = Bundle.main.url(forResource: assetName, withExtension: ext) {
-            return SVGImageFallback.image(contentsOf: url)
+        if let cached = inlineCache[assetName] {
+            return cached
         }
-        if let url = Bundle.main.url(forResource: assetName, withExtension: ext, subdirectory: "Resources/Onboarding") {
-            return SVGImageFallback.image(contentsOf: url)
+        if ext == "svg", let svg = inlineSVG[assetName] {
+            let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(assetName).svg")
+            if !FileManager.default.fileExists(atPath: tmp.path) {
+                try? svg.write(to: tmp, atomically: true, encoding: .utf8)
+            }
+            if let img = SVGImageFallback.image(contentsOf: tmp) {
+                inlineCache[assetName] = img
+                return img
+            }
         }
         return nil
     }
@@ -776,15 +806,15 @@ private final class OnboardingWelcomeStepView: NSView {
             headlineLabel.widthAnchor.constraint(equalToConstant: 416),
 
             subheadlineLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            subheadlineLabel.topAnchor.constraint(equalTo: topAnchor, constant: 284),
+            subheadlineLabel.topAnchor.constraint(equalTo: topAnchor, constant: 289),
             subheadlineLabel.widthAnchor.constraint(equalToConstant: 416),
 
             bodyLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            bodyLabel.topAnchor.constraint(equalTo: topAnchor, constant: 344),
+            bodyLabel.topAnchor.constraint(equalTo: topAnchor, constant: 349),
             bodyLabel.widthAnchor.constraint(equalToConstant: 416),
 
             primaryButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            primaryButton.topAnchor.constraint(equalTo: topAnchor, constant: 410),
+            primaryButton.topAnchor.constraint(equalTo: topAnchor, constant: 415),
             primaryButton.widthAnchor.constraint(equalToConstant: 201),
             primaryButton.heightAnchor.constraint(equalToConstant: 50),
         ])
@@ -797,23 +827,24 @@ private final class OnboardingWelcomeStepView: NSView {
             string: headline,
             font: NSFont.systemFont(ofSize: 36, weight: .heavy),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 1.1
+            lineHeightMultiple: 1.0
         )
         subheadlineLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: subheadline,
             font: NSFont.systemFont(ofSize: 20, weight: .bold),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 1.1
+            lineHeightMultiple: 1.05
         )
         bodyLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: body,
             font: NSFont.systemFont(ofSize: 14, weight: .regular),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 1.2
+            lineHeightMultiple: 1.1
         )
 
         primaryButton.title = primaryTitle
-        primaryButton.image = NSImage(systemSymbolName: "arrow.right", accessibilityDescription: nil)
+        primaryButton.image = OnboardingFigma.image(named: "arrow-right-long-line", ext: "svg")
+        primaryButton.image?.isTemplate = true
         primaryButton.imagePosition = .imageTrailing
         primaryButton.imageScaling = .scaleProportionallyDown
         primaryButton.contentTintColor = .white

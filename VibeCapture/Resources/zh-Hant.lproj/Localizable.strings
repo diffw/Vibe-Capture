@@ -196,9 +196,9 @@
 "paywall.status.success" = "成功！";
 
 "gating.customApp.confirm.title" = "加入這個 App？";
-"gating.customApp.confirm.message" = "免費用戶只能加入 1 個自訂 App，且加入後無法移除。
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
 
-加入：%@";
+Add: %@";
 "gating.customApp.confirm.confirm" = "加入 App";
 "gating.customApp.notCounted.title" = "已支援";
 "gating.customApp.notCounted.message" = "此 App 已在系統白名單中，不會佔用你的免費自訂 App 名額。";
@@ -285,9 +285,61 @@
 "paywall.plan_modal.lifetime_subtitle" = "無需訂閱";
 "paywall.plan_modal.badge_popular" = "最受歡迎";
 "paywall.plan_modal.paid_once" = "一次付清";
+"paywall.plan_modal.trial_hint" = "可在 %d 天免費試用期內隨時取消。";
 
 /* CTA buttons */
 "paywall.plan_modal.cta_start_trial" = "開始免費試用";
 "paywall.plan_modal.cta_buy_now" = "立即購買";
 "paywall.plan_modal.cta_subscribe" = "訂閱 %@/%@";
 "paywall.plan_modal.cta_subscribe_generic" = "立即訂閱";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "已授權 ✓";
+"onboarding.status.not_granted" = "未授權";
+"onboarding.cta.skip" = "跳過";
+"onboarding.cta.restart" = "重新啟動 VibeCap";
+"onboarding.cta.continue" = "繼續";
+"onboarding.cta.granted" = "已授權";
+"onboarding.error.title" = "需要操作";
+"onboarding.01.title" = "截圖。
+提問。
+複製貼上。";
+"onboarding.01.body" = "你的截圖，一鍵即成 AI 就緒。";
+"onboarding.01.detail" = "從日常 ChatGPT 等 AI 工作，到用 Cursor 等工具寫程式，都能保持順暢。";
+"onboarding.01.cta" = "開始使用";
+"onboarding.02.title" = "啟用螢幕錄製";
+"onboarding.02.body" = "macOS 需要螢幕錄製權限才能擷取截圖。";
+"onboarding.02.body.bold" = "沒有此權限，App 將無法運作。";
+"onboarding.02.cta.allow" = "允許存取";
+"onboarding.03.title" = "啟用輔助使用";
+"onboarding.03.body" = "VibeCap 需要輔助使用權限以偵測作用中的視窗並處理快捷鍵，這讓情境截圖成為可能。";
+"onboarding.03.cta.allow" = "允許存取";
+"onboarding.04.title" = "偏好設定";
+"onboarding.04.body" = "自訂儲存位置與截圖方式。";
+"onboarding.04.cta.continue" = "繼續";
+"onboarding.04.save_location" = "儲存位置";
+"onboarding.04.global_shortcut" = "全域快捷鍵";
+"onboarding.04.shortcut_row_title" = "擷取畫面";
+"onboarding.04.browse" = "瀏覽…";
+"onboarding.04.hint" = "之後可在設定中修改。";
+"onboarding.05.title" = "免費開始";
+"onboarding.05.subtitle" = "免費體驗 VibeCap 全功能 14 天。";
+"onboarding.05.cta.trial" = "開始免費試用";
+"onboarding.05.pricing.trial_then" = "%d 天免費，之後 %@/年";
+"onboarding.05.pricing.then" = "之後 %@/年";
+"onboarding.05.feature1.title" = "完整標註功能";
+"onboarding.05.feature1.body" = "快速標註並保留脈絡。";
+"onboarding.05.feature2.title" = "儲存佇列";
+"onboarding.05.feature2.body" = "不中斷流程，也不遺失截圖。";
+"onboarding.05.feature3.title" = "保持截圖清晰";
+"onboarding.05.feature3.body" = "讓截圖立即可讀。";
+"settings.shortcut.recording_short" = "輸入…";
+"settings.permissions.section_title" = "權限";
+"settings.permissions.screen_recording.title" = "螢幕錄製";
+"settings.permissions.screen_recording.open" = "開啟";
+"settings.permissions.accessibility.title" = "輔助使用";
+"settings.permissions.accessibility.open" = "開啟";
+"paywall.error.payments_disabled" = "此 Mac 已停用 App 內購。請在螢幕使用時間中啟用後再試。";

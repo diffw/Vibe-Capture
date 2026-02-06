@@ -196,9 +196,9 @@
 "paywall.status.success" = "成功！";
 
 "gating.customApp.confirm.title" = "添加这个应用？";
-"gating.customApp.confirm.message" = "免费用户只能添加 1 个自定义应用，并且添加后无法移除。
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
 
-添加：%@";
+Add: %@";
 "gating.customApp.confirm.confirm" = "添加应用";
 "gating.customApp.notCounted.title" = "已支持";
 "gating.customApp.notCounted.message" = "该应用已在系统白名单中，不会占用你的免费自定义应用名额。";
@@ -285,9 +285,61 @@
 "paywall.plan_modal.lifetime_subtitle" = "无需订阅";
 "paywall.plan_modal.badge_popular" = "最受欢迎";
 "paywall.plan_modal.paid_once" = "一次付清";
+"paywall.plan_modal.trial_hint" = "可在 %d 天免费试用期内随时取消。";
 
 /* CTA buttons */
 "paywall.plan_modal.cta_start_trial" = "开始免费试用";
 "paywall.plan_modal.cta_buy_now" = "立即购买";
 "paywall.plan_modal.cta_subscribe" = "订阅 %@/%@";
 "paywall.plan_modal.cta_subscribe_generic" = "立即订阅";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "已授予 ✓";
+"onboarding.status.not_granted" = "未授予";
+"onboarding.cta.skip" = "跳过";
+"onboarding.cta.restart" = "重启 VibeCap";
+"onboarding.cta.continue" = "继续";
+"onboarding.cta.granted" = "已授予";
+"onboarding.error.title" = "需要操作";
+"onboarding.01.title" = "截屏。
+提问。
+复制粘贴。";
+"onboarding.01.body" = "你的截图，一键即成 AI 就绪。";
+"onboarding.01.detail" = "从日常 ChatGPT 等 AI 工作，到用 Cursor 等工具进行编程，都能保持顺畅。";
+"onboarding.01.cta" = "开始使用";
+"onboarding.02.title" = "启用屏幕录制";
+"onboarding.02.body" = "macOS 需要屏幕录制权限来截屏。";
+"onboarding.02.body.bold" = "没有它，应用将无法工作。";
+"onboarding.02.cta.allow" = "允许访问";
+"onboarding.03.title" = "启用辅助功能";
+"onboarding.03.body" = "VibeCap 需要辅助功能权限来检测活动窗口并处理快捷键，这让智能截屏成为可能。";
+"onboarding.03.cta.allow" = "允许访问";
+"onboarding.04.title" = "偏好设置";
+"onboarding.04.body" = "自定义保存位置和截屏方式。";
+"onboarding.04.cta.continue" = "继续";
+"onboarding.04.save_location" = "保存位置";
+"onboarding.04.global_shortcut" = "全局快捷键";
+"onboarding.04.shortcut_row_title" = "截屏";
+"onboarding.04.browse" = "浏览…";
+"onboarding.04.hint" = "稍后可在设置中修改。";
+"onboarding.05.title" = "免费开始";
+"onboarding.05.subtitle" = "体验 VibeCap 全部功能，享 14 天免费试用。";
+"onboarding.05.cta.trial" = "开始免费试用";
+"onboarding.05.pricing.trial_then" = "%d 天免费，之后 %@/年";
+"onboarding.05.pricing.then" = "之后 %@/年";
+"onboarding.05.feature1.title" = "完整标注功能";
+"onboarding.05.feature1.body" = "快速标注并保留上下文。";
+"onboarding.05.feature2.title" = "保存队列";
+"onboarding.05.feature2.body" = "不中断流程，也不丢截屏。";
+"onboarding.05.feature3.title" = "保持截图清晰";
+"onboarding.05.feature3.body" = "让截图即刻可读。";
+"settings.shortcut.recording_short" = "按下…";
+"settings.permissions.section_title" = "权限";
+"settings.permissions.screen_recording.title" = "屏幕录制";
+"settings.permissions.screen_recording.open" = "打开";
+"settings.permissions.accessibility.title" = "辅助功能";
+"settings.permissions.accessibility.open" = "打开";
+"paywall.error.payments_disabled" = "此 Mac 禁用了应用内购买。请在屏幕使用时间中启用后再试。";

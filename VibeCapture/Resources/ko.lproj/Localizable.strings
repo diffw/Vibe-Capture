@@ -289,3 +289,55 @@ Add: %@";
 "paywall.plan_modal.cta_buy_now" = "지금 구매";
 "paywall.plan_modal.cta_subscribe" = "%@/%@ 구독";
 "paywall.plan_modal.cta_subscribe_generic" = "지금 구독";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "권한 허용 ✓";
+"onboarding.status.not_granted" = "미허용";
+"onboarding.cta.skip" = "건너뛰기";
+"onboarding.cta.restart" = "VibeCap 다시 시작";
+"onboarding.cta.continue" = "계속";
+"onboarding.cta.granted" = "허용됨";
+"onboarding.error.title" = "조치 필요";
+"onboarding.01.title" = "캡처.
+프롬프트.
+복사 & 붙여넣기.";
+"onboarding.01.body" = "스크린샷을 한 번에 AI 준비 완료.";
+"onboarding.01.detail" = "일상적인 ChatGPT 작업부터 Cursor 같은 도구로 코딩할 때까지 흐름을 유지하세요.";
+"onboarding.01.cta" = "시작하기";
+"onboarding.02.title" = "화면 기록 활성화";
+"onboarding.02.body" = "macOS에서 스크린샷을 찍으려면 화면 기록 권한이 필요합니다.";
+"onboarding.02.body.bold" = "권한이 없으면 앱이 동작하지 않습니다.";
+"onboarding.02.cta.allow" = "접근 허용";
+"onboarding.03.title" = "손쉬운 사용 활성화";
+"onboarding.03.body" = "VibeCap은 활성 창 감지와 단축키 처리를 위해 손쉬운 사용 권한이 필요합니다. 이것이 컨텍스트 기반 캡처를 가능하게 합니다.";
+"onboarding.03.cta.allow" = "접근 허용";
+"onboarding.04.title" = "환경설정";
+"onboarding.04.body" = "저장 위치와 캡처 방식을 설정하세요.";
+"onboarding.04.cta.continue" = "계속";
+"onboarding.04.save_location" = "저장 위치";
+"onboarding.04.global_shortcut" = "전역 단축키";
+"onboarding.04.shortcut_row_title" = "화면 캡처";
+"onboarding.04.browse" = "찾아보기…";
+"onboarding.04.hint" = "이후 설정에서 언제든 변경할 수 있습니다.";
+"onboarding.05.title" = "무료로 시작";
+"onboarding.05.subtitle" = "VibeCap 전체 기능을 14일간 무료로 사용해 보세요.";
+"onboarding.05.cta.trial" = "무료 체험 시작";
+"onboarding.05.pricing.trial_then" = "%d일 무료, 이후 %@/년";
+"onboarding.05.pricing.then" = "이후 %@/년";
+"onboarding.05.feature1.title" = "완전한 주석 도구";
+"onboarding.05.feature1.body" = "빠르게 주석하고 문맥을 유지하세요.";
+"onboarding.05.feature2.title" = "저장 큐";
+"onboarding.05.feature2.body" = "흐름을 끊지 않고 캡처를 잃지 않습니다.";
+"onboarding.05.feature3.title" = "선명한 스크린샷 유지";
+"onboarding.05.feature3.body" = "즉시 읽기 쉽게 만듭니다.";
+"settings.shortcut.recording_short" = "입력…";
+"settings.permissions.section_title" = "권한";
+"settings.permissions.screen_recording.title" = "화면 기록";
+"settings.permissions.screen_recording.open" = "열기";
+"settings.permissions.accessibility.title" = "손쉬운 사용";
+"settings.permissions.accessibility.open" = "열기";
+"paywall.error.payments_disabled" = "이 Mac에서 인앱 구매가 비활성화되었습니다. 스크린타임에서 활성화한 후 다시 시도하세요.";
+"paywall.plan_modal.trial_hint" = "%d일 무료 체험 기간 동안 언제든 취소할 수 있습니다.";

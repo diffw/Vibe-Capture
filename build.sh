@@ -20,8 +20,8 @@ rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_BUNDLE/Contents/MacOS"
 mkdir -p "$APP_BUNDLE/Contents/Resources"
 
-# Collect all Swift source files
-SWIFT_FILES=$(find VibeCapture -name "*.swift" -type f)
+# Collect all Swift source files (exclude Tests from app build)
+SWIFT_FILES=$(find VibeCapture -name "*.swift" -type f ! -path "VibeCapture/Tests/*")
 
 echo "📦 Compiling Swift files..."
 
@@ -80,6 +80,12 @@ echo "🌍 Copied $LPROJ_COUNT language bundles"
 if ls VibeCapture/Resources/*.svg >/dev/null 2>&1; then
     cp VibeCapture/Resources/*.svg "$APP_BUNDLE/Contents/Resources/"
     echo "🎨 UI icons copied"
+fi
+
+# Copy Onboarding assets (SVG/PNG under Resources/Onboarding)
+if [ -d "VibeCapture/Resources/Onboarding" ]; then
+    cp -R "VibeCapture/Resources/Onboarding" "$APP_BUNDLE/Contents/Resources/"
+    echo "🎨 Onboarding assets copied"
 fi
 
 # Create PkgInfo

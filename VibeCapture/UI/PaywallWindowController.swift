@@ -14,6 +14,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     private var products: [String: Product] = [:]
     private var selectedProductID: String = EntitlementsService.ProductID.yearly
     private var modalSelectedProductID: String = EntitlementsService.ProductID.yearly // Temporary selection in modal
+    private var trialDays: Int?
     private var isEligibleForTrial: Bool = false
     private var productsLoadState: ProductsLoadState = .loading
     private var didRetryProductsLoadAfterError = false
@@ -27,6 +28,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     // MARK: - Root Container
 
     private let rootView = NSView()
+    private let unifiedView = OnboardingPaywallView(mode: .hosted)
 
     // MARK: - Step 1: Main View
 
@@ -57,27 +59,52 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
     private let planModalContainer = NSView()
     private var planRows: [String: PlanRowView] = [:]
     private let planModalCTAButton = NSButton()
+    private let planModalHintLabel = NSTextField(wrappingLabelWithString: "")
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 480),
-            styleMask: [.titled, .closable],
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 640),
+            styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
         window.setAccessibilityIdentifier("paywall.window")
         window.title = L("paywall.window_title")
+        window.titleVisibility = .hidden
+        window.titlebarAppearsTransparent = true
+        window.isMovableByWindowBackground = true
+        window.backgroundColor = .white
         window.isReleasedWhenClosed = false
-        window.setContentSize(NSSize(width: 420, height: 480))
-        window.contentMinSize = NSSize(width: 420, height: 400)
-        window.contentMaxSize = NSSize(width: 420, height: 700)
-        window.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 1)
+        window.setContentSize(NSSize(width: 560, height: 640))
+        window.contentMinSize = NSSize(width: 560, height: 640)
+        window.contentMaxSize = NSSize(width: 560, height: 640)
+        window.level = .normal
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        window.hasShadow = true
+        // Match onboarding: only show Close button.
+        window.standardWindowButton(.closeButton)?.isHidden = false
+        window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        window.standardWindowButton(.zoomButton)?.isHidden = true
         window.center()
         super.init(window: window)
         window.delegate = self
-        window.contentView = buildRootView()
+        let rootView = buildRootView()
+        window.contentView = rootView
+        if let contentView = window.contentView {
+            contentView.wantsLayer = true
+            contentView.layer?.cornerRadius = 24
+            // Allow overlay to cover full bounds; window frame still provides rounding.
+            contentView.layer?.masksToBounds = false
+            contentView.layer?.backgroundColor = NSColor.white.cgColor
+        }
         startProStatusObserver()
+
+        // Wire hosted callbacks to existing actions.
+        unifiedView.onPrimary = { [weak self] in self?.ctaPressed() }
+        unifiedView.onPriceTap = { [weak self] in self?.priceSelectorPressed() }
+        unifiedView.onRestoreTap = { [weak self] in self?.restorePressed() }
+        unifiedView.onTermsTap = { [weak self] in self?.openTerms() }
+        unifiedView.onPrivacyTap = { [weak self] in self?.openPrivacy() }
     }
 
     required init?(coder: NSCoder) { nil }
@@ -130,23 +157,19 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         rootView.wantsLayer = true
         rootView.setAccessibilityIdentifier("paywall.root")
 
-        // Build Step 1
-        buildStep1View()
-
-        // Build Step 2 (Plan Modal Overlay)
         buildPlanModalOverlay()
 
-        rootView.addSubview(step1View)
-        rootView.addSubview(planModalOverlay)
-
-        step1View.translatesAutoresizingMaskIntoConstraints = false
+        unifiedView.translatesAutoresizingMaskIntoConstraints = false
         planModalOverlay.translatesAutoresizingMaskIntoConstraints = false
 
+        rootView.addSubview(unifiedView)
+        rootView.addSubview(planModalOverlay)
+
         NSLayoutConstraint.activate([
-            step1View.topAnchor.constraint(equalTo: rootView.topAnchor),
-            step1View.bottomAnchor.constraint(equalTo: rootView.bottomAnchor),
-            step1View.leadingAnchor.constraint(equalTo: rootView.leadingAnchor),
-            step1View.trailingAnchor.constraint(equalTo: rootView.trailingAnchor),
+            unifiedView.topAnchor.constraint(equalTo: rootView.topAnchor),
+            unifiedView.bottomAnchor.constraint(equalTo: rootView.bottomAnchor),
+            unifiedView.leadingAnchor.constraint(equalTo: rootView.leadingAnchor),
+            unifiedView.trailingAnchor.constraint(equalTo: rootView.trailingAnchor),
 
             planModalOverlay.topAnchor.constraint(equalTo: rootView.topAnchor),
             planModalOverlay.bottomAnchor.constraint(equalTo: rootView.bottomAnchor),
@@ -470,6 +493,9 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         let backgroundView = NSView()
         backgroundView.wantsLayer = true
         backgroundView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.4).cgColor
+        // Use square corners so it fully covers the underlying window (no gaps).
+        backgroundView.layer?.cornerRadius = 0
+        backgroundView.layer?.masksToBounds = true
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         planModalOverlay.addSubview(backgroundView)
 
@@ -560,6 +586,14 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         planModalCTAButton.translatesAutoresizingMaskIntoConstraints = false
         planModalCTAButton.setAccessibilityIdentifier("paywall.planModal.cta")
 
+        planModalHintLabel.font = NSFont.systemFont(ofSize: 12)
+        planModalHintLabel.textColor = .secondaryLabelColor
+        planModalHintLabel.alignment = .center
+        planModalHintLabel.maximumNumberOfLines = 2
+        planModalHintLabel.lineBreakMode = .byWordWrapping
+        planModalHintLabel.translatesAutoresizingMaskIntoConstraints = false
+        planModalHintLabel.isHidden = true
+
         // Fixed height for buttons
         let buttonHeight: CGFloat = 40
         cancelButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
@@ -573,18 +607,18 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
 
         planModalContainer.addSubview(modalTitle)
         planModalContainer.addSubview(plansStack)
+        planModalContainer.addSubview(planModalHintLabel)
         planModalContainer.addSubview(buttonStack)
 
         planModalOverlay.addSubview(planModalContainer)
 
         let modalWidth: CGFloat = 380
-        let modalHeight: CGFloat = 400
 
         NSLayoutConstraint.activate([
             planModalContainer.centerXAnchor.constraint(equalTo: planModalOverlay.centerXAnchor),
             planModalContainer.centerYAnchor.constraint(equalTo: planModalOverlay.centerYAnchor),
             planModalContainer.widthAnchor.constraint(equalToConstant: modalWidth),
-            planModalContainer.heightAnchor.constraint(equalToConstant: modalHeight),
+            planModalContainer.heightAnchor.constraint(lessThanOrEqualTo: planModalOverlay.heightAnchor, constant: -40),
 
             modalTitle.topAnchor.constraint(equalTo: planModalContainer.topAnchor, constant: 24),
             modalTitle.centerXAnchor.constraint(equalTo: planModalContainer.centerXAnchor),
@@ -593,6 +627,11 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             plansStack.leadingAnchor.constraint(equalTo: planModalContainer.leadingAnchor, constant: 16),
             plansStack.trailingAnchor.constraint(equalTo: planModalContainer.trailingAnchor, constant: -16),
 
+            planModalHintLabel.topAnchor.constraint(equalTo: plansStack.bottomAnchor, constant: 12),
+            planModalHintLabel.leadingAnchor.constraint(equalTo: planModalContainer.leadingAnchor, constant: 24),
+            planModalHintLabel.trailingAnchor.constraint(equalTo: planModalContainer.trailingAnchor, constant: -24),
+
+            buttonStack.topAnchor.constraint(equalTo: planModalHintLabel.bottomAnchor, constant: 16),
             buttonStack.leadingAnchor.constraint(equalTo: planModalContainer.leadingAnchor, constant: 16),
             buttonStack.trailingAnchor.constraint(equalTo: planModalContainer.trailingAnchor, constant: -16),
             buttonStack.bottomAnchor.constraint(equalTo: planModalContainer.bottomAnchor, constant: -20),
@@ -699,6 +738,9 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         updatePlanRowsPrices()
         updatePlanModalCTAButton()
 
+        // Hide window close button while modal is visible.
+        window?.standardWindowButton(.closeButton)?.isHidden = true
+
         planModalOverlay.alphaValue = 0
         planModalOverlay.isHidden = false
 
@@ -718,10 +760,13 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
                 guard let self else { return }
                 self.planModalOverlay.isHidden = true
                 self.planModalOverlay.alphaValue = 0
+                // Restore window close button.
+                self.window?.standardWindowButton(.closeButton)?.isHidden = false
             })
         } else {
             planModalOverlay.alphaValue = 0
             planModalOverlay.isHidden = true
+            window?.standardWindowButton(.closeButton)?.isHidden = false
         }
     }
 
@@ -780,6 +825,30 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
                 planModalCTAButton.title = L("paywall.plan_modal.cta_subscribe_generic")
             }
         }
+        updatePlanModalTrialHint()
+    }
+
+    private func updatePlanModalTrialHint() {
+        let isLifetime = modalSelectedProductID == EntitlementsService.ProductID.lifetime
+        guard isEligibleForTrial, let trialDays else {
+            planModalHintLabel.isHidden = true
+            return
+        }
+        planModalHintLabel.isHidden = isLifetime
+        guard !isLifetime else { return }
+
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.lineHeightMultiple = 1.2
+        paragraph.alignment = .center
+
+        planModalHintLabel.attributedStringValue = NSAttributedString(
+            string: L("paywall.plan_modal.trial_hint", trialDays),
+            attributes: [
+                .font: NSFont.systemFont(ofSize: 12, weight: .regular),
+                .foregroundColor: NSColor.secondaryLabelColor,
+                .paragraphStyle: paragraph,
+            ]
+        )
     }
 
     // MARK: - Data Loading
@@ -791,6 +860,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         if products.isEmpty || productsLoadState != .loaded {
             productsLoadState = .loading
             isEligibleForTrial = false
+            trialDays = nil
             refreshUI()
         }
 
@@ -803,18 +873,32 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             ].compactMapValues { $0 }
 
             isEligibleForTrial = PurchaseService.shared.isEligibleForTrial
+            if isEligibleForTrial {
+                if let yearlyDays = await PurchaseService.shared.trialDays(for: EntitlementsService.ProductID.yearly) {
+                    trialDays = yearlyDays
+                } else if let monthlyDays = await PurchaseService.shared.trialDays(for: EntitlementsService.ProductID.monthly) {
+                    trialDays = monthlyDays
+                } else {
+                    trialDays = nil
+                }
+            } else {
+                trialDays = nil
+            }
             productsLoadState = .loaded
             didRetryProductsLoadAfterError = false
             refreshUI()
             updatePlanRowsPrices()
+            updatePlanModalTrialHint()
         } catch {
             AppLog.log(.error, "paywall", "Failed to load products: \(error.localizedDescription)")
 
             products = [:]
             isEligibleForTrial = false
+            trialDays = nil
             productsLoadState = .failed
             refreshUI()
             updatePlanRowsPrices()
+            updatePlanModalTrialHint()
 
             guard let window else { return }
             guard !didRetryProductsLoadAfterError else { return }
@@ -846,75 +930,61 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
         let isPro = EntitlementsService.shared.isPro
 
         if isPro {
-            titleLabel.stringValue = L("paywall.pro_status.title")
-            subtitleLabel.stringValue = ""
-            trialBadgeContainer.isHidden = true
-        } else if isEligibleForTrial {
-            titleLabel.stringValue = L("paywall.step1.title_trial")
-            subtitleLabel.stringValue = L("paywall.step1.subtitle_trial")
-            trialBadgeContainer.isHidden = false
-            trialBadgeLabel.stringValue = L("paywall.step1.trial_badge")
+            unifiedView.setTitleText(L("paywall.pro_status.title"))
+            unifiedView.setSubtitleText("")
         } else {
-            titleLabel.stringValue = L("paywall.step1.title_no_trial")
-            subtitleLabel.stringValue = L("paywall.step1.subtitle_no_trial")
-            trialBadgeContainer.isHidden = true
+            // Use the same title/subtitle as the onboarding paywall for visual consistency.
+            unifiedView.setTitleText(L("onboarding.05.title"))
+            unifiedView.setSubtitleText(L("onboarding.05.subtitle"))
         }
 
-        updateProStatusCard()
         updateCTAButton()
         updatePriceSelector()
-        rebuildLegalStack()
     }
 
     private func updateCTAButton() {
         let isPro = EntitlementsService.shared.isPro
 
         if isPro {
-            ctaButton.title = L("paywall.status.already_pro")
-            ctaButton.isEnabled = false
-            ctaButton.layer?.backgroundColor = NSColor.systemGray.cgColor
+            unifiedView.setCTATitle(L("paywall.status.already_pro"))
+            unifiedView.setCTAEnabled(false)
             return
         }
 
         // Disable CTA if products aren't loaded yet (or failed to load)
         if productsLoadState != .loaded {
-            ctaButton.isEnabled = false
-            ctaButton.layer?.backgroundColor = NSColor.systemGray.cgColor
             if productsLoadState == .loading {
-                ctaButton.title = L("paywall.price.loading")
+                unifiedView.setCTATitle(L("paywall.price.loading"))
             } else {
-                // Failed state: keep a stable CTA label but disabled
-                ctaButton.title = L("paywall.step1.cta_no_trial")
+                unifiedView.setCTATitle(L("paywall.step1.cta_no_trial"))
             }
+            unifiedView.setCTAEnabled(false)
             return
         }
 
-        ctaButton.isEnabled = true
-        ctaButton.layer?.backgroundColor = brandColor.cgColor
+        unifiedView.setCTAEnabled(true)
 
         let isLifetime = selectedProductID == EntitlementsService.ProductID.lifetime
 
         if isLifetime {
-            ctaButton.title = L("paywall.plan_modal.cta_buy_now")
+            unifiedView.setCTATitle(L("paywall.plan_modal.cta_buy_now"))
         } else if isEligibleForTrial {
-            ctaButton.title = L("paywall.step1.cta_trial")
+            unifiedView.setCTATitle(L("paywall.step1.cta_trial"))
         } else {
-            ctaButton.title = L("paywall.step1.cta_no_trial")
+            unifiedView.setCTATitle(L("paywall.step1.cta_no_trial"))
         }
     }
 
     private func updatePriceSelector() {
         if productsLoadState != .loaded {
-            priceSelectorButton.isEnabled = false
-            priceSelectorButton.title = L("paywall.price.loading")
+            unifiedView.setPriceText(L("paywall.price.loading"))
             return
         }
 
         guard let product = products[selectedProductID] else {
-            priceSelectorButton.title = L("paywall.price.loading")
+            unifiedView.setPriceText(L("paywall.price.loading"))
             return
         }
-        priceSelectorButton.isEnabled = true
 
         let isLifetime = selectedProductID == EntitlementsService.ProductID.lifetime
 
@@ -933,16 +1003,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             priceText = L("paywall.step1.price_no_trial", product.displayPrice, unit)
         }
 
-        let attachment = NSTextAttachment()
-        let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .medium)
-        attachment.image = NSImage(systemSymbolName: "chevron.up.chevron.down", accessibilityDescription: nil)?
-            .withSymbolConfiguration(config)
-
-        let attrString = NSMutableAttributedString(string: "\(priceText) ")
-        attrString.append(NSAttributedString(attachment: attachment))
-        attrString.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor, range: NSRange(location: 0, length: attrString.length))
-        attrString.addAttribute(.font, value: NSFont.systemFont(ofSize: 13), range: NSRange(location: 0, length: attrString.length))
-        priceSelectorButton.attributedTitle = attrString
+        unifiedView.setPriceText(priceText)
     }
 
     // MARK: - Observing
@@ -957,6 +1018,7 @@ final class PaywallWindowController: NSWindowController, NSWindowDelegate {
             self?.refreshUI()
         }
     }
+
 }
 
 // MARK: - Plan Row View

@@ -287,3 +287,57 @@ Add: %@";
 "paywall.plan_modal.cta_buy_now" = "Acquista ora";
 "paywall.plan_modal.cta_subscribe" = "Abbonati a %@/%@";
 "paywall.plan_modal.cta_subscribe_generic" = "Abbonati ora";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "Concesso ✓";
+"onboarding.status.not_granted" = "Non concesso";
+"onboarding.cta.skip" = "Salta";
+"onboarding.cta.restart" = "Riavvia VibeCap";
+"onboarding.cta.continue" = "Continua";
+"onboarding.cta.granted" = "Concesso";
+"onboarding.error.title" = "Azione necessaria";
+"onboarding.01.title" = "Cattura.
+Prompt.
+Copia e Incolla.";
+"onboarding.01.body" = "I tuoi screenshot pronti per l’IA con un clic.";
+"onboarding.01.detail" = "Dal lavoro quotidiano con ChatGPT al coding con strumenti come Cursor, resta nel flusso.";
+"onboarding.01.cta" = "Inizia";
+"onboarding.02.title" = "Attiva Registrazione Schermo";
+"onboarding.02.body" = "macOS richiede il permesso di registrazione schermo per acquisire screenshot.";
+"onboarding.02.body.bold" = "Senza questo permesso l’app non funziona.";
+"onboarding.02.cta.allow" = "Consenti accesso";
+"onboarding.03.title" = "Attiva Accessibilità";
+"onboarding.03.body" = "VibeCap ha bisogno dei permessi di accessibilità per rilevare le finestre attive e gestire le scorciatoie. Questo abilita le acquisizioni contestuali.";
+"onboarding.03.cta.allow" = "Consenti accesso";
+"onboarding.04.title" = "Preferenze";
+"onboarding.04.body" = "Personalizza dove salvare e come acquisire.";
+"onboarding.04.cta.continue" = "Continua";
+"onboarding.04.save_location" = "POSIZIONE DI SALVATAGGIO";
+"onboarding.04.global_shortcut" = "SCORCIATOIA GLOBALE";
+"onboarding.04.shortcut_row_title" = "Acquisisci schermo";
+"onboarding.04.browse" = "Sfoglia…";
+"onboarding.04.hint" = "Puoi modificarlo più tardi nelle Impostazioni.";
+"onboarding.05.title" = "Inizia gratis";
+"onboarding.05.subtitle" = "Prova tutte le funzioni di VibeCap gratis per 14 giorni.";
+"onboarding.05.cta.trial" = "Avvia prova gratuita";
+"onboarding.05.pricing.trial_then" = "%d giorni gratis, poi %@/anno";
+"onboarding.05.pricing.then" = "Poi %@/anno";
+"onboarding.05.feature1.title" = "Strumenti di annotazione completi";
+"onboarding.05.feature1.body" = "Annota rapidamente e mantieni il contesto.";
+"onboarding.05.feature2.title" = "Coda di salvataggio";
+"onboarding.05.feature2.body" = "Non perdere le acquisizioni né interrompere il flusso.";
+"onboarding.05.feature3.title" = "Screenshot nitidi";
+"onboarding.05.feature3.body" = "Subito leggibili.";
+"hud.configure_save_folder" = "To enable auto-save, click %@ to choose a folder.";
+"hud.configure_save_folder_in_settings" = "To enable auto-save, open Settings and click %@.";
+"settings.shortcut.recording_short" = "Digita…";
+"settings.permissions.section_title" = "Permessi";
+"settings.permissions.screen_recording.title" = "Registrazione schermo";
+"settings.permissions.screen_recording.open" = "Apri";
+"settings.permissions.accessibility.title" = "Accessibilità";
+"settings.permissions.accessibility.open" = "Apri";
+"paywall.error.payments_disabled" = "Gli acquisti in-app sono disattivati su questo Mac. Attivali in Tempo di utilizzo e riprova.";
+"paywall.plan_modal.trial_hint" = "Annulla in qualsiasi momento durante la prova gratuita di %d giorni.";

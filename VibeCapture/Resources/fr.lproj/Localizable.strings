@@ -287,3 +287,57 @@ Add: %@";
 "paywall.plan_modal.cta_buy_now" = "Acheter maintenant";
 "paywall.plan_modal.cta_subscribe" = "S'abonner pour %@/%@";
 "paywall.plan_modal.cta_subscribe_generic" = "S'abonner maintenant";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "Autorisé ✓";
+"onboarding.status.not_granted" = "Non autorisé";
+"onboarding.cta.skip" = "Ignorer";
+"onboarding.cta.restart" = "Redémarrer VibeCap";
+"onboarding.cta.continue" = "Continuer";
+"onboarding.cta.granted" = "Autorisé";
+"onboarding.error.title" = "Action requise";
+"onboarding.01.title" = "Capturer.
+Prompter.
+Copier-coller.";
+"onboarding.01.body" = "Vos captures prêtes pour l’IA en un clic.";
+"onboarding.01.detail" = "Du travail quotidien sur ChatGPT au code avec des outils comme Cursor, restez dans le flow.";
+"onboarding.01.cta" = "Commencer";
+"onboarding.02.title" = "Activer l’enregistrement d’écran";
+"onboarding.02.body" = "macOS a besoin de l’autorisation d’enregistrement d’écran pour capturer.";
+"onboarding.02.body.bold" = "Sans cela, l’app ne fonctionnera pas.";
+"onboarding.02.cta.allow" = "Autoriser l’accès";
+"onboarding.03.title" = "Activer l’accessibilité";
+"onboarding.03.body" = "VibeCap a besoin des autorisations d’accessibilité pour détecter les fenêtres actives et gérer les raccourcis. Cela permet les captures contextuelles.";
+"onboarding.03.cta.allow" = "Autoriser l’accès";
+"onboarding.04.title" = "Préférences";
+"onboarding.04.body" = "Personnalisez l’emplacement d’enregistrement et la façon de capturer.";
+"onboarding.04.cta.continue" = "Continuer";
+"onboarding.04.save_location" = "EMPLACEMENT D’ENREGISTREMENT";
+"onboarding.04.global_shortcut" = "RACCOURCI GLOBAL";
+"onboarding.04.shortcut_row_title" = "Capturer l’écran";
+"onboarding.04.browse" = "Parcourir…";
+"onboarding.04.hint" = "Vous pourrez modifier cela plus tard dans Réglages.";
+"onboarding.05.title" = "Commencer gratuitement";
+"onboarding.05.subtitle" = "Profitez de toutes les fonctions de VibeCap pendant 14 jours gratuitement.";
+"onboarding.05.cta.trial" = "Démarrer l’essai gratuit";
+"onboarding.05.pricing.trial_then" = "%d jours gratuits, puis %@/an";
+"onboarding.05.pricing.then" = "Ensuite %@/an";
+"onboarding.05.feature1.title" = "Outils d’annotation complets";
+"onboarding.05.feature1.body" = "Annotez rapidement et gardez le contexte.";
+"onboarding.05.feature2.title" = "File d’enregistrement";
+"onboarding.05.feature2.body" = "Ne perdez aucune capture, sans casser le flow.";
+"onboarding.05.feature3.title" = "Captures nettes";
+"onboarding.05.feature3.body" = "Rendez-les lisibles instantanément.";
+"hud.configure_save_folder" = "To enable auto-save, click %@ to choose a folder.";
+"hud.configure_save_folder_in_settings" = "To enable auto-save, open Settings and click %@.";
+"settings.shortcut.recording_short" = "Saisir…";
+"settings.permissions.section_title" = "Autorisations";
+"settings.permissions.screen_recording.title" = "Enregistrement d’écran";
+"settings.permissions.screen_recording.open" = "Ouvrir";
+"settings.permissions.accessibility.title" = "Accessibilité";
+"settings.permissions.accessibility.open" = "Ouvrir";
+"paywall.error.payments_disabled" = "Les achats intégrés sont désactivés sur ce Mac. Activez-les dans Temps d’écran, puis réessayez.";
+"paywall.plan_modal.trial_hint" = "Annulation possible à tout moment pendant l’essai gratuit de %d jours.";

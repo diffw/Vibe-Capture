@@ -36,7 +36,8 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
         if let contentView = window.contentView {
             contentView.wantsLayer = true
             contentView.layer?.cornerRadius = 24
-            contentView.layer?.masksToBounds = true
+            // Allow overlays (plan modal) to cover full bounds; window frame still rounds corners.
+            contentView.layer?.masksToBounds = false
             contentView.layer?.backgroundColor = NSColor.white.cgColor
         }
         super.init(window: window)
@@ -94,10 +95,13 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        // Only treat this as a "dismiss" when the user closes the window.
-        // During app termination (e.g. Quit & Reopen after granting Screen Recording),
-        // we must NOT mark dismissed.
-        if !isAppTerminating {
+        // Only treat this as user intent when not terminating (e.g. system Quit & Reopen).
+        guard !isAppTerminating else { return true }
+
+        // If the user closes on the paywall step, treat it as "skip trial" and complete onboarding.
+        if onboardingVC.visibleStep == .paywall {
+            OnboardingStore.shared.markFlowCompleted()
+        } else {
             OnboardingStore.shared.markDismissed()
         }
         return true

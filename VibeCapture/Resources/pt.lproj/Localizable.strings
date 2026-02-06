@@ -287,3 +287,57 @@ Add: %@";
 "paywall.plan_modal.cta_buy_now" = "Comprar agora";
 "paywall.plan_modal.cta_subscribe" = "Assinar por %@/%@";
 "paywall.plan_modal.cta_subscribe_generic" = "Assinar agora";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "Concedido ✓";
+"onboarding.status.not_granted" = "Não concedido";
+"onboarding.cta.skip" = "Pular";
+"onboarding.cta.restart" = "Reiniciar o VibeCap";
+"onboarding.cta.continue" = "Continuar";
+"onboarding.cta.granted" = "Concedido";
+"onboarding.error.title" = "Ação necessária";
+"onboarding.01.title" = "Capturar.
+Prompt.
+Copiar e Colar.";
+"onboarding.01.body" = "Suas capturas prontas para IA com um clique.";
+"onboarding.01.detail" = "Do uso diário do ChatGPT ao código com ferramentas como o Cursor, mantenha o fluxo.";
+"onboarding.01.cta" = "Começar";
+"onboarding.02.title" = "Ativar Gravação de Tela";
+"onboarding.02.body" = "O macOS precisa de permissão de gravação de tela para capturar screenshots.";
+"onboarding.02.body.bold" = "Sem essa permissão, o app não funcionará.";
+"onboarding.02.cta.allow" = "Permitir acesso";
+"onboarding.03.title" = "Ativar Acessibilidade";
+"onboarding.03.body" = "O VibeCap precisa de permissões de acessibilidade para detectar janelas ativas e lidar com atalhos. Isso habilita capturas com contexto.";
+"onboarding.03.cta.allow" = "Permitir acesso";
+"onboarding.04.title" = "Preferências";
+"onboarding.04.body" = "Personalize onde salvar e como capturar.";
+"onboarding.04.cta.continue" = "Continuar";
+"onboarding.04.save_location" = "LOCAL DE SALVAMENTO";
+"onboarding.04.global_shortcut" = "ATALHO GLOBAL";
+"onboarding.04.shortcut_row_title" = "Capturar tela";
+"onboarding.04.browse" = "Procurar…";
+"onboarding.04.hint" = "Você pode alterar isso depois em Ajustes.";
+"onboarding.05.title" = "Comece grátis";
+"onboarding.05.subtitle" = "Experimente todos os recursos do VibeCap grátis por 14 dias.";
+"onboarding.05.cta.trial" = "Iniciar teste grátis";
+"onboarding.05.pricing.trial_then" = "%d dias grátis, depois %@/ano";
+"onboarding.05.pricing.then" = "Depois %@/ano";
+"onboarding.05.feature1.title" = "Ferramentas completas de anotação";
+"onboarding.05.feature1.body" = "Anote rápido e mantenha o contexto.";
+"onboarding.05.feature2.title" = "Fila de salvamento";
+"onboarding.05.feature2.body" = "Não perca capturas nem interrompa o fluxo.";
+"onboarding.05.feature3.title" = "Capturas nítidas";
+"onboarding.05.feature3.body" = "Ficam legíveis na hora.";
+"hud.configure_save_folder" = "To enable auto-save, click %@ to choose a folder.";
+"hud.configure_save_folder_in_settings" = "To enable auto-save, open Settings and click %@.";
+"settings.shortcut.recording_short" = "Digitar…";
+"settings.permissions.section_title" = "Permissões";
+"settings.permissions.screen_recording.title" = "Gravação de tela";
+"settings.permissions.screen_recording.open" = "Abrir";
+"settings.permissions.accessibility.title" = "Acessibilidade";
+"settings.permissions.accessibility.open" = "Abrir";
+"paywall.error.payments_disabled" = "As compras dentro do app estão desativadas neste Mac. Ative em Tempo de Uso e tente novamente.";
+"paywall.plan_modal.trial_hint" = "Cancele a qualquer momento durante o teste grátis de %d dias.";

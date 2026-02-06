@@ -190,6 +190,35 @@ final class PurchaseService {
             return .failed(L("paywall.error.payments_disabled"))
         }
 
+        // StoreKit purchase UI on macOS can behave poorly for menu-bar / LSUIElement apps running as
+        // `.accessory` (e.g., missing confirmation button). Temporarily switch to `.regular` while
+        // presenting the system purchase flow, then restore.
+        let originalPolicy = NSApp.activationPolicy()
+        if originalPolicy != .regular {
+            let ok = NSApp.setActivationPolicy(.regular)
+            AppLog.log(.info, "iap", "setActivationPolicy(.regular) ok=\(ok) from=\(originalPolicy)")
+        }
+        NSApp.activate(ignoringOtherApps: true)
+
+        // FIX (H1): StoreKit's payment sheet requires the parent window at a high level
+        // (floating or above) for the Subscribe button to render correctly on macOS.
+        // The main branch had window.level = floating+1 and worked; .normal causes the
+        // Subscribe button to be invisible.  Temporarily elevate the key window's level.
+        let purchaseWindow = NSApp.keyWindow
+        let originalWindowLevel = purchaseWindow?.level ?? .normal
+        let elevatedLevel = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 1)
+        purchaseWindow?.level = elevatedLevel
+
+        defer {
+            // Restore window level
+            purchaseWindow?.level = originalWindowLevel
+
+            if originalPolicy != .regular {
+                let ok = NSApp.setActivationPolicy(originalPolicy)
+                AppLog.log(.info, "iap", "restoreActivationPolicy(\(originalPolicy)) ok=\(ok)")
+            }
+        }
+
         do {
             let result = try await product.purchase()
             switch result {

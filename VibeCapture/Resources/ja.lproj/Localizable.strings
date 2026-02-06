@@ -289,3 +289,55 @@ Add: %@";
 "paywall.plan_modal.cta_buy_now" = "購入する";
 "paywall.plan_modal.cta_subscribe" = "%@/%@ で購読";
 "paywall.plan_modal.cta_subscribe_generic" = "今すぐ購読";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "付与済み ✓";
+"onboarding.status.not_granted" = "未付与";
+"onboarding.cta.skip" = "スキップ";
+"onboarding.cta.restart" = "VibeCap を再起動";
+"onboarding.cta.continue" = "続行";
+"onboarding.cta.granted" = "付与済み";
+"onboarding.error.title" = "操作が必要です";
+"onboarding.01.title" = "キャプチャ。
+プロンプト。
+コピー＆ペースト。";
+"onboarding.01.body" = "スクリーンショットをワンクリックでAI対応に。";
+"onboarding.01.detail" = "日常の ChatGPT 作業から Cursor などのツールを使った開発まで、スムーズに進めましょう。";
+"onboarding.01.cta" = "はじめる";
+"onboarding.02.title" = "画面収録を有効にする";
+"onboarding.02.body" = "macOS でスクリーンショットを撮るには画面収録の許可が必要です。";
+"onboarding.02.body.bold" = "許可がないとアプリは動作しません。";
+"onboarding.02.cta.allow" = "アクセスを許可";
+"onboarding.03.title" = "アクセシビリティを有効にする";
+"onboarding.03.body" = "VibeCap はアクティブウィンドウ検出とショートカット処理のためにアクセシビリティ権限が必要です。これがコンテキスト対応キャプチャを可能にします。";
+"onboarding.03.cta.allow" = "アクセスを許可";
+"onboarding.04.title" = "環境設定";
+"onboarding.04.body" = "保存先とキャプチャ方法をカスタマイズ。";
+"onboarding.04.cta.continue" = "続行";
+"onboarding.04.save_location" = "保存先";
+"onboarding.04.global_shortcut" = "グローバルショートカット";
+"onboarding.04.shortcut_row_title" = "画面をキャプチャ";
+"onboarding.04.browse" = "参照…";
+"onboarding.04.hint" = "これらは後で設定で変更できます。";
+"onboarding.05.title" = "無料で開始";
+"onboarding.05.subtitle" = "VibeCap の全機能を 14 日間無料で体験。";
+"onboarding.05.cta.trial" = "無料トライアルを開始";
+"onboarding.05.pricing.trial_then" = "%d日間無料、その後 %@/年";
+"onboarding.05.pricing.then" = "その後 %@/年";
+"onboarding.05.feature1.title" = "フル注釈ツール";
+"onboarding.05.feature1.body" = "素早く注釈し、文脈を保てます。";
+"onboarding.05.feature2.title" = "保存キュー";
+"onboarding.05.feature2.body" = "フローを崩さず、キャプチャを失いません。";
+"onboarding.05.feature3.title" = "スクリーンショットをクリアに";
+"onboarding.05.feature3.body" = "すぐに読みやすい状態に。";
+"settings.shortcut.recording_short" = "入力…";
+"settings.permissions.section_title" = "権限";
+"settings.permissions.screen_recording.title" = "画面収録";
+"settings.permissions.screen_recording.open" = "開く";
+"settings.permissions.accessibility.title" = "アクセシビリティ";
+"settings.permissions.accessibility.open" = "開く";
+"paywall.error.payments_disabled" = "この Mac ではアプリ内課金が無効です。スクリーンタイムで有効にしてから再試行してください。";
+"paywall.plan_modal.trial_hint" = "%d日間の無料トライアル中はいつでもキャンセルできます。";

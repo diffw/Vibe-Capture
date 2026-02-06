@@ -37,6 +37,7 @@
 - **用 `build.sh`**：
   - 需要快速打一个 `dist/` 包给自己/朋友试用
   - 验证你脚本化的打包/拷资源/签名流程
+  - 注意：新增英文文案后，先运行 `./scripts/sync-localization.py` 再跑 `./scripts/check-localization.sh VibeCapture/Resources`
 
 ### 4) 重要原则：避免再次“跑错 app / 两个菜单栏图标”
 
