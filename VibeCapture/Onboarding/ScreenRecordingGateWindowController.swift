@@ -45,12 +45,22 @@ final class ScreenRecordingGateWindowController: NSWindowController, NSWindowDel
     func show() {
         AppLog.log(.info, "permissions", "ScreenRecordingGateWindowController.show invoked")
         DispatchQueue.main.async { [weak self] in
-            guard let self, let window = self.window else { return }
+            guard let self, let window = self.window else {
+                AppLog.log(.error, "permissions", "ScreenRecordingGateWindowController.show: self or window is nil")
+                return
+            }
             self.vc.refreshStatus()
+            
+            // Ensure window has correct size before centering
+            let targetSize = NSSize(width: 600, height: 640)
+            window.setContentSize(targetSize)
+            
             NSApp.activate(ignoringOtherApps: true)
             window.center()
             window.makeKeyAndOrderFront(nil)
-            AppLog.log(.info, "permissions", "ScreenRecordingGateWindowController.show displayed window_visible=\(window.isVisible)")
+            let frame = window.frame
+            let screen = window.screen?.frame ?? .zero
+            AppLog.log(.info, "permissions", "ScreenRecordingGateWindowController.show displayed window_visible=\(window.isVisible) frame=(\(Int(frame.origin.x)),\(Int(frame.origin.y)) \(Int(frame.width))x\(Int(frame.height))) screen=(\(Int(screen.origin.x)),\(Int(screen.origin.y)) \(Int(screen.width))x\(Int(screen.height))) isOnActiveSpace=\(window.isOnActiveSpace) alphaValue=\(window.alphaValue)")
         }
     }
 
@@ -66,9 +76,12 @@ private final class ScreenRecordingGateViewController: NSViewController {
     private let screenshotView = GateScreenshotCardView()
 
     private let allowButton = OnboardingPillButton()
-    private let cancelButton = NSButton(title: "", target: nil, action: nil)
+    private let skipButton = NSButton(title: "", target: nil, action: nil)
 
     private var pollTimer: Timer?
+
+    // Use same colors as OnboardingFigma for consistency
+    private static let primaryColor = NSColor(srgbRed: 115.0 / 255.0, green: 69.0 / 255.0, blue: 46.0 / 255.0, alpha: 1.0) // #73452E
 
     override func loadView() {
         view = NSView()
@@ -87,19 +100,19 @@ private final class ScreenRecordingGateViewController: NSViewController {
         GateFigma.configureLabel(titleLabel)
         titleLabel.attributedStringValue = GateFigma.attributedText(
             string: L("onboarding.02.title"),
-            font: NSFont.systemFont(ofSize: 24, weight: .heavy),
-            color: GateFigma.blue,
-            lineHeightMultiple: 1.1
+            font: NSFont.systemFont(ofSize: 24, weight: .bold),
+            color: Self.primaryColor,
+            lineHeightMultiple: 1.0
         )
 
         bodyLabel.maximumNumberOfLines = 0
         GateFigma.configureLabel(bodyLabel)
-        bodyLabel.attributedStringValue = GateFigma.attributedBodyWithBoldTail(
+        bodyLabel.attributedStringValue = GateFigma.attributedBodyWithBoldTailInline(
             regular: L("onboarding.02.body"),
             bold: L("onboarding.02.body.bold"),
             fontSize: 16,
-            color: GateFigma.blue,
-            lineHeightMultiple: 1.5
+            color: Self.primaryColor,
+            lineHeightMultiple: 1.2
         )
 
         screenshotView.configure(assetName: "system-settings")
@@ -107,7 +120,7 @@ private final class ScreenRecordingGateViewController: NSViewController {
         allowButton.title = L("onboarding.02.cta.allow")
         allowButton.target = self
         allowButton.action = #selector(allowPressed)
-        allowButton.fillColor = NSColor(srgbRed: 115.0 / 255.0, green: 69.0 / 255.0, blue: 46.0 / 255.0, alpha: 1.0) // #73452E
+        allowButton.fillColor = Self.primaryColor
         allowButton.titleColor = .white
         allowButton.titleFont = NSFont.systemFont(ofSize: 18, weight: .semibold)
         allowButton.contentInsets = NSEdgeInsets(top: 13, left: 32, bottom: 13, right: 32)
@@ -115,48 +128,50 @@ private final class ScreenRecordingGateViewController: NSViewController {
         allowButton.imagePosition = .noImage
         allowButton.setButtonType(.momentaryPushIn)
 
-        cancelButton.title = L("button.cancel")
-        cancelButton.target = self
-        cancelButton.action = #selector(cancelPressed)
-        GateFigma.applyLinkStyle(to: cancelButton, color: GateFigma.gray666, font: NSFont.systemFont(ofSize: 14, weight: .regular))
+        skipButton.title = L("onboarding.cta.skip")
+        skipButton.target = self
+        skipButton.action = #selector(skipPressed)
+        GateFigma.applyLinkStyle(to: skipButton, color: Self.primaryColor, font: NSFont.systemFont(ofSize: 14, weight: .regular))
 
         view.addSubview(logoImageView)
         view.addSubview(titleLabel)
         view.addSubview(bodyLabel)
         view.addSubview(screenshotView)
         view.addSubview(allowButton)
-        view.addSubview(cancelButton)
+        view.addSubview(skipButton)
 
-        for v in [logoImageView, titleLabel, bodyLabel, screenshotView, allowButton, cancelButton] {
+        for v in [logoImageView, titleLabel, bodyLabel, screenshotView, allowButton, skipButton] {
             v.translatesAutoresizingMaskIntoConstraints = false
         }
 
+        // Use same layout as OnboardingPermissionStepView (contentTop=80)
+        let contentTop: CGFloat = 80
         NSLayoutConstraint.activate([
             logoImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            logoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 73),
-            logoImageView.widthAnchor.constraint(equalToConstant: 139.643),
-            logoImageView.heightAnchor.constraint(equalToConstant: 32),
+            logoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop),
+            logoImageView.widthAnchor.constraint(equalToConstant: 157),
+            logoImageView.heightAnchor.constraint(equalToConstant: 36),
 
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 137),
-            titleLabel.widthAnchor.constraint(equalToConstant: 456),
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 68),
+            titleLabel.widthAnchor.constraint(equalToConstant: 416),
 
             bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            bodyLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 175),
-            bodyLabel.widthAnchor.constraint(equalToConstant: 456),
+            bodyLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 106),
+            bodyLabel.widthAnchor.constraint(equalToConstant: 416),
 
             screenshotView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            screenshotView.topAnchor.constraint(equalTo: view.topAnchor, constant: 259),
-            screenshotView.widthAnchor.constraint(equalToConstant: 456),
+            screenshotView.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 190),
+            screenshotView.widthAnchor.constraint(equalToConstant: 416),
             screenshotView.heightAnchor.constraint(equalToConstant: 228),
 
             allowButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            allowButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 519),
+            allowButton.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 450),
             allowButton.widthAnchor.constraint(equalToConstant: 179),
             allowButton.heightAnchor.constraint(equalToConstant: 48),
 
-            cancelButton.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72 + 456),
-            cancelButton.centerYAnchor.constraint(equalTo: allowButton.centerYAnchor),
+            skipButton.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72 + 416),
+            skipButton.centerYAnchor.constraint(equalTo: allowButton.centerYAnchor),
         ])
 
         NotificationCenter.default.addObserver(
@@ -216,13 +231,12 @@ private final class ScreenRecordingGateViewController: NSViewController {
         // Let System Settings be clickable (don't stay above it).
         view.window?.level = .normal
         view.window?.orderBack(nil)
-        let granted = ScreenRecordingGate.requestPermissionIfNeeded()
-        // Always open System Settings after user taps Allow.
+        // Open System Settings directly; do NOT trigger CGRequestScreenCaptureAccess (no system dialog).
         PermissionsUI.openScreenRecordingSettings()
         tick()
     }
 
-    @objc private func cancelPressed() {
+    @objc private func skipPressed() {
         view.window?.close()
     }
 }
@@ -270,14 +284,15 @@ private enum GateFigma {
         ])
     }
 
-    static func attributedBodyWithBoldTail(
+    static func attributedBodyWithBoldTailInline(
         regular: String,
         bold: String,
         fontSize: CGFloat,
         color: NSColor,
         lineHeightMultiple: CGFloat
     ) -> NSAttributedString {
-        let full = regular + "\n" + bold
+        // Same line (no newline before bold) to match onboarding style
+        let full = regular + " " + bold
         let regularFont = NSFont.systemFont(ofSize: fontSize, weight: .regular)
         let boldFont = NSFont.systemFont(ofSize: fontSize, weight: .bold)
         let out = NSMutableAttributedString(string: full, attributes: [

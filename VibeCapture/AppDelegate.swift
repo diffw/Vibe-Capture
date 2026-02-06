@@ -288,7 +288,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func captureArea(_ sender: Any?) {
-        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
+        AppLog.log(.info, "capture", "captureArea invoked")
+        if interceptMenuActionToResumeOnboardingIfNeeded() {
+            AppLog.log(.info, "capture", "captureArea intercepted by onboarding resume logic")
+            return
+        }
+        AppLog.log(.info, "capture", "captureArea proceeding to startCapture")
         captureManager.startCapture()
     }
 
@@ -373,11 +378,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// If onboarding isn't finished, intercept menu actions and show onboarding instead.
     /// This is used as a fallback after system-driven "Quit & Reopen".
+    /// NOTE: Does NOT intercept if user has progressed past screen recording step (skip allowed).
     private func interceptMenuActionToResumeOnboardingIfNeeded() -> Bool {
         let store = OnboardingStore.shared
         // If onboarding has been started but not completed, resume it on any menu action.
         guard !store.isFlowCompleted else { return false }
         guard store.startedAt != nil else { return false }
+
+        // If user has progressed past screenRecording step (e.g. skipped), don't block capture.
+        // Let CaptureManager handle permission check and show Gate if needed.
+        if store.step.index > OnboardingStep.screenRecording.index {
+            AppLog.log(.info, "onboarding", "interceptMenuActionToResumeOnboardingIfNeeded: user past screenRecording, not intercepting \(store.debugSnapshot())")
+            return false
+        }
 
         AppLog.log(.info, "onboarding", "interceptMenuActionToResumeOnboardingIfNeeded: intercepting menu action \(store.debugSnapshot())")
         // Defer until after NSMenu tracking finishes.

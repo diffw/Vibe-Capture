@@ -1,6 +1,6 @@
 ---
 name: requirement-clarification
-description: Requirement clarification skill. Triggered when user says "clarify requirements" (or "澄清需求"). Use structured questions to help users clarify vague or complex requirements. Applicable when: user has new feedback/requirements but worries AI may not fully understand, requirement description is unclear, or multiple interaction details need confirmation.
+description: Requirement clarification skill. Use structured questions to help users clarify vague or complex requirements. Applicable when: user has new feedback/requirements but worries AI may not fully understand, requirement description is unclear, or multiple interaction details need confirmation. Use when user mentions "#需求对齐", "#需求澄清".
 ---
 
 

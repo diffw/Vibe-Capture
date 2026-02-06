@@ -12,17 +12,21 @@ final class CaptureManager {
         let span = AppLog.span("capture", "startCapture")
         defer { span.end(.info) }
 
+        AppLog.log(.info, "capture", "CaptureManager.startCapture entered")
+
         guard !isStartingCapture else {
             AppLog.log(.debug, "capture", "startCapture ignored (already starting)")
             return
         }
         isStartingCapture = true
+        AppLog.log(.info, "capture", "CaptureManager.startCapture isStartingCapture=true, calling ScreenRecordingGate.ensureOrShowModal()")
 
         guard ScreenRecordingGate.ensureOrShowModal() else {
-            AppLog.log(.warn, "capture", "Screen recording permission missing; showing gate modal")
+            AppLog.log(.warn, "capture", "Screen recording permission missing; ensureOrShowModal returned false")
             isStartingCapture = false
             return
         }
+        AppLog.log(.info, "capture", "CaptureManager.startCapture permission granted, proceeding to capture")
         
         // Capture frozen snapshots off the main thread and in parallel (multi-monitor optimization).
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in

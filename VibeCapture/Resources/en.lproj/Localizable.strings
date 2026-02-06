@@ -60,12 +60,12 @@
 "onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
 "onboarding.05.pricing.then" = "Then %@/year";
 
-"onboarding.05.feature1.title" = "Full annotated feature";
-"onboarding.05.feature1.body" = "Annotate quickly and keep context.";
-"onboarding.05.feature2.title" = "Save queue";
-"onboarding.05.feature2.body" = "Never lose a capture mid-flow.";
-"onboarding.05.feature3.title" = "Keep screenshot clear";
-"onboarding.05.feature3.body" = "Make screenshots readable instantly.";
+"onboarding.05.feature1.title" = "All annotation tools, unlocked";
+"onboarding.05.feature1.body" = "Full access to every annotation tool.";
+"onboarding.05.feature2.title" = "A queue-based workflow (coming soon...)";
+"onboarding.05.feature2.body" = "Save, reuse, and manage screenshots with prompts.";
+"onboarding.05.feature3.title" = "Smart cleanup, without losing what matters (coming soon...)";
+"onboarding.05.feature3.body" = "Auto-remove old screenshots. Favorites stay safe.";
 
 /* ===== App Menu ===== */
 

@@ -73,6 +73,10 @@
 		D0A500000000000000000007 /* bullet-circle.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000008 /* bullet-circle.svg */; };
 		D0A500000000000000000008 /* pro-badge.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A400000000000000000009 /* pro-badge.svg */; };
 		D0A500000000000000000009 /* logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A40000000000000000000A /* logo.svg */; };
+		D0A50000000000000000000B /* annotation.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A40000000000000000000B /* annotation.svg */; };
+		D0A50000000000000000000C /* cleanup.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A40000000000000000000C /* cleanup.svg */; };
+		D0A50000000000000000000D /* queue.svg in Resources */ = {isa = PBXBuildFile; fileRef = D0A40000000000000000000D /* queue.svg */; };
+		D0A50000000000000000000E /* bg_vc.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A40000000000000000000E /* bg_vc.png */; };
 		A1B2C3D4E5F60718293A4D60 /* EntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */; };
 		A1B2C3D4E5F60718293A4D61 /* CapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */; };
 		A1B2C3D4E5F60718293A4D62 /* PurchaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */; };
@@ -191,6 +195,10 @@
 		D0A400000000000000000008 /* bullet-circle.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "bullet-circle.svg"; sourceTree = "<group>"; };
 		D0A400000000000000000009 /* pro-badge.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "pro-badge.svg"; sourceTree = "<group>"; };
 		D0A40000000000000000000A /* logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "logo.svg"; sourceTree = "<group>"; };
+		D0A40000000000000000000B /* annotation.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "annotation.svg"; sourceTree = "<group>"; };
+		D0A40000000000000000000C /* cleanup.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "cleanup.svg"; sourceTree = "<group>"; };
+		D0A40000000000000000000D /* queue.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "queue.svg"; sourceTree = "<group>"; };
+		D0A40000000000000000000E /* bg_vc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_vc.png"; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C60 /* EntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementsService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C61 /* CapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C62 /* PurchaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseService.swift; sourceTree = "<group>"; };
@@ -446,6 +454,10 @@
 				D0A400000000000000000008 /* bullet-circle.svg */,
 				D0A400000000000000000009 /* pro-badge.svg */,
 				D0A40000000000000000000A /* logo.svg */,
+				D0A40000000000000000000B /* annotation.svg */,
+				D0A40000000000000000000C /* cleanup.svg */,
+				D0A40000000000000000000D /* queue.svg */,
+				D0A40000000000000000000E /* bg_vc.png */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -587,6 +599,10 @@
 				D0A500000000000000000007 /* bullet-circle.svg in Resources */,
 				D0A500000000000000000008 /* pro-badge.svg in Resources */,
 				D0A500000000000000000009 /* logo.svg in Resources */,
+				D0A50000000000000000000B /* annotation.svg in Resources */,
+				D0A50000000000000000000C /* cleanup.svg in Resources */,
+				D0A50000000000000000000D /* queue.svg in Resources */,
+				D0A50000000000000000000E /* bg_vc.png in Resources */,
 				A1B2C3D4E5F60718293A4D45 /* de.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D47 /* en.lproj in Resources */,
 				A1B2C3D4E5F60718293A4D48 /* es.lproj in Resources */,

@@ -17,6 +17,7 @@ final class OnboardingPaywallView: NSView {
     var onPrivacyTap: (() -> Void)?
 
     var onFinished: (() -> Void)?
+    var onContentSizeChange: (() -> Void)?
 
     private let mode: Mode
 
@@ -26,7 +27,7 @@ final class OnboardingPaywallView: NSView {
 
     private let featureCard = NSView()
     private let featureBgImageView = NSImageView()
-    private let proBadgeImageView = NSImageView()
+    private let proBadgeLabel = NSTextField(labelWithString: "")
 
     private let ctaButton = OnboardingPillButton()
     private let pricingLabel = NSTextField(labelWithString: "")
@@ -38,6 +39,7 @@ final class OnboardingPaywallView: NSView {
 
     private var yearlyProduct: Product?
     private var trialDays: Int?
+    private var lastFittingHeight: CGFloat = 0
 
     // Plan modal (onboarding mode only)
     private let planModalOverlay = NSView()
@@ -65,6 +67,17 @@ final class OnboardingPaywallView: NSView {
 
     required init?(coder: NSCoder) { nil }
 
+    override func layout() {
+        super.layout()
+        guard !isHidden else { return }
+        let height = fittingSize.height
+        if abs(height - lastFittingHeight) > 0.5 {
+            lastFittingHeight = height
+            AppLog.log(.info, "onboarding", "OnboardingPaywallView.layout fittingSize=(\(Int(fittingSize.width))x\(Int(fittingSize.height)))")
+            onContentSizeChange?()
+        }
+    }
+
     private func setup() {
         wantsLayer = true
         layer?.backgroundColor = NSColor.white.cgColor
@@ -81,9 +94,9 @@ final class OnboardingPaywallView: NSView {
         PaywallFigma.configureLabel(titleLabel)
         titleLabel.attributedStringValue = PaywallFigma.attributedText(
             string: L("onboarding.05.title"),
-            font: NSFont.systemFont(ofSize: 24, weight: .bold),
+            font: NSFont.systemFont(ofSize: 24, weight: .heavy),
             color: primary,
-            lineHeightMultiple: 1.0
+            lineHeightMultiple: 1.1
         )
 
         subtitleLabel.maximumNumberOfLines = 0
@@ -93,7 +106,7 @@ final class OnboardingPaywallView: NSView {
             string: L("onboarding.05.subtitle"),
             font: NSFont.systemFont(ofSize: 16, weight: .regular),
             color: primary,
-            lineHeightMultiple: 1.2
+            lineHeightMultiple: 1.5
         )
 
         setupFeatureCard()
@@ -114,6 +127,7 @@ final class OnboardingPaywallView: NSView {
         pricingLabel.textColor = primary
         pricingLabel.alignment = .center
         PaywallFigma.configureLabel(pricingLabel)
+        setPricingText("")
 
         pricingArrowImageView.imageScaling = .scaleProportionallyDown
         pricingArrowImageView.imageAlignment = .alignCenter
@@ -151,7 +165,7 @@ final class OnboardingPaywallView: NSView {
             v.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        // Figma layout (frame: 560x640, content width: 416 @ x=72, top = 80)
+        // Figma layout (frame: 560x695.06, content width: 416 @ x=72, top = 80)
         NSLayoutConstraint.activate([
             logoImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
             logoImageView.topAnchor.constraint(equalTo: topAnchor, constant: 80),
@@ -167,21 +181,20 @@ final class OnboardingPaywallView: NSView {
             subtitleLabel.widthAnchor.constraint(equalToConstant: 416),
 
             featureCard.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            featureCard.topAnchor.constraint(equalTo: topAnchor, constant: 222),
+            featureCard.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 12),
             featureCard.widthAnchor.constraint(equalToConstant: 416),
-            featureCard.heightAnchor.constraint(equalToConstant: 188),
 
             ctaButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            ctaButton.topAnchor.constraint(equalTo: topAnchor, constant: 442),
+            ctaButton.topAnchor.constraint(equalTo: featureCard.bottomAnchor, constant: 32),
             ctaButton.widthAnchor.constraint(equalToConstant: 416),
             ctaButton.heightAnchor.constraint(equalToConstant: 48),
 
             pricingLabel.centerXAnchor.constraint(equalTo: ctaButton.centerXAnchor),
             pricingLabel.topAnchor.constraint(equalTo: ctaButton.bottomAnchor, constant: 10),
-            pricingArrowImageView.leadingAnchor.constraint(equalTo: pricingLabel.trailingAnchor, constant: 4),
+            pricingArrowImageView.leadingAnchor.constraint(equalTo: pricingLabel.trailingAnchor, constant: 8),
             pricingArrowImageView.centerYAnchor.constraint(equalTo: pricingLabel.centerYAnchor),
-            pricingArrowImageView.widthAnchor.constraint(equalToConstant: 14),
-            pricingArrowImageView.heightAnchor.constraint(equalToConstant: 14),
+            pricingArrowImageView.widthAnchor.constraint(equalToConstant: 24),
+            pricingArrowImageView.heightAnchor.constraint(equalToConstant: 24),
 
             priceTapButton.leadingAnchor.constraint(equalTo: pricingLabel.leadingAnchor, constant: -6),
             priceTapButton.trailingAnchor.constraint(equalTo: pricingArrowImageView.trailingAnchor, constant: 6),
@@ -189,7 +202,8 @@ final class OnboardingPaywallView: NSView {
             priceTapButton.bottomAnchor.constraint(equalTo: pricingLabel.bottomAnchor, constant: 4),
 
             termsButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            termsButton.topAnchor.constraint(equalTo: topAnchor, constant: 547),
+            termsButton.topAnchor.constraint(equalTo: pricingArrowImageView.bottomAnchor, constant: 32),
+            termsButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -80),
 
             privacyButton.leadingAnchor.constraint(equalTo: termsButton.trailingAnchor, constant: 12),
             privacyButton.centerYAnchor.constraint(equalTo: termsButton.centerYAnchor),
@@ -205,20 +219,22 @@ final class OnboardingPaywallView: NSView {
         featureCard.layer?.masksToBounds = true
 
         featureBgImageView.imageScaling = .scaleAxesIndependently
-        featureBgImageView.image = PaywallFigma.image(named: "paywall-card-bg", ext: "png")
+        featureBgImageView.image = PaywallFigma.image(named: "bg_vc", ext: "png")
 
-        proBadgeImageView.imageScaling = .scaleProportionallyUpOrDown
-        proBadgeImageView.image = PaywallFigma.image(named: "pro-badge", ext: "svg")
+        proBadgeLabel.stringValue = "VibeCap PRO"
+        proBadgeLabel.font = NSFont.systemFont(ofSize: 16, weight: .semibold)
+        proBadgeLabel.textColor = .white
+        PaywallFigma.configureLabel(proBadgeLabel)
 
         let featuresStack = NSStackView()
         featuresStack.orientation = .vertical
         featuresStack.spacing = 16
         featuresStack.alignment = .leading
 
-        func row(title: String, subtitle: String) -> NSView {
+        func row(icon: String, title: String, subtitle: String) -> NSView {
             let bullet = NSImageView()
             bullet.imageScaling = .scaleProportionallyUpOrDown
-            bullet.image = PaywallFigma.image(named: "bullet-circle", ext: "svg")
+            bullet.image = PaywallFigma.image(named: icon, ext: "svg")
             bullet.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 bullet.widthAnchor.constraint(equalToConstant: 34),
@@ -227,60 +243,81 @@ final class OnboardingPaywallView: NSView {
 
             let t = NSTextField(labelWithString: title)
             PaywallFigma.configureLabel(t)
+            t.maximumNumberOfLines = 0
+            t.lineBreakMode = .byWordWrapping
             t.attributedStringValue = PaywallFigma.attributedText(
                 string: title,
-                font: NSFont.systemFont(ofSize: 16, weight: .bold),
+                font: NSFont.systemFont(ofSize: 15, weight: .semibold),
                 color: .white,
                 lineHeightMultiple: 1.1
             )
+            t.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
             let s = NSTextField(labelWithString: subtitle)
             PaywallFigma.configureLabel(s)
+            s.maximumNumberOfLines = 0
+            s.lineBreakMode = .byWordWrapping
             s.attributedStringValue = PaywallFigma.attributedText(
                 string: subtitle,
-                font: NSFont.systemFont(ofSize: 14, weight: .regular),
+                font: NSFont.systemFont(ofSize: 13, weight: .regular),
                 color: .white,
                 lineHeightMultiple: 1.1
             )
+            s.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
             let textStack = NSStackView(views: [t, s])
             textStack.orientation = .vertical
-            textStack.spacing = 3
+            textStack.spacing = 2
             textStack.alignment = .leading
+            textStack.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
             let row = NSStackView(views: [bullet, textStack])
             row.orientation = .horizontal
             row.spacing = 12
-            row.alignment = .centerY
+            row.alignment = .top
+            textStack.translatesAutoresizingMaskIntoConstraints = false
+            textStack.widthAnchor.constraint(equalToConstant: 322).isActive = true
             return row
         }
 
-        featuresStack.addArrangedSubview(row(title: L("onboarding.05.feature1.title"), subtitle: L("onboarding.05.feature1.body")))
-        featuresStack.addArrangedSubview(row(title: L("onboarding.05.feature2.title"), subtitle: L("onboarding.05.feature2.body")))
-        featuresStack.addArrangedSubview(row(title: L("onboarding.05.feature3.title"), subtitle: L("onboarding.05.feature3.body")))
+        featuresStack.addArrangedSubview(row(
+            icon: "annotation",
+            title: L("onboarding.05.feature1.title"),
+            subtitle: L("onboarding.05.feature1.body")
+        ))
+        featuresStack.addArrangedSubview(row(
+            icon: "queue",
+            title: L("onboarding.05.feature2.title"),
+            subtitle: L("onboarding.05.feature2.body")
+        ))
+        featuresStack.addArrangedSubview(row(
+            icon: "cleanup",
+            title: L("onboarding.05.feature3.title"),
+            subtitle: L("onboarding.05.feature3.body")
+        ))
 
         featureCard.addSubview(featureBgImageView)
         featureCard.addSubview(featuresStack)
-        featureCard.addSubview(proBadgeImageView)
+        featureCard.addSubview(proBadgeLabel)
 
         featureBgImageView.translatesAutoresizingMaskIntoConstraints = false
         featuresStack.translatesAutoresizingMaskIntoConstraints = false
-        proBadgeImageView.translatesAutoresizingMaskIntoConstraints = false
+        proBadgeLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             featureBgImageView.centerXAnchor.constraint(equalTo: featureCard.centerXAnchor),
-            featureBgImageView.centerYAnchor.constraint(equalTo: featureCard.centerYAnchor, constant: 17),
-            featureBgImageView.widthAnchor.constraint(equalToConstant: 500),
-            featureBgImageView.heightAnchor.constraint(equalToConstant: 326),
+            featureBgImageView.centerYAnchor.constraint(equalTo: featureCard.centerYAnchor, constant: 9.47),
+            featureBgImageView.widthAnchor.constraint(equalToConstant: 616),
+            featureBgImageView.heightAnchor.constraint(equalToConstant: 401),
 
             featuresStack.leadingAnchor.constraint(equalTo: featureCard.leadingAnchor, constant: 24),
-            featuresStack.topAnchor.constraint(equalTo: featureCard.topAnchor, constant: 24),
-            featuresStack.widthAnchor.constraint(equalToConstant: 284.403),
+            featuresStack.topAnchor.constraint(equalTo: featureCard.topAnchor, constant: 60.0615),
+            featuresStack.widthAnchor.constraint(equalToConstant: 368),
+            featuresStack.bottomAnchor.constraint(equalTo: featureCard.bottomAnchor, constant: -24),
+            featuresStack.bottomAnchor.constraint(equalTo: featureCard.bottomAnchor, constant: -24),
 
-            proBadgeImageView.trailingAnchor.constraint(equalTo: featureCard.trailingAnchor, constant: -24),
-            proBadgeImageView.topAnchor.constraint(equalTo: featureCard.topAnchor, constant: 24),
-            proBadgeImageView.widthAnchor.constraint(equalToConstant: 67.597),
-            proBadgeImageView.heightAnchor.constraint(equalToConstant: 30.557),
+            proBadgeLabel.leadingAnchor.constraint(equalTo: featureCard.leadingAnchor, constant: 24),
+            proBadgeLabel.topAnchor.constraint(equalTo: featureCard.topAnchor, constant: 24),
         ])
     }
 
@@ -648,7 +685,7 @@ final class OnboardingPaywallView: NSView {
 
     private func refreshPricingCopy() {
         guard let yearlyProduct else {
-            pricingLabel.stringValue = ""
+            setPricingText("")
             return
         }
 
@@ -658,7 +695,17 @@ final class OnboardingPaywallView: NSView {
         } else {
             text = L("onboarding.05.pricing.then", yearlyProduct.displayPrice)
         }
-        pricingLabel.stringValue = text
+        setPricingText(text)
+    }
+
+    private func setPricingText(_ text: String) {
+        pricingLabel.attributedStringValue = PaywallFigma.attributedText(
+            string: text,
+            font: NSFont.systemFont(ofSize: 14, weight: .regular),
+            color: pricingLabel.textColor ?? .labelColor,
+            lineHeightMultiple: 1.1,
+            alignment: .center
+        )
     }
 
     // MARK: - Actions

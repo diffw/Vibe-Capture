@@ -266,6 +266,7 @@ final class OnboardingViewController: NSViewController {
     /// Exposes the active step so the window controller can decide how to handle closing.
     var visibleStep: OnboardingStep { currentStep }
     private var pollTimer: Timer?
+    private var isHandlingPaywallLayout = false
 
     // MARK: - Figma step views
 
@@ -274,6 +275,7 @@ final class OnboardingViewController: NSViewController {
     private let accessibilityView = OnboardingPermissionStepView(contentTop: 80, logoAssetName: "logo", showSkip: true)
     private let preferencesView = OnboardingPreferencesStepView()
     private let paywallView = OnboardingPaywallView()
+    private var stepConstraints: [ObjectIdentifier: [NSLayoutConstraint]] = [:]
 
     override func loadView() {
         view = NSView()
@@ -317,16 +319,24 @@ final class OnboardingViewController: NSViewController {
             self?.store.markFlowCompleted()
             self?.view.window?.close()
         }
+        paywallView.onContentSizeChange = { [weak self] in
+            guard let self else { return }
+            AppLog.log(.info, "onboarding", "paywallView.onContentSizeChange currentStep=\(self.currentStep.rawValue) isHidden=\(self.paywallView.isHidden) fittingSize=(\(self.formatSize(self.paywallView.fittingSize.width))x\(self.formatSize(self.paywallView.fittingSize.height)))")
+            self.isHandlingPaywallLayout = true
+            self.applyPreferredWindowSize()
+            self.isHandlingPaywallLayout = false
+        }
 
         for v in [welcomeView, screenRecordingView, accessibilityView, preferencesView, paywallView] {
             view.addSubview(v)
             v.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
+            let constraints = [
                 v.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 v.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                 v.topAnchor.constraint(equalTo: view.topAnchor),
                 v.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            ])
+            ]
+            stepConstraints[ObjectIdentifier(v)] = constraints
             v.isHidden = true
         }
     }
@@ -374,11 +384,14 @@ final class OnboardingViewController: NSViewController {
         accessibilityView.isHidden = true
         preferencesView.isHidden = true
         paywallView.isHidden = true
-        applyPreferredWindowSize()
-
+        for constraints in stepConstraints.values {
+            NSLayoutConstraint.deactivate(constraints)
+        }
+        var activeView: NSView?
         switch currentStep {
         case .welcome:
             welcomeView.isHidden = false
+            activeView = welcomeView
             welcomeView.configure(
                 logoAssetName: "logo",
                 headline: L("onboarding.01.title"),
@@ -389,6 +402,7 @@ final class OnboardingViewController: NSViewController {
 
         case .screenRecording:
             screenRecordingView.isHidden = false
+            activeView = screenRecordingView
             screenRecordingView.titleLabel.attributedStringValue = OnboardingFigma.attributedText(
                 string: L("onboarding.02.title"),
                 font: NSFont.systemFont(ofSize: 24, weight: .bold),
@@ -410,6 +424,7 @@ final class OnboardingViewController: NSViewController {
 
         case .accessibility:
             accessibilityView.isHidden = false
+            activeView = accessibilityView
             accessibilityView.titleLabel.attributedStringValue = OnboardingFigma.attributedText(
                 string: L("onboarding.03.title"),
                 font: NSFont.systemFont(ofSize: 24, weight: .bold),
@@ -431,6 +446,7 @@ final class OnboardingViewController: NSViewController {
 
         case .preferences:
             preferencesView.isHidden = false
+            activeView = preferencesView
             preferencesView.configure(
                 logoAssetName: "logo",
                 title: L("onboarding.04.title"),
@@ -441,11 +457,17 @@ final class OnboardingViewController: NSViewController {
 
         case .paywall:
             paywallView.isHidden = false
+            activeView = paywallView
 
         case .done:
             store.markFlowCompleted()
             view.window?.close()
         }
+        if let activeView, let constraints = stepConstraints[ObjectIdentifier(activeView)] {
+            NSLayoutConstraint.activate(constraints)
+        }
+        AppLog.log(.info, "onboarding", "render step=\(currentStep.rawValue) paywallHidden=\(paywallView.isHidden) paywallFit=(\(formatSize(paywallView.fittingSize.width))x\(formatSize(paywallView.fittingSize.height))) windowContent=(\(formatSize(view.window?.contentView?.frame.size.width ?? 0))x\(formatSize(view.window?.contentView?.frame.size.height ?? 0)))")
+        applyPreferredWindowSize()
     }
 
     // MARK: - Window sizing
@@ -458,7 +480,7 @@ final class OnboardingViewController: NSViewController {
         case .screenRecording, .accessibility:
             return NSSize(width: 560, height: 658)
         case .paywall:
-            return NSSize(width: 560, height: 640)
+            return NSSize(width: 560, height: 695.0615)
         case .done:
             return NSSize(width: 560, height: 540)
         }
@@ -466,16 +488,57 @@ final class OnboardingViewController: NSViewController {
 
     private func applyPreferredWindowSize() {
         guard let window = view.window else { return }
-        let target = Self.preferredContentSize(for: currentStep)
+        var target = Self.preferredContentSize(for: currentStep)
+        let isPaywall = currentStep == .paywall
+        if isPaywall {
+            if !isHandlingPaywallLayout {
+                view.layoutSubtreeIfNeeded()
+            }
+            let fit = paywallView.fittingSize
+            let fitWidth = fit.width.isFinite ? fit.width : 0
+            let fitHeight = fit.height.isFinite ? fit.height : 0
+            target = NSSize(width: max(560, fitWidth), height: max(540, fitHeight))
+            AppLog.log(.info, "onboarding", "applyPreferredWindowSize step=paywall fit=(\(formatSize(fit.width))x\(formatSize(fit.height))) target=(\(formatSize(target.width))x\(formatSize(target.height)))")
+        } else {
+            AppLog.log(.info, "onboarding", "applyPreferredWindowSize step=\(currentStep.rawValue) target=(\(formatSize(target.width))x\(formatSize(target.height)))")
+        }
         guard window.contentView?.frame.size != target else { return }
 
         window.contentMinSize = target
-        window.contentMaxSize = target
+        if isPaywall {
+            window.contentMaxSize = NSSize(width: target.width, height: .greatestFiniteMagnitude)
+        } else {
+            window.contentMaxSize = target
+        }
 
+        AppLog.log(.info, "onboarding", "applyPreferredWindowSize window_before contentSize=(\(formatSize(window.contentView?.frame.size.width ?? 0))x\(formatSize(window.contentView?.frame.size.height ?? 0))) min=(\(formatSize(window.contentMinSize.width))x\(formatSize(window.contentMinSize.height))) max=(\(formatSize(window.contentMaxSize.width))x\(formatSize(window.contentMaxSize.height)))")
         NSAnimationContext.runAnimationGroup { ctx in
             ctx.duration = 0.18
-            window.animator().setContentSize(target)
+            if isPaywall {
+                let newFrameSize = window.frameRect(forContentRect: NSRect(x: 0, y: 0, width: target.width, height: target.height)).size
+                var frame = window.frame
+                frame.origin.x = frame.midX - newFrameSize.width / 2
+                frame.origin.y = frame.midY - newFrameSize.height / 2
+                frame.size = newFrameSize
+                window.animator().setFrame(frame, display: true)
+            } else {
+                window.animator().setContentSize(target)
+            }
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self, weak window] in
+            guard let self, let window else { return }
+            AppLog.log(.info, "onboarding", "applyPreferredWindowSize window_after contentSize=(\(self.formatSize(window.contentView?.frame.size.width ?? 0))x\(self.formatSize(window.contentView?.frame.size.height ?? 0))) min=(\(self.formatSize(window.contentMinSize.width))x\(self.formatSize(window.contentMinSize.height))) max=(\(self.formatSize(window.contentMaxSize.width))x\(self.formatSize(window.contentMaxSize.height)))")
+        }
+    }
+
+    private func formatSize(_ value: CGFloat) -> String {
+        guard value.isFinite else { return "nan" }
+        let maxInt = Double(Int.max)
+        let minInt = Double(Int.min)
+        let v = Double(value)
+        if v >= maxInt { return "max" }
+        if v <= minInt { return "min" }
+        return String(Int(v.rounded()))
     }
 
     // MARK: - Polling
@@ -537,14 +600,9 @@ final class OnboardingViewController: NSViewController {
         case .screenRecording:
             // Let System Settings be clickable (don't stay above it).
             view.window?.orderBack(nil)
-            let granted = ScreenRecordingGate.requestPermissionIfNeeded()
-            // Always open System Settings after user taps "Allow access" for clarity.
+            // Open System Settings directly; do NOT trigger CGRequestScreenCaptureAccess (no system dialog).
             PermissionsUI.openScreenRecordingSettings()
             pollTick()
-            if granted {
-                // If the user approved via the system prompt, advance after settings open check.
-                // Polling will update the UI; no immediate advance here.
-            }
         case .accessibility:
             ClipboardAutoPasteService.shared.requestAccessibilityPermission()
             // Let System Settings be clickable (don't stay above it).

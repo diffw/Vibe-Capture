@@ -42,9 +42,8 @@ final class ScreenCaptureService {
             return true
         }
 
-        // Surface the custom gate; the gate's Allow button will trigger the system prompt/settings.
-        AppLog.log(.warn, "capture", "CGPreflightScreenCaptureAccess = false; showing gate")
-        ScreenRecordingGateWindowController.shared.show()
+        // Permission missing – let caller show custom gate; do NOT trigger system dialog here.
+        AppLog.log(.warn, "capture", "CGPreflightScreenCaptureAccess = false; will show custom gate")
         return false
     }
 
