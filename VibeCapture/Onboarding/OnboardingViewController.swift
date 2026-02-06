@@ -270,7 +270,7 @@ final class OnboardingViewController: NSViewController {
     // MARK: - Figma step views
 
     private let welcomeView = OnboardingWelcomeStepView()
-    private let screenRecordingView = OnboardingPermissionStepView(contentTop: 80, logoAssetName: "logo", showSkip: false)
+    private let screenRecordingView = OnboardingPermissionStepView(contentTop: 80, logoAssetName: "logo", showSkip: true)
     private let accessibilityView = OnboardingPermissionStepView(contentTop: 80, logoAssetName: "logo", showSkip: true)
     private let preferencesView = OnboardingPreferencesStepView()
     private let paywallView = OnboardingPaywallView()
@@ -391,16 +391,16 @@ final class OnboardingViewController: NSViewController {
             screenRecordingView.isHidden = false
             screenRecordingView.titleLabel.attributedStringValue = OnboardingFigma.attributedText(
                 string: L("onboarding.02.title"),
-                font: NSFont.systemFont(ofSize: 24, weight: .heavy),
+                font: NSFont.systemFont(ofSize: 24, weight: .bold),
                 color: OnboardingFigma.primary,
-                lineHeightMultiple: 1.1
+                lineHeightMultiple: 1.0
             )
             screenRecordingView.bodyLabel.attributedStringValue = OnboardingFigma.attributedBodyWithBoldTailInline(
                 regular: L("onboarding.02.body"),
                 bold: L("onboarding.02.body.bold"),
                 fontSize: 16,
                 color: OnboardingFigma.primary,
-                lineHeightMultiple: 1.5
+                lineHeightMultiple: 1.2
             )
             screenRecordingView.allowButton.title = L("onboarding.02.cta.allow")
             screenRecordingView.restartButton.isHidden = true
@@ -412,15 +412,15 @@ final class OnboardingViewController: NSViewController {
             accessibilityView.isHidden = false
             accessibilityView.titleLabel.attributedStringValue = OnboardingFigma.attributedText(
                 string: L("onboarding.03.title"),
-                font: NSFont.systemFont(ofSize: 24, weight: .heavy),
+                font: NSFont.systemFont(ofSize: 24, weight: .bold),
                 color: OnboardingFigma.primary,
-                lineHeightMultiple: 1.1
+                lineHeightMultiple: 1.0
             )
             accessibilityView.bodyLabel.attributedStringValue = OnboardingFigma.attributedText(
                 string: L("onboarding.03.body"),
                 font: NSFont.systemFont(ofSize: 16, weight: .regular),
                 color: OnboardingFigma.primary,
-                lineHeightMultiple: 1.5
+                lineHeightMultiple: 1.2
             )
             accessibilityView.allowButton.title = L("onboarding.03.cta.allow")
             accessibilityView.skipButton.title = L("onboarding.cta.skip")
@@ -537,8 +537,14 @@ final class OnboardingViewController: NSViewController {
         case .screenRecording:
             // Let System Settings be clickable (don't stay above it).
             view.window?.orderBack(nil)
+            let granted = ScreenRecordingGate.requestPermissionIfNeeded()
+            // Always open System Settings after user taps "Allow access" for clarity.
             PermissionsUI.openScreenRecordingSettings()
             pollTick()
+            if granted {
+                // If the user approved via the system prompt, advance after settings open check.
+                // Polling will update the UI; no immediate advance here.
+            }
         case .accessibility:
             ClipboardAutoPasteService.shared.requestAccessibilityPermission()
             // Let System Settings be clickable (don't stay above it).
@@ -825,13 +831,13 @@ private final class OnboardingWelcomeStepView: NSView {
 
         headlineLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: headline,
-            font: NSFont.systemFont(ofSize: 36, weight: .heavy),
+            font: NSFont.systemFont(ofSize: 36, weight: .bold),
             color: OnboardingFigma.primary,
             lineHeightMultiple: 1.0
         )
         subheadlineLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: subheadline,
-            font: NSFont.systemFont(ofSize: 20, weight: .bold),
+            font: NSFont.systemFont(ofSize: 20, weight: .semibold),
             color: OnboardingFigma.primary,
             lineHeightMultiple: 1.05
         )
@@ -888,20 +894,17 @@ private final class OnboardingPermissionStepView: NSView {
         OnboardingFigma.configureLabel(titleLabel)
         OnboardingFigma.configureLabel(bodyLabel)
 
-        allowButton.fillColor = OnboardingFigma.primary
-        allowButton.titleColor = .white
-        allowButton.titleFont = NSFont.systemFont(ofSize: 18, weight: .semibold)
-        allowButton.contentInsets = NSEdgeInsets(top: 13, left: 32, bottom: 13, right: 32)
-        allowButton.imagePosition = .noImage
-        allowButton.setButtonType(.momentaryPushIn)
-
         continueButton.fillColor = OnboardingFigma.primary
         continueButton.titleColor = .white
         continueButton.titleFont = NSFont.systemFont(ofSize: 18, weight: .semibold)
         continueButton.contentInsets = NSEdgeInsets(top: 13, left: 32, bottom: 13, right: 32)
-        continueButton.imagePosition = .noImage
+        continueButton.imagePosition = .imageTrailing
+        continueButton.image = OnboardingFigma.image(named: "arrow-right-long-line", ext: "svg")
+        continueButton.image?.isTemplate = true
+        continueButton.contentTintColor = .white
         continueButton.setButtonType(.momentaryPushIn)
-        continueButton.isHidden = true
+
+        allowButton.setButtonType(.momentaryPushIn)
 
         restartButton.title = L("onboarding.cta.restart")
         OnboardingFigma.applyLinkStyle(
@@ -911,6 +914,9 @@ private final class OnboardingPermissionStepView: NSView {
         )
         restartButton.isHidden = true
 
+        if showSkip {
+            skipButton.title = L("onboarding.cta.skip")
+        }
         OnboardingFigma.applyLinkStyle(to: skipButton, color: OnboardingFigma.primary, font: NSFont.systemFont(ofSize: 14, weight: .regular))
         skipButton.isHidden = !showSkip
 
@@ -951,16 +957,16 @@ private final class OnboardingPermissionStepView: NSView {
             allowButton.widthAnchor.constraint(equalToConstant: 179),
             allowButton.heightAnchor.constraint(equalToConstant: 48),
 
-            continueButton.trailingAnchor.constraint(equalTo: leadingAnchor, constant: 72 + 416),
-            continueButton.topAnchor.constraint(equalTo: allowButton.topAnchor),
+            continueButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
+            continueButton.topAnchor.constraint(equalTo: topAnchor, constant: contentTop + 450),
             continueButton.widthAnchor.constraint(equalToConstant: 179),
             continueButton.heightAnchor.constraint(equalToConstant: 48),
 
-            restartButton.leadingAnchor.constraint(equalTo: allowButton.leadingAnchor),
-            restartButton.topAnchor.constraint(equalTo: allowButton.bottomAnchor, constant: 10),
+            restartButton.leadingAnchor.constraint(equalTo: continueButton.leadingAnchor),
+            restartButton.topAnchor.constraint(equalTo: continueButton.bottomAnchor, constant: 10),
 
             skipButton.trailingAnchor.constraint(equalTo: leadingAnchor, constant: 72 + 416),
-            skipButton.centerYAnchor.constraint(equalTo: allowButton.centerYAnchor),
+            skipButton.centerYAnchor.constraint(equalTo: continueButton.centerYAnchor),
         ])
     }
 
@@ -970,20 +976,28 @@ private final class OnboardingPermissionStepView: NSView {
 
     func setPermissionGranted(_ granted: Bool, allowTitle: String, grantedTitle: String, continueTitle: String) {
         if granted {
-            allowButton.title = grantedTitle
-            allowButton.isEnabled = false
-            allowButton.fillColor = NSColor.systemGreen
-
             continueButton.title = continueTitle
             continueButton.isHidden = false
-            skipButton.isHidden = true
+
+            skipButton.title = grantedTitle
+            skipButton.contentTintColor = .systemGreen
+            skipButton.isHidden = false
+
+            allowButton.isHidden = true
         } else {
+            continueButton.isHidden = true
+            continueButton.image = nil
+            skipButton.isHidden = !showSkip
+            if showSkip {
+                skipButton.title = L("onboarding.cta.skip")
+                skipButton.contentTintColor = OnboardingFigma.primary
+            }
+
             allowButton.title = allowTitle
             allowButton.isEnabled = true
             allowButton.fillColor = OnboardingFigma.primary
-
-            continueButton.isHidden = true
-            skipButton.isHidden = !showSkip
+            allowButton.image = nil
+            allowButton.isHidden = false
         }
     }
 }
@@ -1129,7 +1143,10 @@ private final class OnboardingPreferencesStepView: NSView {
         allowButton.titleColor = .white
         allowButton.titleFont = NSFont.systemFont(ofSize: 18, weight: .semibold)
         allowButton.contentInsets = NSEdgeInsets(top: 13, left: 32, bottom: 13, right: 32)
-        allowButton.imagePosition = .noImage
+        allowButton.imagePosition = .imageTrailing
+        allowButton.image = OnboardingFigma.image(named: "arrow-right-long-line", ext: "svg")
+        allowButton.image?.isTemplate = true
+        allowButton.contentTintColor = .white
         allowButton.setButtonType(.momentaryPushIn)
         OnboardingFigma.applyLinkStyle(to: skipButton, color: OnboardingFigma.primary, font: NSFont.systemFont(ofSize: 14, weight: .regular))
 
@@ -1173,7 +1190,7 @@ private final class OnboardingPreferencesStepView: NSView {
             // Save location label
             saveTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
             saveTitle.topAnchor.constraint(equalTo: topAnchor, constant: 242),
-            saveTitle.heightAnchor.constraint(equalToConstant: 14),
+            saveTitle.heightAnchor.constraint(equalToConstant: 16),
 
             // Save field + browse button row
             saveField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
@@ -1198,7 +1215,7 @@ private final class OnboardingPreferencesStepView: NSView {
             // Global shortcut
             shortcutTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
             shortcutTitle.topAnchor.constraint(equalTo: topAnchor, constant: 318),
-            shortcutTitle.heightAnchor.constraint(equalToConstant: 14),
+            shortcutTitle.heightAnchor.constraint(equalToConstant: 16),
 
             shortcutRow.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
             shortcutRow.topAnchor.constraint(equalTo: topAnchor, constant: 336),
@@ -1223,15 +1240,15 @@ private final class OnboardingPreferencesStepView: NSView {
         logoImageView.image = OnboardingFigma.image(named: logoAssetName, ext: "svg")
         titleLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: title,
-            font: NSFont.systemFont(ofSize: 24, weight: .heavy),
+            font: NSFont.systemFont(ofSize: 24, weight: .bold),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 1.1
+            lineHeightMultiple: 1.0
         )
         bodyLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: body,
             font: NSFont.systemFont(ofSize: 16, weight: .regular),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 1.5
+            lineHeightMultiple: 1.2
         )
         allowButton.title = allowTitle
         skipButton.title = skipTitle
@@ -1242,14 +1259,14 @@ private final class OnboardingPreferencesStepView: NSView {
             string: L("onboarding.04.save_location").uppercased(),
             font: NSFont.systemFont(ofSize: 12, weight: .medium),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 16.0 / 12.0,
+            lineHeightMultiple: 1.0,
             kern: 0.6
         )
         shortcutTitle.attributedStringValue = OnboardingFigma.attributedText(
             string: L("onboarding.04.global_shortcut").uppercased(),
             font: NSFont.systemFont(ofSize: 12, weight: .medium),
             color: OnboardingFigma.primary,
-            lineHeightMultiple: 16.0 / 12.0,
+            lineHeightMultiple: 1.0,
             kern: 0.6
         )
     }

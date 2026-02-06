@@ -1,6 +1,6 @@
 ---
 name: localization-handler
-description: Localization and multi-language management skill. Triggered when user mentions "补充多语言", "完善多语言", "新增多语言", "add localization", "update localization", or "sync localization". Handles tasks including: reviewing English baseline translations, localizing content to other languages with native fluency, ensuring key parity across all language files, and validating translation completeness.
+description: Localization and multi-language management skill. Triggered when user mentions "#多语言补齐", "#完善多语言", "#新增多语言", "add localization", "update localization", or "sync localization". Handles tasks including: reviewing English baseline translations, localizing content to other languages with native fluency, ensuring key parity across all language files, and validating translation completeness.
 ---
 
 # Localization Handler Skill

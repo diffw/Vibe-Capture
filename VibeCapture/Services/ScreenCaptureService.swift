@@ -41,12 +41,11 @@ final class ScreenCaptureService {
             AppLog.log(.debug, "capture", "CGPreflightScreenCaptureAccess = true")
             return true
         }
-        // Shows the system prompt. User may need to restart the app after granting.
-        AppLog.log(.warn, "capture", "CGPreflightScreenCaptureAccess = false; requesting access")
-        _ = CGRequestScreenCaptureAccess()
-        let ok = CGPreflightScreenCaptureAccess()
-        AppLog.log(.info, "capture", "CGPreflight after request = \(ok)")
-        return ok
+
+        // Surface the custom gate; the gate's Allow button will trigger the system prompt/settings.
+        AppLog.log(.warn, "capture", "CGPreflightScreenCaptureAccess = false; showing gate")
+        ScreenRecordingGateWindowController.shared.show()
+        return false
     }
 
     func captureFrozenSnapshot(for screen: NSScreen) throws -> FrozenScreenSnapshot {

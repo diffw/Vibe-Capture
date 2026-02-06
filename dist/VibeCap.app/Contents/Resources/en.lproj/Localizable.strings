@@ -1,0 +1,574 @@
+/* ===== Menu Bar ===== */
+
+/* [Context: Menu Bar] Main capture action */
+"menu.capture_area" = "Capture Area";
+
+/* [Context: Menu Bar] Open settings window */
+"menu.settings" = "Settings…";
+
+/* [Context: Menu Bar] Quit application */
+"menu.quit" = "Quit";
+
+/* [Context: Menu Bar] Language submenu */
+"menu.language" = "Language";
+
+/* [Context: Menu Bar] System default language option */
+"menu.language.system_default" = "System Default";
+
+/* ===== Onboarding ===== */
+
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+
+"onboarding.status.granted" = "Granted ✓";
+"onboarding.status.not_granted" = "Not granted";
+
+"onboarding.cta.skip" = "Skip";
+"onboarding.cta.restart" = "Restart VibeCap";
+"onboarding.cta.continue" = "Continue";
+"onboarding.cta.granted" = "Granted";
+
+"onboarding.error.title" = "Action needed";
+
+"onboarding.01.title" = "Capture.\nPrompt.\nCopy & Paste.";
+"onboarding.01.body" = "Your screenshots,\nAI-ready in one click.";
+"onboarding.01.detail" = "From everyday AI work like ChatGPT\nto vibe coding with tools like Cursor and more.";
+"onboarding.01.cta" = "Get Started";
+
+"onboarding.02.title" = "Enable Screen Recording";
+"onboarding.02.body" = "Screen Recording permission is required to capture screenshots on macOS.";
+"onboarding.02.body.bold" = "Without it, the app won’t work.";
+"onboarding.02.cta.allow" = "Allow access";
+
+"onboarding.03.title" = "Enable Accessibility";
+"onboarding.03.body" = "VibeCap needs accessibility permissions to detect active windows and handle shortcuts. This enables the magic of context-aware capturing.";
+"onboarding.03.cta.allow" = "Allow access";
+
+"onboarding.04.title" = "Preferences";
+"onboarding.04.body" = "Customize where to save and how to capture.";
+"onboarding.04.cta.continue" = "Continue";
+"onboarding.04.save_location" = "SAVE LOCATION";
+"onboarding.04.global_shortcut" = "GLOBAL SHORTCUT";
+"onboarding.04.shortcut_row_title" = "Capture Screen";
+"onboarding.04.browse" = "Browse…";
+"onboarding.04.hint" = "You can change these later in Settings.";
+
+// Step 05 placeholder (replaced when paywall UI lands)
+"onboarding.05.title" = "Start Free";
+"onboarding.05.subtitle" = "Experience the full power of VibeCap free for 14 days.";
+"onboarding.05.cta.trial" = "Start Your Free Trial";
+"onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
+"onboarding.05.pricing.then" = "Then %@/year";
+
+"onboarding.05.feature1.title" = "Full annotated feature";
+"onboarding.05.feature1.body" = "Annotate quickly and keep context.";
+"onboarding.05.feature2.title" = "Save queue";
+"onboarding.05.feature2.body" = "Never lose a capture mid-flow.";
+"onboarding.05.feature3.title" = "Keep screenshot clear";
+"onboarding.05.feature3.body" = "Make screenshots readable instantly.";
+
+/* ===== App Menu ===== */
+
+/* [Context: App Menu] Quit VibeCap */
+"menu.app.quit_vibecap" = "Quit VibeCap";
+
+/* [Context: App Menu] Edit menu title */
+"menu.edit" = "Edit";
+
+/* [Context: Edit Menu] Undo action */
+"menu.edit.undo" = "Undo";
+
+/* [Context: Edit Menu] Redo action */
+"menu.edit.redo" = "Redo";
+
+/* [Context: Edit Menu] Cut action */
+"menu.edit.cut" = "Cut";
+
+/* [Context: Edit Menu] Copy action */
+"menu.edit.copy" = "Copy";
+
+/* [Context: Edit Menu] Paste action */
+"menu.edit.paste" = "Paste";
+
+/* [Context: Edit Menu] Select all action */
+"menu.edit.select_all" = "Select All";
+
+/* ===== Capture Modal ===== */
+
+/* [Context: Modal] Send button with app name. %@ = app name */
+"modal.button.send_to_app" = "Send to %@";
+
+/* [Context: Modal] Save image button */
+"modal.button.save_image" = "Save Image";
+
+/* [Context: Modal] Close button */
+"modal.button.close" = "Close";
+
+/* [Context: Modal] ESC key hint */
+"modal.hint.esc_to_close" = "ESC to close";
+
+/* [Context: Modal] Command+Enter hint */
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ to Send";
+
+/* [Context: Modal] Command+S hint */
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+
+/* [Context: Modal - Basic Mode] Copy Image button */
+"modal.button.copy_image" = "Copy Image";
+
+/* [Context: Modal] Copy Image & Prompt button (requires Accessibility) */
+"modal.button.copy_image_and_prompt" = "Copy Image & Prompt";
+
+/* [Context: Modal - Basic Mode] Copy Prompt button */
+"modal.button.copy_prompt" = "Copy Prompt";
+
+/* [Context: Modal - Basic Mode] Enable auto-send hint */
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+
+/* [Context: Modal - Basic Mode] Enable auto-send hint with app name */
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+
+/* [Context: Modal - Basic Mode] Enable copying image+prompt together hint */
+"modal.hint.enable_copy_image_prompt" = "Want to copy image and prompt together?";
+
+/* [Context: Modal - Basic Mode] Enable Accessibility button */
+"modal.button.enable_accessibility" = "Enable →";
+
+/* [Context: Modal - Basic Mode] Enable auto-send button */
+"modal.button.enable_auto_send" = "Enable →";
+
+/* [Context: HUD] Image copied */
+"hud.image_copied" = "Image copied";
+
+/* [Context: HUD] Image & Prompt copied (Copy & Arm) */
+"hud.image_prompt_copied" = "Image & Prompt copied";
+
+/* [Context: HUD] Copied (generic) */
+"hud.copied" = "Copied";
+
+/* [Context: HUD] Prompt copied */
+"hud.prompt_copied" = "Prompt copied";
+
+/* [Context: HUD] Configure save folder for auto-save. %@ = button title */
+"hud.configure_save_folder" = "To enable auto-save, click %@ to choose a folder.";
+"hud.configure_save_folder_in_settings" = "To enable auto-save, open Settings and click %@.";
+
+/* [Context: Modal] Text input placeholder */
+"modal.placeholder.add_instructions" = "Add instructions (optional)";
+
+/* [Context: Modal Menu] No supported apps message */
+"modal.menu.no_supported_apps" = "No supported apps running";
+
+/* [Context: Modal Menu] Send to app item. %@ = app name */
+"modal.menu.send_to_app" = "Send to %@";
+
+/* [Context: Modal Menu] Save image item */
+"modal.menu.save_image" = "Save Image";
+
+/* [Context: Modal Menu] Add to send list item */
+"modal.menu.add_to_send_list" = "Add to Send List...";
+
+/* ===== Settings Window ===== */
+
+/* [Context: Settings] Window title */
+"settings.window_title" = "Settings";
+
+/* [Context: Settings] Shortcut section title */
+"settings.shortcut.title" = "Capture Shortcut";
+
+/* [Context: Settings] Recording shortcut state */
+"settings.shortcut.recording" = "Type shortcut…";
+"settings.shortcut.recording_short" = "Type…";
+
+/* [Context: Settings] Shortcut help text */
+"settings.shortcut.help" = "Click to record. Press Esc to cancel.";
+
+/* [Context: Settings] Auto-save checkbox */
+"settings.save.checkbox" = "Auto-save screenshots after Paste";
+
+/* [Context: Settings] Choose folder button */
+"settings.save.choose_folder" = "Choose Folder…";
+
+/* [Context: Settings] No folder selected message */
+"settings.save.no_folder" = "No folder selected (you'll be asked on first save)";
+
+/* [Context: Settings] Launch at login checkbox */
+"settings.login.checkbox" = "Launch at Login";
+
+/* [Context: Settings] Permissions section title */
+"settings.permissions.section_title" = "Permissions";
+"settings.permissions.screen_recording.title" = "Screen Recording";
+"settings.permissions.screen_recording.open" = "Open";
+"settings.permissions.accessibility.title" = "Accessibility";
+"settings.permissions.accessibility.open" = "Open";
+
+/* [Context: Settings] Send list section title */
+"settings.send_list.title" = "Added Apps";
+
+/* ===== Add App Panel ===== */
+
+/* [Context: Add App] Window title */
+"add_app.window_title" = "Add to Send List";
+
+/* [Context: Add App] Running apps header */
+"add_app.header" = "Running Apps:";
+
+/* [Context: Add App] Choose from applications button */
+"add_app.choose_from_apps" = "Choose from Applications...";
+
+/* [Context: Add App] Done button */
+"add_app.done" = "Done";
+
+/* [Context: Add App] File panel message */
+"add_app.panel_message" = "Select an application to add to the Send List";
+
+/* [Context: Add App] Built-in status label */
+"add_app.status.builtin" = "Built-in";
+
+/* ===== Annotation Toolbar ===== */
+
+/* [Context: Annotation] Arrow tool tooltip */
+"annotation.tool.arrow" = "Arrow Tool";
+
+/* [Context: Annotation] Circle tool tooltip */
+"annotation.tool.circle" = "Circle Tool";
+
+/* [Context: Annotation] Rectangle tool tooltip */
+"annotation.tool.rectangle" = "Rectangle Tool";
+
+/* [Context: Annotation] Number tool tooltip */
+"annotation.tool.number" = "Number Tool";
+
+/* [Context: Annotation] Color picker tooltip */
+"annotation.color.tooltip" = "Annotation Color";
+
+/* [Context: Annotation] Clear all button */
+"annotation.clear_all" = "Clear All";
+
+/* [Context: Annotation] Clear all button tooltip */
+"annotation.clear_all.tooltip" = "Clear All Annotations";
+
+/* ===== Colors ===== */
+
+/* [Context: Color Menu] Red */
+"color.red" = "Red";
+
+/* [Context: Color Menu] Orange */
+"color.orange" = "Orange";
+
+/* [Context: Color Menu] Yellow */
+"color.yellow" = "Yellow";
+
+/* [Context: Color Menu] Green */
+"color.green" = "Green";
+
+/* [Context: Color Menu] Blue */
+"color.blue" = "Blue";
+
+/* [Context: Color Menu] Purple */
+"color.purple" = "Purple";
+
+/* ===== HUD Messages ===== */
+
+/* [Context: HUD] App is running message */
+"hud.app_running" = "VibeCap is running";
+
+/* [Context: HUD] Pasted to app success. %@ = app name */
+"hud.pasted_to_app" = "Pasted to %@";
+
+/* [Context: HUD] Saved message */
+"hud.saved" = "Saved";
+
+/* [Context: HUD] Screenshot saved message */
+"hud.screenshot_saved" = "Screenshot Saved";
+
+/* [Context: HUD] Folder selected message */
+"hud.folder_selected" = "Folder Selected";
+
+/* ===== Errors ===== */
+
+/* [Context: Error] Shortcut unavailable title */
+"error.shortcut_unavailable" = "Shortcut Unavailable";
+
+/* [Context: Error] Shortcut registration failed. %d = OSStatus code */
+"error.shortcut_registration_failed" = "Unable to register this shortcut (OSStatus %d). It may be used by another app or reserved by the system.";
+
+/* [Context: Error] Unable to set folder title */
+"error.unable_to_set_folder" = "Unable to Set Folder";
+
+/* [Context: Error] Launch at login failed title */
+"error.launch_login_failed" = "Launch at Login Failed";
+
+/* [Context: Error] Launch at login requires approval */
+"error.launch_login_requires_approval" = "Launch at Login requires approval in System Settings → General → Login Items.";
+
+/* [Context: Error] Invalid application title */
+"error.invalid_application" = "Invalid Application";
+
+/* [Context: Error] Could not read bundle message */
+"error.could_not_read_bundle" = "Could not read application bundle.";
+
+/* [Context: Error] Cannot add app title */
+"error.cannot_add_app" = "Cannot Add App";
+
+/* [Context: Error] App doesn't support paste */
+"error.app_no_paste_support" = "This app doesn't support image paste.";
+
+/* [Context: Error] Already added title */
+"error.already_added" = "Already Added";
+
+/* [Context: Error] App already in list message */
+"error.app_already_in_list" = "This app is already in the Send List.";
+
+/* [Context: Error] App not found. %@ = app name */
+"error.app_not_found" = "Could not find %@. Is it running?";
+
+/* [Context: Error] No folder selected */
+"error.no_folder_selected" = "No save folder selected.";
+
+/* [Context: Error] Folder access failed */
+"error.folder_access_failed" = "Unable to access the save folder.";
+
+/* [Context: Error] Image encoding failed */
+"error.image_encoding_failed" = "Failed to encode image.";
+
+/* [Context: Error] Save failed. %@ = error description */
+"error.save_failed" = "Failed to save screenshot: %@";
+
+/* [Context: Error] Clipboard write failed */
+"error.clipboard_write_failed" = "Failed to write to clipboard.";
+
+/* [Context: Error] Capture failed */
+"error.capture_failed" = "Unable to capture the selected area.";
+
+/* [Context: Error] Modifier key required */
+"error.modifier_required" = "Use at least one modifier key (⌘⇧⌥⌃).";
+
+/* ===== Permissions ===== */
+
+/* [Context: Permission] Screen recording title */
+"permission.screen_recording.title" = "Screen Recording Permission Required";
+
+/* [Context: Permission] Screen recording message */
+"permission.screen_recording.message" = "VibeCap needs Screen Recording permission to capture your screen.\n\nOpen System Settings → Privacy & Security → Screen Recording, enable VibeCap, then quit and reopen the app.";
+
+/* [Context: Permission] Screen recording error */
+"permission.screen_recording.error" = "Screen Recording permission is required to capture your screen.";
+
+/* [Context: Permission] Accessibility message */
+"permission.accessibility.message" = "Accessibility permission required. Please grant it in System Settings → Privacy & Security → Accessibility, then try again.";
+
+/* [Context: Permission] Approval required title */
+"permission.login.approval_required" = "Approval Required";
+
+/* [Context: Permission] Login items message */
+"permission.login.message" = "To launch VibeCap at login, enable it in System Settings → General → Login Items.";
+
+/* ===== Common Buttons ===== */
+
+/* [Context: Button] OK */
+"button.ok" = "OK";
+
+/* [Context: Button] Cancel */
+"button.cancel" = "Cancel";
+
+/* [Context: Button] Open System Settings */
+"button.open_system_settings" = "Open System Settings";
+
+/* [Context: Button] Open Login Items */
+"button.open_login_items" = "Open Login Items";
+
+/* [Context: Button] Choose */
+"button.choose" = "Choose";
+
+/* [Context: Button] Restart Now */
+"button.restart_now" = "Restart Now";
+
+/* [Context: Button] Later */
+"button.later" = "Later";
+
+/* ===== Alerts ===== */
+
+/* [Context: Alert] Restart required title */
+"alert.restart.title" = "Restart Required";
+
+/* [Context: Alert] Restart required message */
+"alert.restart.message" = "Please restart VibeCap for the language change to take effect.";
+
+/* ===== File Panels ===== */
+
+/* [Context: Panel] Choose folder title */
+"panel.choose_folder.title" = "Choose Save Folder";
+
+/* [Context: Panel] Choose folder message */
+"panel.choose_folder.message" = "Select a folder where VibeCap will save screenshots.";
+
+/* ===== Accessibility ===== */
+
+/* [Context: Accessibility] Dropdown button */
+"a11y.dropdown_select_app" = "Select app";
+
+/* [Context: Accessibility] Save icon */
+"a11y.save_icon" = "Save";
+
+/* [Context: Accessibility] Add icon */
+"a11y.add_icon" = "Add";
+
+/* ===== Key Names ===== */
+
+/* [Context: Key] Space key */
+"key.space" = "Space";
+
+/* ===== Misc ===== */
+
+/* [Context: Fallback] Unknown app name */
+"app.unknown" = "Unknown";
+
+/* ===== Preview ===== */
+
+/* [Context: Preview] Show saved file in Finder */
+"preview.button.show_in_finder" = "Show in Finder";
+
+/* ===== IAP / Pro ===== */
+
+/* [Context: Settings] Pro section title */
+"settings.pro.section_title" = "Pro";
+
+/* [Context: Settings] Pro actions */
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+
+/* [Context: Settings] Pro status */
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+
+/* [Context: Paywall] Title and options */
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Supercharge your workflow with Pro features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Something went wrong. Please try again.";
+"paywall.error.payments_disabled" = "In-App Purchases are disabled on this Mac. Please enable purchases in Screen Time settings, then try again.";
+
+/* [Context: Menu] Upgrade entry */
+"menu.upgrade" = "Upgrade…";
+
+/* [Context: Paywall] Window */
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+/* ===== Gating: Custom App (Free) ===== */
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Upgrade to Pro";
+"paywall.compare.free" = "Free";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Annotation tools";
+"paywall.feature.annotations.free" = "Arrow (default color)";
+"paywall.feature.annotations.pro" = "Circle / Rectangle / Number / Colors";
+
+"paywall.feature.custom_apps" = "Custom send apps";
+"paywall.feature.custom_apps.free" = "1 custom app (can't remove)";
+"paywall.feature.custom_apps.pro" = "Unlimited custom apps";
+
+"paywall.feature.download_manager" = "Downloads & library";
+"paywall.feature.send_queue" = "Send queue";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Coming soon";
+
+"paywall.badge.recommended" = "Recommended";
+
+"paywall.legal.terms" = "Terms of Use";
+"paywall.legal.privacy" = "Privacy Policy";
+
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
+"paywall.plan.per_year" = "per year";
+"paywall.plan.per_month" = "per month";
+"paywall.plan.one_time" = "one-time";
+"paywall.plan.save_percent" = "Save %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / month";
+"paywall.plan.save_percent.loading" = "Save —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / month";
+
+"paywall.cta.title_with_savings" = "Get %@ OFF on Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Yearly billed · ≈ %@ / month";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "You're Pro";
+"paywall.pro_status.type" = "Plan: %@";
+"paywall.pro_status.renews" = "Renews: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Start Free";
+"paywall.step1.subtitle_trial" = "Try VibeCap for free on your Mac. Pay only if you choose to continue, or cancel at any time.";
+"paywall.step1.trial_badge" = "14 Days Free";
+"paywall.step1.cta_trial" = "Start Your Free Trial";
+"paywall.step1.price_with_trial" = "14 days free, then %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Upgrade to Pro";
+"paywall.step1.subtitle_no_trial" = "Pay only if you choose to continue, or cancel at any time.";
+"paywall.step1.cta_no_trial" = "Upgrade to Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Choose Your Plan";
+"paywall.plan_modal.monthly_subtitle" = "Pay as you go";
+"paywall.plan_modal.yearly_subtitle" = "Best value";
+"paywall.plan_modal.lifetime_subtitle" = "No subscription";
+"paywall.plan_modal.badge_popular" = "MOST POPULAR";
+"paywall.plan_modal.paid_once" = "paid once";
+"paywall.plan_modal.trial_hint" = "Cancel anytime during the %d-day free trial.";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Start Free Trial";
+"paywall.plan_modal.cta_buy_now" = "Buy Now";
+"paywall.plan_modal.cta_subscribe" = "Subscribe for %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Subscribe Now";

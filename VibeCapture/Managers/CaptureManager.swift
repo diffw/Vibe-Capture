@@ -49,7 +49,12 @@ final class CaptureManager {
                 DispatchQueue.main.async {
                     AppLog.log(.error, "capture", "Failed to capture frozen snapshot: \(error)")
                     self.isStartingCapture = false
-                    HUDService.shared.show(message: error.localizedDescription, style: .error)
+                    if case ScreenCaptureError.permissionDenied = error {
+                        AppLog.log(.warn, "permissions", "captureFrozenSnapshot -> permissionDenied; showing gate")
+                        ScreenRecordingGateWindowController.shared.show()
+                    } else {
+                        HUDService.shared.show(message: error.localizedDescription, style: .error)
+                    }
                 }
             }
         }

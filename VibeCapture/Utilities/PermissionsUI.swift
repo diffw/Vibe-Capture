@@ -21,12 +21,14 @@ enum PermissionsUI {
         AppLog.log(.info, "permissions", "Marked resumeAfterRestart minimumStep=\(minimumStep.rawValue) \(store.debugSnapshot())")
     }
 
-    static func showScreenRecordingPermissionAlert() {
+    static func showScreenRecordingPermissionAlert(showCancel: Bool = true) {
         let alert = NSAlert()
         alert.messageText = L("permission.screen_recording.title")
         alert.informativeText = L("permission.screen_recording.message")
         alert.addButton(withTitle: L("button.open_system_settings"))
-        alert.addButton(withTitle: L("button.cancel"))
+        if showCancel {
+            alert.addButton(withTitle: L("button.cancel"))
+        }
 
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {

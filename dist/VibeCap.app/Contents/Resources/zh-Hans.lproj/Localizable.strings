@@ -1,0 +1,343 @@
+/* ===== 菜单栏 ===== */
+
+"menu.capture_area" = "截取区域";
+"menu.settings" = "设置…";
+"menu.quit" = "退出";
+"menu.language" = "语言";
+"menu.language.system_default" = "跟随系统";
+
+/* ===== 应用菜单 ===== */
+
+"menu.app.quit_vibecap" = "退出 VibeCap";
+"menu.edit" = "编辑";
+"menu.edit.undo" = "撤销";
+"menu.edit.redo" = "重做";
+"menu.edit.cut" = "剪切";
+"menu.edit.copy" = "拷贝";
+"menu.edit.paste" = "粘贴";
+"menu.edit.select_all" = "全选";
+
+/* ===== 截图预览 ===== */
+
+"modal.button.send_to_app" = "发送到 %@";
+"modal.button.save_image" = "保存图片";
+"modal.button.close" = "关闭";
+"modal.hint.esc_to_close" = "ESC 关闭";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ 发送";
+"modal.hint.cmd_s_to_save" = "⌘S 保存";
+"modal.button.copy_image" = "复制图片";
+"modal.button.copy_image_and_prompt" = "复制图片和提示词";
+"modal.button.copy_prompt" = "复制指令";
+"modal.hint.enable_auto_send" = "想要一键发送到 App？";
+"modal.hint.enable_auto_send_to_app" = "想要一键发送到 %@？";
+"modal.hint.enable_copy_image_prompt" = "想要同时复制图片和提示词吗？";
+"modal.button.enable_accessibility" = "启用 →";
+"modal.button.enable_auto_send" = "启用 →";
+"hud.image_copied" = "图片已复制";
+"hud.image_prompt_copied" = "图片和提示词已复制";
+"hud.copied" = "已复制";
+"hud.prompt_copied" = "指令已复制";
+"hud.configure_save_folder" = "要启用自动保存，请点击 %@ 选择一次保存文件夹。";
+"hud.configure_save_folder_in_settings" = "要启用自动保存，请打开设置并点击 %@。";
+"modal.placeholder.add_instructions" = "添加说明（可选）";
+"modal.menu.no_supported_apps" = "没有支持的应用在运行";
+"modal.menu.send_to_app" = "发送到 %@";
+"modal.menu.save_image" = "保存图片";
+"modal.menu.add_to_send_list" = "添加到发送列表…";
+
+/* ===== 设置 ===== */
+
+"settings.window_title" = "设置";
+"settings.shortcut.title" = "截图快捷键";
+"settings.shortcut.recording" = "输入快捷键…";
+"settings.shortcut.help" = "点击录制，按 Esc 取消。";
+"settings.save.checkbox" = "粘贴后自动保存截图";
+"settings.save.choose_folder" = "选择文件夹…";
+"settings.save.no_folder" = "未选择文件夹（首次保存时会询问）";
+"settings.login.checkbox" = "登录时启动";
+"settings.send_list.title" = "已添加的应用";
+
+/* ===== 添加应用 ===== */
+
+"add_app.window_title" = "添加到发送列表";
+"add_app.header" = "正在运行的应用：";
+"add_app.choose_from_apps" = "从应用程序中选择…";
+"add_app.done" = "完成";
+"add_app.panel_message" = "选择要添加到发送列表的应用";
+"add_app.status.builtin" = "内置";
+
+/* ===== 标注工具 ===== */
+
+"annotation.tool.arrow" = "箭头工具";
+"annotation.tool.circle" = "圆形工具";
+"annotation.tool.rectangle" = "矩形工具";
+"annotation.tool.number" = "数字工具";
+"annotation.color.tooltip" = "标注颜色";
+"annotation.clear_all" = "清除全部";
+"annotation.clear_all.tooltip" = "清除所有标注";
+
+/* ===== 颜色 ===== */
+
+"color.red" = "红色";
+"color.orange" = "橙色";
+"color.yellow" = "黄色";
+"color.green" = "绿色";
+"color.blue" = "蓝色";
+"color.purple" = "紫色";
+
+/* ===== 提示消息 ===== */
+
+"hud.app_running" = "VibeCap 正在运行";
+"hud.pasted_to_app" = "已粘贴到 %@";
+"hud.saved" = "已保存";
+"hud.screenshot_saved" = "截图已保存";
+"hud.folder_selected" = "已选择文件夹";
+
+/* ===== 错误 ===== */
+
+"error.shortcut_unavailable" = "快捷键不可用";
+"error.shortcut_registration_failed" = "无法注册此快捷键（OSStatus %d）。可能已被其他应用使用或被系统保留。";
+"error.unable_to_set_folder" = "无法设置文件夹";
+"error.launch_login_failed" = "登录时启动失败";
+"error.launch_login_requires_approval" = "登录时启动需要在系统设置 → 通用 → 登录项中批准。";
+"error.invalid_application" = "无效的应用";
+"error.could_not_read_bundle" = "无法读取应用程序包。";
+"error.cannot_add_app" = "无法添加应用";
+"error.app_no_paste_support" = "此应用不支持图片粘贴。";
+"error.already_added" = "已添加";
+"error.app_already_in_list" = "此应用已在发送列表中。";
+"error.app_not_found" = "找不到 %@。应用是否在运行？";
+"error.no_folder_selected" = "未选择保存文件夹。";
+"error.folder_access_failed" = "无法访问保存文件夹。";
+"error.image_encoding_failed" = "图片编码失败。";
+"error.save_failed" = "截图保存失败：%@";
+"error.clipboard_write_failed" = "写入剪贴板失败。";
+"error.capture_failed" = "无法截取所选区域。";
+"error.modifier_required" = "请至少使用一个修饰键（⌘⇧⌥⌃）。";
+
+/* ===== 权限 ===== */
+
+"permission.screen_recording.title" = "需要屏幕录制权限";
+"permission.screen_recording.message" = "VibeCap 需要屏幕录制权限才能截取屏幕。\n\n请打开系统设置 → 隐私与安全性 → 屏幕录制，启用 VibeCap，然后退出并重新打开应用。";
+"permission.screen_recording.error" = "需要屏幕录制权限才能截取屏幕。";
+"permission.accessibility.message" = "需要辅助功能权限。请在系统设置 → 隐私与安全性 → 辅助功能中授权，然后重试。";
+"permission.login.approval_required" = "需要批准";
+"permission.login.message" = "要在登录时启动 VibeCap，请在系统设置 → 通用 → 登录项中启用。";
+
+/* ===== 通用按钮 ===== */
+
+"button.ok" = "好";
+"button.cancel" = "取消";
+"button.open_system_settings" = "打开系统设置";
+"button.open_login_items" = "打开登录项";
+"button.choose" = "选择";
+"button.restart_now" = "立即重启";
+"button.later" = "稍后";
+
+/* ===== 弹窗 ===== */
+
+"alert.restart.title" = "需要重启";
+"alert.restart.message" = "请重启 VibeCap 以使语言更改生效。";
+
+/* ===== 文件面板 ===== */
+
+"panel.choose_folder.title" = "选择保存文件夹";
+"panel.choose_folder.message" = "选择 VibeCap 保存截图的文件夹。";
+
+/* ===== 无障碍 ===== */
+
+"a11y.dropdown_select_app" = "选择应用";
+"a11y.save_icon" = "保存";
+"a11y.add_icon" = "添加";
+
+/* ===== 按键名称 ===== */
+
+"key.space" = "空格";
+
+/* ===== 其他 ===== */
+
+"app.unknown" = "未知";
+
+/* ===== 预览 ===== */
+
+"preview.button.show_in_finder" = "在 Finder 中显示";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "升级到 Pro…";
+"settings.pro.action.restore" = "恢复购买";
+"settings.pro.action.manage" = "管理订阅";
+"settings.proStatus.free" = "免费";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "上次刷新：";
+"settings.proStatus.source" = "来源：%@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "按月";
+"settings.proStatus.source.yearly" = "按年";
+"settings.proStatus.source.lifetime" = "买断";
+"settings.proStatus.source.unknown" = "未知";
+"paywall.title" = "升级到 Pro";
+"paywall.subtitle" = "解锁高级功能。";
+"paywall.option.monthly" = "按月";
+"paywall.option.yearly" = "按年";
+"paywall.option.lifetime" = "买断";
+"paywall.error.generic" = "出现问题，请重试。";
+
+"menu.upgrade" = "升级…";
+"paywall.window_title" = "升级";
+"paywall.action.purchase" = "购买";
+"paywall.action.restore" = "恢复";
+"paywall.action.manage" = "管理";
+"paywall.action.close" = "关闭";
+"paywall.price.loading" = "加载中…";
+"paywall.status.already_pro" = "你已经是 Pro。";
+"paywall.status.purchasing" = "购买中…";
+"paywall.status.pending" = "等待确认…";
+"paywall.status.success" = "成功！";
+
+"gating.customApp.confirm.title" = "添加这个应用？";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "添加应用";
+"gating.customApp.notCounted.title" = "已支持";
+"gating.customApp.notCounted.message" = "该应用已在系统白名单中，不会占用你的免费自定义应用名额。";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "升级到 Pro";
+"paywall.compare.free" = "免费";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "标注工具";
+"paywall.feature.annotations.free" = "仅箭头（默认颜色）";
+"paywall.feature.annotations.pro" = "圆形 / 矩形 / 编号 / 颜色";
+
+"paywall.feature.custom_apps" = "自定义发送 App";
+"paywall.feature.custom_apps.free" = "1 个自定义 App（不可移除）";
+"paywall.feature.custom_apps.pro" = "不限数量自定义 App";
+
+"paywall.feature.download_manager" = "下载与管理";
+"paywall.feature.send_queue" = "发送队列";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "即将推出";
+
+"paywall.badge.recommended" = "推荐";
+
+"paywall.legal.terms" = "条款";
+"paywall.legal.privacy" = "隐私";
+
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "订阅将自动续费，除非在当前订阅期结束前 24 小时取消。可随时在 App Store → 账户 → 订阅 中管理或取消。";
+
+"paywall.plan.per_year" = "每年";
+"paywall.plan.per_month" = "每月";
+"paywall.plan.one_time" = "一次性";
+"paywall.plan.save_percent" = "省 %@";
+"paywall.plan.equivalent_monthly" = "约 %@ / 月";
+"paywall.plan.save_percent.loading" = "省 —";
+"paywall.plan.equivalent_monthly.loading" = "约 — / 月";
+
+"paywall.cta.title_with_savings" = "升级 Pro 立省 %@";
+"paywall.cta.subtitle_yearly_equivalent" = "按年计费 · 约 %@ / 月";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "完整标注工具";
+"paywall.feature.annotations.subtitle" = "圆形、矩形、编号和自定义颜色。";
+
+"paywall.feature.send_list.title" = "无限发送列表";
+"paywall.feature.send_list.subtitle" = "随意添加应用到发送列表，无数量限制。";
+
+"paywall.badge.best_value" = "最划算";
+"paywall.badge.save_percent" = "省 %@%%";
+
+"paywall.unit.month" = "月";
+"paywall.unit.year" = "年";
+
+"paywall.cta.subscribe_monthly" = "订阅 %@ / 月";
+"paywall.cta.subscribe_yearly" = "订阅 %@ / 年";
+"paywall.cta.unlock_lifetime" = "一次买断 %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "你已是 Pro";
+"paywall.pro_status.type" = "方案：%@";
+"paywall.pro_status.renews" = "续费日期：%@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "免费开始";
+"paywall.step1.subtitle_trial" = "在 Mac 上免费试用 VibeCap。满意后再付费，可随时取消。";
+"paywall.step1.trial_badge" = "14 天免费";
+"paywall.step1.cta_trial" = "开始免费试用";
+"paywall.step1.price_with_trial" = "14 天免费，之后 %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "升级到 Pro";
+"paywall.step1.subtitle_no_trial" = "满意后再付费，可随时取消。";
+"paywall.step1.cta_no_trial" = "升级到 Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "选择方案";
+"paywall.plan_modal.monthly_subtitle" = "按需付费";
+"paywall.plan_modal.yearly_subtitle" = "最优惠";
+"paywall.plan_modal.lifetime_subtitle" = "无需订阅";
+"paywall.plan_modal.badge_popular" = "最受欢迎";
+"paywall.plan_modal.paid_once" = "一次付清";
+"paywall.plan_modal.trial_hint" = "可在 %d 天免费试用期内随时取消。";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "开始免费试用";
+"paywall.plan_modal.cta_buy_now" = "立即购买";
+"paywall.plan_modal.cta_subscribe" = "订阅 %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "立即订阅";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "Granted ✓";
+"onboarding.status.not_granted" = "Not granted";
+"onboarding.cta.skip" = "Skip";
+"onboarding.cta.restart" = "Restart VibeCap";
+"onboarding.cta.continue" = "Continue";
+"onboarding.cta.granted" = "Granted";
+"onboarding.error.title" = "Action needed";
+"onboarding.01.title" = "Capture.\nPrompt.\nCopy & Paste.";
+"onboarding.01.body" = "Your screenshots,\nAI-ready in one click.";
+"onboarding.01.detail" = "From everyday AI work like ChatGPT\nto vibe coding with tools like Cursor and more.";
+"onboarding.01.cta" = "Get Started";
+"onboarding.02.title" = "Enable Screen Recording";
+"onboarding.02.body" = "Screen Recording permission is required to capture screenshots on macOS.";
+"onboarding.02.body.bold" = "Without it, the app won’t work.";
+"onboarding.02.cta.allow" = "Allow access";
+"onboarding.03.title" = "Enable Accessibility";
+"onboarding.03.body" = "VibeCap needs accessibility permissions to detect active windows and handle shortcuts. This enables the magic of context-aware capturing.";
+"onboarding.03.cta.allow" = "Allow access";
+"onboarding.04.title" = "Preferences";
+"onboarding.04.body" = "Customize where to save and how to capture.";
+"onboarding.04.cta.continue" = "Continue";
+"onboarding.04.save_location" = "SAVE LOCATION";
+"onboarding.04.global_shortcut" = "GLOBAL SHORTCUT";
+"onboarding.04.shortcut_row_title" = "Capture Screen";
+"onboarding.04.browse" = "Browse…";
+"onboarding.04.hint" = "You can change these later in Settings.";
+"onboarding.05.title" = "Start Free";
+"onboarding.05.subtitle" = "Experience the full power of VibeCap free for 14 days.";
+"onboarding.05.cta.trial" = "Start Your Free Trial";
+"onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
+"onboarding.05.pricing.then" = "Then %@/year";
+"onboarding.05.feature1.title" = "Full annotated feature";
+"onboarding.05.feature1.body" = "Annotate quickly and keep context.";
+"onboarding.05.feature2.title" = "Save queue";
+"onboarding.05.feature2.body" = "Never lose a capture mid-flow.";
+"onboarding.05.feature3.title" = "Keep screenshot clear";
+"onboarding.05.feature3.body" = "Make screenshots readable instantly.";
+"settings.shortcut.recording_short" = "Type…";
+"settings.permissions.section_title" = "Permissions";
+"settings.permissions.screen_recording.title" = "Screen Recording";
+"settings.permissions.screen_recording.open" = "Open";
+"settings.permissions.accessibility.title" = "Accessibility";
+"settings.permissions.accessibility.open" = "Open";
+"paywall.error.payments_disabled" = "In-App Purchases are disabled on this Mac. Please enable purchases in Screen Time settings, then try again.";

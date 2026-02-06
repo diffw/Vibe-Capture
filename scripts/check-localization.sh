@@ -23,8 +23,7 @@ NC='\033[0m' # No Color
 RESOURCES_DIR="${1:-VibeCapture/Resources}"
 BASE_LANGUAGE="en"
 REQUIRED_LANGUAGES=(
-    "en" "zh-Hans" "zh-Hant" "ja" "de" "fr" "es" "ko" "pt" "it"
-    "nl" "sv" "da" "nb" "fi" "ru" "pl" "cs" "tr" "el"
+    "en" "zh-Hans" "zh-Hant" "ja" "de" "fr" "es" "ko" "it" "sv"
 )
 
 echo "========================================"

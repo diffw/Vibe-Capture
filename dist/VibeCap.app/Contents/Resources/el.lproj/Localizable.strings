@@ -1,0 +1,341 @@
+/* ===== Γραμμή μενού ===== */
+
+"menu.capture_area" = "Λήψη περιοχής";
+"menu.settings" = "Ρυθμίσεις…";
+"menu.quit" = "Τερματισμός";
+"menu.language" = "Γλώσσα";
+"menu.language.system_default" = "Προεπιλογή συστήματος";
+
+/* ===== Μενού εφαρμογής ===== */
+
+"menu.app.quit_vibecap" = "Τερματισμός VibeCap";
+"menu.edit" = "Επεξεργασία";
+"menu.edit.undo" = "Αναίρεση";
+"menu.edit.redo" = "Επανάληψη";
+"menu.edit.cut" = "Αποκοπή";
+"menu.edit.copy" = "Αντιγραφή";
+"menu.edit.paste" = "Επικόλληση";
+"menu.edit.select_all" = "Επιλογή όλων";
+
+/* ===== Προεπισκόπηση λήψης ===== */
+
+"modal.button.send_to_app" = "Αποστολή σε %@";
+"modal.button.save_image" = "Αποθήκευση εικόνας";
+"modal.button.close" = "Κλείσιμο";
+"modal.hint.esc_to_close" = "ESC για κλείσιμο";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ για αποστολή";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_image_and_prompt" = "Αντιγραφή εικόνας & προτροπής";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.hint.enable_copy_image_prompt" = "Θέλετε να αντιγράψετε εικόνα και προτροπή μαζί;";
+"modal.button.enable_accessibility" = "Ενεργοποίηση →";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.image_prompt_copied" = "Image & Prompt copied";
+"hud.copied" = "Copied";
+"hud.prompt_copied" = "Prompt copied";
+"modal.placeholder.add_instructions" = "Προσθήκη οδηγιών (προαιρετικό)";
+"modal.menu.no_supported_apps" = "Καμία υποστηριζόμενη εφαρμογή δεν εκτελείται";
+"modal.menu.send_to_app" = "Αποστολή σε %@";
+"modal.menu.save_image" = "Αποθήκευση εικόνας";
+"modal.menu.add_to_send_list" = "Προσθήκη στη λίστα αποστολής…";
+
+/* ===== Ρυθμίσεις ===== */
+
+"settings.window_title" = "Ρυθμίσεις";
+"settings.shortcut.title" = "Συντόμευση λήψης";
+"settings.shortcut.recording" = "Πληκτρολογήστε συντόμευση…";
+"settings.shortcut.help" = "Κάντε κλικ για εγγραφή. Esc για ακύρωση.";
+"settings.save.checkbox" = "Αυτόματη αποθήκευση μετά την επικόλληση";
+"settings.save.choose_folder" = "Επιλογή φακέλου…";
+"settings.save.no_folder" = "Δεν έχει επιλεγεί φάκελος (θα ερωτηθείτε κατά την πρώτη αποθήκευση)";
+"settings.login.checkbox" = "Άνοιγμα κατά τη σύνδεση";
+"settings.send_list.title" = "Προστεθείσες εφαρμογές";
+
+/* ===== Προσθήκη εφαρμογής ===== */
+
+"add_app.window_title" = "Προσθήκη στη λίστα αποστολής";
+"add_app.header" = "Εφαρμογές σε εκτέλεση:";
+"add_app.choose_from_apps" = "Επιλογή από Εφαρμογές…";
+"add_app.done" = "Τέλος";
+"add_app.panel_message" = "Επιλέξτε μια εφαρμογή για προσθήκη στη λίστα αποστολής";
+"add_app.status.builtin" = "Ενσωματωμένη";
+
+/* ===== Εργαλεία σχολιασμού ===== */
+
+"annotation.tool.arrow" = "Εργαλείο βέλους";
+"annotation.tool.circle" = "Εργαλείο κύκλου";
+"annotation.tool.rectangle" = "Εργαλείο ορθογωνίου";
+"annotation.tool.number" = "Εργαλείο αρίθμησης";
+"annotation.color.tooltip" = "Χρώμα σχολιασμού";
+"annotation.clear_all" = "Εκκαθάριση όλων";
+"annotation.clear_all.tooltip" = "Εκκαθάριση όλων των σχολιασμών";
+
+/* ===== Χρώματα ===== */
+
+"color.red" = "Κόκκινο";
+"color.orange" = "Πορτοκαλί";
+"color.yellow" = "Κίτρινο";
+"color.green" = "Πράσινο";
+"color.blue" = "Μπλε";
+"color.purple" = "Μοβ";
+
+/* ===== Μηνύματα HUD ===== */
+
+"hud.app_running" = "Το VibeCap εκτελείται";
+"hud.pasted_to_app" = "Επικολλήθηκε στο %@";
+"hud.saved" = "Αποθηκεύτηκε";
+"hud.screenshot_saved" = "Το στιγμιότυπο αποθηκεύτηκε";
+"hud.folder_selected" = "Ο φάκελος επιλέχθηκε";
+
+/* ===== Σφάλματα ===== */
+
+"error.shortcut_unavailable" = "Η συντόμευση δεν είναι διαθέσιμη";
+"error.shortcut_registration_failed" = "Αδυναμία καταχώρησης αυτής της συντόμευσης (OSStatus %d). Ενδέχεται να χρησιμοποιείται από άλλη εφαρμογή ή να είναι δεσμευμένη από το σύστημα.";
+"error.unable_to_set_folder" = "Αδυναμία ορισμού φακέλου";
+"error.launch_login_failed" = "Αποτυχία ανοίγματος κατά τη σύνδεση";
+"error.launch_login_requires_approval" = "Το άνοιγμα κατά τη σύνδεση απαιτεί έγκριση στις Ρυθμίσεις συστήματος → Γενικά → Στοιχεία σύνδεσης.";
+"error.invalid_application" = "Μη έγκυρη εφαρμογή";
+"error.could_not_read_bundle" = "Αδυναμία ανάγνωσης του πακέτου εφαρμογής.";
+"error.cannot_add_app" = "Αδυναμία προσθήκης εφαρμογής";
+"error.app_no_paste_support" = "Αυτή η εφαρμογή δεν υποστηρίζει επικόλληση εικόνων.";
+"error.already_added" = "Έχει ήδη προστεθεί";
+"error.app_already_in_list" = "Αυτή η εφαρμογή υπάρχει ήδη στη λίστα αποστολής.";
+"error.app_not_found" = "Δεν βρέθηκε το %@. Εκτελείται η εφαρμογή;";
+"error.no_folder_selected" = "Δεν έχει επιλεγεί φάκελος αποθήκευσης.";
+"error.folder_access_failed" = "Αδυναμία πρόσβασης στον φάκελο αποθήκευσης.";
+"error.image_encoding_failed" = "Αποτυχία κωδικοποίησης εικόνας.";
+"error.save_failed" = "Αποτυχία αποθήκευσης στιγμιότυπου: %@";
+"error.clipboard_write_failed" = "Αποτυχία εγγραφής στο πρόχειρο.";
+"error.capture_failed" = "Αδυναμία λήψης της επιλεγμένης περιοχής.";
+"error.modifier_required" = "Χρησιμοποιήστε τουλάχιστον ένα πλήκτρο τροποποίησης (⌘⇧⌥⌃).";
+
+/* ===== Δικαιώματα ===== */
+
+"permission.screen_recording.title" = "Απαιτείται δικαίωμα εγγραφής οθόνης";
+"permission.screen_recording.message" = "Το VibeCap χρειάζεται δικαίωμα εγγραφής οθόνης για λήψη της οθόνης σας.\n\nΑνοίξτε τις Ρυθμίσεις συστήματος → Απόρρητο και ασφάλεια → Εγγραφή οθόνης, ενεργοποιήστε το VibeCap και επανεκκινήστε την εφαρμογή.";
+"permission.screen_recording.error" = "Απαιτείται δικαίωμα εγγραφής οθόνης για τη λήψη της οθόνης.";
+"permission.accessibility.message" = "Απαιτείται δικαίωμα προσβασιμότητας. Παραχωρήστε το στις Ρυθμίσεις συστήματος → Απόρρητο και ασφάλεια → Προσβασιμότητα και δοκιμάστε ξανά.";
+"permission.login.approval_required" = "Απαιτείται έγκριση";
+"permission.login.message" = "Για να ανοίγει το VibeCap κατά τη σύνδεση, ενεργοποιήστε το στις Ρυθμίσεις συστήματος → Γενικά → Στοιχεία σύνδεσης.";
+
+/* ===== Κοινά κουμπιά ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Ακύρωση";
+"button.open_system_settings" = "Άνοιγμα Ρυθμίσεων συστήματος";
+"button.open_login_items" = "Άνοιγμα Στοιχείων σύνδεσης";
+"button.choose" = "Επιλογή";
+"button.restart_now" = "Επανεκκίνηση τώρα";
+"button.later" = "Αργότερα";
+
+/* ===== Ειδοποιήσεις ===== */
+
+"alert.restart.title" = "Απαιτείται επανεκκίνηση";
+"alert.restart.message" = "Κάντε επανεκκίνηση του VibeCap για να εφαρμοστεί η αλλαγή γλώσσας.";
+
+/* ===== Πίνακες αρχείων ===== */
+
+"panel.choose_folder.title" = "Επιλογή φακέλου αποθήκευσης";
+"panel.choose_folder.message" = "Επιλέξτε έναν φάκελο όπου το VibeCap θα αποθηκεύει τα στιγμιότυπα οθόνης.";
+
+/* ===== Προσβασιμότητα ===== */
+
+"a11y.dropdown_select_app" = "Επιλογή εφαρμογής";
+"a11y.save_icon" = "Αποθήκευση";
+"a11y.add_icon" = "Προσθήκη";
+
+/* ===== Ονόματα πλήκτρων ===== */
+
+"key.space" = "Διάστημα";
+
+/* ===== Άλλα ===== */
+
+"app.unknown" = "Άγνωστο";
+
+"preview.button.show_in_finder" = "Εμφάνιση στο Finder";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Αναβάθμιση σε Pro";
+"paywall.compare.free" = "Δωρεάν";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Εργαλεία σχολιασμού";
+"paywall.feature.annotations.free" = "Μόνο βέλος (προεπιλεγμένο χρώμα)";
+"paywall.feature.annotations.pro" = "Κύκλος / Ορθογώνιο / Αριθμός / Χρώματα";
+
+"paywall.feature.custom_apps" = "Προσαρμοσμένες εφαρμογές αποστολής";
+"paywall.feature.custom_apps.free" = "1 εφαρμογή (δεν αφαιρείται)";
+"paywall.feature.custom_apps.pro" = "Απεριόριστες εφαρμογές";
+
+"paywall.feature.download_manager" = "Λήψεις και βιβλιοθήκη";
+"paywall.feature.send_queue" = "Ουρά αποστολής";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Σύντομα";
+
+"paywall.badge.recommended" = "Προτεινόμενο";
+
+"paywall.legal.terms" = "Όροι";
+"paywall.legal.privacy" = "Απόρρητο";
+
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
+"paywall.plan.per_year" = "ανά έτος";
+"paywall.plan.per_month" = "ανά μήνα";
+"paywall.plan.one_time" = "εφάπαξ";
+"paywall.plan.save_percent" = "Εξοικονομείτε %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / μήνα";
+"paywall.plan.save_percent.loading" = "Εξοικονομείτε —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / μήνα";
+
+"paywall.cta.title_with_savings" = "Εξοικονομήστε %@ στο Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Ετήσια χρέωση · ≈ %@ / μήνα";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Είστε Pro";
+"paywall.pro_status.type" = "Πλάνο: %@";
+"paywall.pro_status.renews" = "Ανανέωση: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Ξεκινήστε δωρεάν";
+"paywall.step1.subtitle_trial" = "Δοκιμάστε το VibeCap δωρεάν στο Mac σας. Πληρώστε μόνο αν θέλετε να συνεχίσετε, ακυρώστε οποτεδήποτε.";
+"paywall.step1.trial_badge" = "14 ημέρες δωρεάν";
+"paywall.step1.cta_trial" = "Έναρξη δωρεάν δοκιμής";
+"paywall.step1.price_with_trial" = "14 ημέρες δωρεάν, μετά %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Αναβάθμιση σε Pro";
+"paywall.step1.subtitle_no_trial" = "Πληρώστε μόνο αν θέλετε να συνεχίσετε, ακυρώστε οποτεδήποτε.";
+"paywall.step1.cta_no_trial" = "Αναβάθμιση σε Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Επιλέξτε πλάνο";
+"paywall.plan_modal.monthly_subtitle" = "Πληρώστε όσο χρησιμοποιείτε";
+"paywall.plan_modal.yearly_subtitle" = "Καλύτερη αξία";
+"paywall.plan_modal.lifetime_subtitle" = "Χωρίς συνδρομή";
+"paywall.plan_modal.badge_popular" = "ΔΗΜΟΦΙΛΕΣ";
+"paywall.plan_modal.paid_once" = "εφάπαξ πληρωμή";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Έναρξη δωρεάν δοκιμής";
+"paywall.plan_modal.cta_buy_now" = "Αγορά τώρα";
+"paywall.plan_modal.cta_subscribe" = "Συνδρομή για %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Συνδρομή τώρα";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "Granted ✓";
+"onboarding.status.not_granted" = "Not granted";
+"onboarding.cta.skip" = "Skip";
+"onboarding.cta.restart" = "Restart VibeCap";
+"onboarding.cta.continue" = "Continue";
+"onboarding.cta.granted" = "Granted";
+"onboarding.error.title" = "Action needed";
+"onboarding.01.title" = "Capture.\nPrompt.\nCopy & Paste.";
+"onboarding.01.body" = "Your screenshots,\nAI-ready in one click.";
+"onboarding.01.detail" = "From everyday AI work like ChatGPT\nto vibe coding with tools like Cursor and more.";
+"onboarding.01.cta" = "Get Started";
+"onboarding.02.title" = "Enable Screen Recording";
+"onboarding.02.body" = "Screen Recording permission is required to capture screenshots on macOS.";
+"onboarding.02.body.bold" = "Without it, the app won’t work.";
+"onboarding.02.cta.allow" = "Allow access";
+"onboarding.03.title" = "Enable Accessibility";
+"onboarding.03.body" = "VibeCap needs accessibility permissions to detect active windows and handle shortcuts. This enables the magic of context-aware capturing.";
+"onboarding.03.cta.allow" = "Allow access";
+"onboarding.04.title" = "Preferences";
+"onboarding.04.body" = "Customize where to save and how to capture.";
+"onboarding.04.cta.continue" = "Continue";
+"onboarding.04.save_location" = "SAVE LOCATION";
+"onboarding.04.global_shortcut" = "GLOBAL SHORTCUT";
+"onboarding.04.shortcut_row_title" = "Capture Screen";
+"onboarding.04.browse" = "Browse…";
+"onboarding.04.hint" = "You can change these later in Settings.";
+"onboarding.05.title" = "Start Free";
+"onboarding.05.subtitle" = "Experience the full power of VibeCap free for 14 days.";
+"onboarding.05.cta.trial" = "Start Your Free Trial";
+"onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
+"onboarding.05.pricing.then" = "Then %@/year";
+"onboarding.05.feature1.title" = "Full annotated feature";
+"onboarding.05.feature1.body" = "Annotate quickly and keep context.";
+"onboarding.05.feature2.title" = "Save queue";
+"onboarding.05.feature2.body" = "Never lose a capture mid-flow.";
+"onboarding.05.feature3.title" = "Keep screenshot clear";
+"onboarding.05.feature3.body" = "Make screenshots readable instantly.";
+"hud.configure_save_folder" = "To enable auto-save, click %@ to choose a folder.";
+"hud.configure_save_folder_in_settings" = "To enable auto-save, open Settings and click %@.";
+"settings.shortcut.recording_short" = "Type…";
+"settings.permissions.section_title" = "Permissions";
+"settings.permissions.screen_recording.title" = "Screen Recording";
+"settings.permissions.screen_recording.open" = "Open";
+"settings.permissions.accessibility.title" = "Accessibility";
+"settings.permissions.accessibility.open" = "Open";
+"paywall.error.payments_disabled" = "In-App Purchases are disabled on this Mac. Please enable purchases in Screen Time settings, then try again.";
+"paywall.plan_modal.trial_hint" = "Cancel anytime during the %d-day free trial.";

@@ -43,11 +43,15 @@ final class ScreenRecordingGateWindowController: NSWindowController, NSWindowDel
     required init?(coder: NSCoder) { nil }
 
     func show() {
-        vc.refreshStatus()
-        guard let window else { return }
-        NSApp.activate(ignoringOtherApps: true)
-        window.center()
-        window.makeKeyAndOrderFront(nil)
+        AppLog.log(.info, "permissions", "ScreenRecordingGateWindowController.show invoked")
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let window = self.window else { return }
+            self.vc.refreshStatus()
+            NSApp.activate(ignoringOtherApps: true)
+            window.center()
+            window.makeKeyAndOrderFront(nil)
+            AppLog.log(.info, "permissions", "ScreenRecordingGateWindowController.show displayed window_visible=\(window.isVisible)")
+        }
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -212,6 +216,8 @@ private final class ScreenRecordingGateViewController: NSViewController {
         // Let System Settings be clickable (don't stay above it).
         view.window?.level = .normal
         view.window?.orderBack(nil)
+        let granted = ScreenRecordingGate.requestPermissionIfNeeded()
+        // Always open System Settings after user taps Allow.
         PermissionsUI.openScreenRecordingSettings()
         tick()
     }

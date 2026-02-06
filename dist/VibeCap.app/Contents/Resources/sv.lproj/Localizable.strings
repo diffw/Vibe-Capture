@@ -1,0 +1,341 @@
+/* ===== Menyrad ===== */
+
+"menu.capture_area" = "Ta skärmbild av område";
+"menu.settings" = "Inställningar…";
+"menu.quit" = "Avsluta";
+"menu.language" = "Språk";
+"menu.language.system_default" = "Systemstandard";
+
+/* ===== Appmeny ===== */
+
+"menu.app.quit_vibecap" = "Avsluta VibeCap";
+"menu.edit" = "Redigera";
+"menu.edit.undo" = "Ångra";
+"menu.edit.redo" = "Gör om";
+"menu.edit.cut" = "Klipp ut";
+"menu.edit.copy" = "Kopiera";
+"menu.edit.paste" = "Klistra in";
+"menu.edit.select_all" = "Markera allt";
+
+/* ===== Förhandsgranskning ===== */
+
+"modal.button.send_to_app" = "Skicka till %@";
+"modal.button.save_image" = "Spara bild";
+"modal.button.close" = "Stäng";
+"modal.hint.esc_to_close" = "ESC för att stänga";
+"modal.hint.cmd_enter_to_send" = "⌘↩︎ för att skicka";
+"modal.hint.cmd_s_to_save" = "⌘S to save";
+"modal.button.copy_image" = "Copy Image";
+"modal.button.copy_image_and_prompt" = "Kopiera bild och prompt";
+"modal.button.copy_prompt" = "Copy Prompt";
+"modal.hint.enable_auto_send" = "Want to auto-send to apps?";
+"modal.hint.enable_auto_send_to_app" = "Want to auto-send to %@?";
+"modal.hint.enable_copy_image_prompt" = "Vill du kopiera bild och prompt tillsammans?";
+"modal.button.enable_accessibility" = "Aktivera →";
+"modal.button.enable_auto_send" = "Enable →";
+"hud.image_copied" = "Image copied";
+"hud.image_prompt_copied" = "Image & Prompt copied";
+"hud.copied" = "Copied";
+"hud.prompt_copied" = "Prompt copied";
+"modal.placeholder.add_instructions" = "Lägg till instruktioner (valfritt)";
+"modal.menu.no_supported_apps" = "Inga appar som stöds körs";
+"modal.menu.send_to_app" = "Skicka till %@";
+"modal.menu.save_image" = "Spara bild";
+"modal.menu.add_to_send_list" = "Lägg till i skickalista…";
+
+/* ===== Inställningar ===== */
+
+"settings.window_title" = "Inställningar";
+"settings.shortcut.title" = "Kortkommando för skärmbild";
+"settings.shortcut.recording" = "Skriv kortkommando…";
+"settings.shortcut.help" = "Klicka för att spela in. Esc för att avbryta.";
+"settings.save.checkbox" = "Spara automatiskt efter inklistring";
+"settings.save.choose_folder" = "Välj mapp…";
+"settings.save.no_folder" = "Ingen mapp vald (du tillfrågas vid första sparandet)";
+"settings.login.checkbox" = "Öppna vid inloggning";
+"settings.send_list.title" = "Tillagda appar";
+
+/* ===== Lägg till app ===== */
+
+"add_app.window_title" = "Lägg till i skickalista";
+"add_app.header" = "Appar som körs:";
+"add_app.choose_from_apps" = "Välj från Program…";
+"add_app.done" = "Klar";
+"add_app.panel_message" = "Välj en app att lägga till i skickalistan";
+"add_app.status.builtin" = "Inbyggd";
+
+/* ===== Anteckningsverktyg ===== */
+
+"annotation.tool.arrow" = "Pilverktyg";
+"annotation.tool.circle" = "Cirkelverktyg";
+"annotation.tool.rectangle" = "Rektangelverktyg";
+"annotation.tool.number" = "Nummerverktyg";
+"annotation.color.tooltip" = "Anteckningsfärg";
+"annotation.clear_all" = "Rensa allt";
+"annotation.clear_all.tooltip" = "Rensa alla anteckningar";
+
+/* ===== Färger ===== */
+
+"color.red" = "Röd";
+"color.orange" = "Orange";
+"color.yellow" = "Gul";
+"color.green" = "Grön";
+"color.blue" = "Blå";
+"color.purple" = "Lila";
+
+/* ===== HUD-meddelanden ===== */
+
+"hud.app_running" = "VibeCap körs";
+"hud.pasted_to_app" = "Inklistrat i %@";
+"hud.saved" = "Sparat";
+"hud.screenshot_saved" = "Skärmbild sparad";
+"hud.folder_selected" = "Mapp vald";
+
+/* ===== Fel ===== */
+
+"error.shortcut_unavailable" = "Kortkommando ej tillgängligt";
+"error.shortcut_registration_failed" = "Kan inte registrera detta kortkommando (OSStatus %d). Det kanske används av en annan app eller är reserverat av systemet.";
+"error.unable_to_set_folder" = "Kan inte ställa in mapp";
+"error.launch_login_failed" = "Kunde inte öppna vid inloggning";
+"error.launch_login_requires_approval" = "Öppna vid inloggning kräver godkännande i Systeminställningar → Allmänt → Inloggningsobjekt.";
+"error.invalid_application" = "Ogiltig app";
+"error.could_not_read_bundle" = "Kunde inte läsa appens paket.";
+"error.cannot_add_app" = "Kan inte lägga till app";
+"error.app_no_paste_support" = "Denna app stöder inte inklistring av bilder.";
+"error.already_added" = "Redan tillagd";
+"error.app_already_in_list" = "Denna app finns redan i skickalistan.";
+"error.app_not_found" = "Kunde inte hitta %@. Körs appen?";
+"error.no_folder_selected" = "Ingen lagringsmapp vald.";
+"error.folder_access_failed" = "Kan inte komma åt lagringsmappen.";
+"error.image_encoding_failed" = "Kunde inte koda bilden.";
+"error.save_failed" = "Kunde inte spara skärmbild: %@";
+"error.clipboard_write_failed" = "Kunde inte skriva till urklipp.";
+"error.capture_failed" = "Kunde inte ta skärmbild av det valda området.";
+"error.modifier_required" = "Använd minst en modifieringstangent (⌘⇧⌥⌃).";
+
+/* ===== Behörigheter ===== */
+
+"permission.screen_recording.title" = "Skärminspelningsbehörighet krävs";
+"permission.screen_recording.message" = "VibeCap behöver skärminspelningsbehörighet för att ta skärmbilder.\n\nÖppna Systeminställningar → Integritet och säkerhet → Skärminspelning, aktivera VibeCap och starta om appen.";
+"permission.screen_recording.error" = "Skärminspelningsbehörighet krävs för att ta skärmbilder.";
+"permission.accessibility.message" = "Hjälpmedelsbehörighet krävs. Bevilja den i Systeminställningar → Integritet och säkerhet → Hjälpmedel och försök igen.";
+"permission.login.approval_required" = "Godkännande krävs";
+"permission.login.message" = "För att öppna VibeCap vid inloggning, aktivera det i Systeminställningar → Allmänt → Inloggningsobjekt.";
+
+/* ===== Vanliga knappar ===== */
+
+"button.ok" = "OK";
+"button.cancel" = "Avbryt";
+"button.open_system_settings" = "Öppna Systeminställningar";
+"button.open_login_items" = "Öppna Inloggningsobjekt";
+"button.choose" = "Välj";
+"button.restart_now" = "Starta om nu";
+"button.later" = "Senare";
+
+/* ===== Varningar ===== */
+
+"alert.restart.title" = "Omstart krävs";
+"alert.restart.message" = "Starta om VibeCap för att språkändringen ska börja gälla.";
+
+/* ===== Filpaneler ===== */
+
+"panel.choose_folder.title" = "Välj lagringsmapp";
+"panel.choose_folder.message" = "Välj en mapp där VibeCap ska spara skärmbilder.";
+
+/* ===== Hjälpmedel ===== */
+
+"a11y.dropdown_select_app" = "Välj app";
+"a11y.save_icon" = "Spara";
+"a11y.add_icon" = "Lägg till";
+
+/* ===== Tangentnamn ===== */
+
+"key.space" = "Blanksteg";
+
+/* ===== Övrigt ===== */
+
+"app.unknown" = "Okänd";
+
+"preview.button.show_in_finder" = "Visa i Finder";
+
+/* ===== IAP / Pro ===== */
+"settings.pro.section_title" = "Pro";
+"settings.pro.action.upgrade" = "Upgrade to Pro…";
+"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.manage" = "Manage Subscription";
+"settings.proStatus.free" = "Free";
+"settings.proStatus.pro" = "Pro";
+"settings.proStatus.lastRefreshed" = "Last refreshed:";
+"settings.proStatus.source" = "Source: %@";
+"settings.proStatus.source.none" = "-";
+"settings.proStatus.source.monthly" = "Monthly";
+"settings.proStatus.source.yearly" = "Yearly";
+"settings.proStatus.source.lifetime" = "Lifetime";
+"settings.proStatus.source.unknown" = "Unknown";
+"paywall.title" = "Upgrade to Pro";
+"paywall.subtitle" = "Unlock premium features.";
+"paywall.option.monthly" = "Monthly";
+"paywall.option.yearly" = "Yearly";
+"paywall.option.lifetime" = "Lifetime";
+"paywall.error.generic" = "Purchase failed. Please try again.";
+
+"menu.upgrade" = "Upgrade…";
+"paywall.window_title" = "Upgrade";
+"paywall.action.purchase" = "Purchase";
+"paywall.action.restore" = "Restore";
+"paywall.action.manage" = "Manage";
+"paywall.action.close" = "Close";
+"paywall.price.loading" = "Loading…";
+"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.purchasing" = "Purchasing…";
+"paywall.status.pending" = "Pending approval…";
+"paywall.status.success" = "Success!";
+
+"gating.customApp.confirm.title" = "Add this app?";
+"gating.customApp.confirm.message" = "Free users can add only one custom app, and it can't be removed later.
+
+Add: %@";
+"gating.customApp.confirm.confirm" = "Add App";
+"gating.customApp.notCounted.title" = "Already supported";
+"gating.customApp.notCounted.message" = "This app is already supported and doesn't use your free custom app slot.";
+
+/* ===== Paywall: Compare & Plans ===== */
+"paywall.action.upgrade_to_pro" = "Uppgradera till Pro";
+"paywall.compare.free" = "Gratis";
+"paywall.compare.pro" = "Pro";
+
+"paywall.feature.annotations" = "Anteckningsverktyg";
+"paywall.feature.annotations.free" = "Endast pil (standardfärg)";
+"paywall.feature.annotations.pro" = "Cirkel / Rektangel / Nummer / Färger";
+
+"paywall.feature.custom_apps" = "Anpassade sändappar";
+"paywall.feature.custom_apps.free" = "1 app (kan inte tas bort)";
+"paywall.feature.custom_apps.pro" = "Obegränsat antal appar";
+
+"paywall.feature.download_manager" = "Nedladdningar och bibliotek";
+"paywall.feature.send_queue" = "Sändkö";
+"paywall.feature.unavailable" = "—";
+"paywall.feature.coming_soon" = "Kommer snart";
+
+"paywall.badge.recommended" = "Rekommenderad";
+
+"paywall.legal.terms" = "Villkor";
+"paywall.legal.privacy" = "Integritet";
+
+/* Subscription auto-renewal terms (Apple requirement) */
+"paywall.subscription_terms" = "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in App Store → Account → Subscriptions.";
+
+"paywall.plan.per_year" = "per år";
+"paywall.plan.per_month" = "per månad";
+"paywall.plan.one_time" = "engångsbetalning";
+"paywall.plan.save_percent" = "Spara %@";
+"paywall.plan.equivalent_monthly" = "≈ %@ / månad";
+"paywall.plan.save_percent.loading" = "Spara —";
+"paywall.plan.equivalent_monthly.loading" = "≈ — / månad";
+
+"paywall.cta.title_with_savings" = "Spara %@ på Pro";
+"paywall.cta.subtitle_yearly_equivalent" = "Årlig fakturering · ≈ %@ / månad";
+
+/* ===== Paywall: Redesigned ===== */
+"paywall.feature.annotations.title" = "Full Annotation Tools";
+"paywall.feature.annotations.subtitle" = "Circle, rectangle, numbering, and custom colors.";
+
+"paywall.feature.send_list.title" = "Unlimited Send List";
+"paywall.feature.send_list.subtitle" = "Add any app to your Send List without limits.";
+
+"paywall.badge.best_value" = "Best Value";
+"paywall.badge.save_percent" = "Save %@%%";
+
+"paywall.unit.month" = "month";
+"paywall.unit.year" = "year";
+
+"paywall.cta.subscribe_monthly" = "Subscribe for %@ / month";
+"paywall.cta.subscribe_yearly" = "Subscribe for %@ / year";
+"paywall.cta.unlock_lifetime" = "Unlock Lifetime for %@";
+
+/* Pro status card (for existing Pro users) */
+"paywall.pro_status.title" = "Du är Pro";
+"paywall.pro_status.type" = "Plan: %@";
+"paywall.pro_status.renews" = "Förnyas: %@";
+
+/* ===== Paywall: Step 1 (Main View) ===== */
+
+/* With trial eligibility */
+"paywall.step1.title_trial" = "Starta gratis";
+"paywall.step1.subtitle_trial" = "Prova VibeCap gratis på din Mac. Betala bara om du väljer att fortsätta, avbryt när som helst.";
+"paywall.step1.trial_badge" = "14 dagar gratis";
+"paywall.step1.cta_trial" = "Starta gratis provperiod";
+"paywall.step1.price_with_trial" = "14 dagar gratis, sedan %@/%@";
+
+/* Without trial eligibility */
+"paywall.step1.title_no_trial" = "Uppgradera till Pro";
+"paywall.step1.subtitle_no_trial" = "Betala bara om du väljer att fortsätta, avbryt när som helst.";
+"paywall.step1.cta_no_trial" = "Uppgradera till Pro";
+"paywall.step1.price_no_trial" = "%@/%@";
+
+/* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
+
+"paywall.plan_modal.title" = "Välj din plan";
+"paywall.plan_modal.monthly_subtitle" = "Betala löpande";
+"paywall.plan_modal.yearly_subtitle" = "Bästa värde";
+"paywall.plan_modal.lifetime_subtitle" = "Ingen prenumeration";
+"paywall.plan_modal.badge_popular" = "POPULÄR";
+"paywall.plan_modal.paid_once" = "engångsbetalning";
+
+/* CTA buttons */
+"paywall.plan_modal.cta_start_trial" = "Starta gratis provperiod";
+"paywall.plan_modal.cta_buy_now" = "Köp nu";
+"paywall.plan_modal.cta_subscribe" = "Prenumerera för %@/%@";
+"paywall.plan_modal.cta_subscribe_generic" = "Prenumerera nu";
+
+
+// === Auto-filled missing keys (copied from en, TODO translate) ===
+"onboarding.window_title" = "VibeCap";
+"onboarding.progress" = "%d / %d";
+"onboarding.status.granted" = "Granted ✓";
+"onboarding.status.not_granted" = "Not granted";
+"onboarding.cta.skip" = "Skip";
+"onboarding.cta.restart" = "Restart VibeCap";
+"onboarding.cta.continue" = "Continue";
+"onboarding.cta.granted" = "Granted";
+"onboarding.error.title" = "Action needed";
+"onboarding.01.title" = "Capture.\nPrompt.\nCopy & Paste.";
+"onboarding.01.body" = "Your screenshots,\nAI-ready in one click.";
+"onboarding.01.detail" = "From everyday AI work like ChatGPT\nto vibe coding with tools like Cursor and more.";
+"onboarding.01.cta" = "Get Started";
+"onboarding.02.title" = "Enable Screen Recording";
+"onboarding.02.body" = "Screen Recording permission is required to capture screenshots on macOS.";
+"onboarding.02.body.bold" = "Without it, the app won’t work.";
+"onboarding.02.cta.allow" = "Allow access";
+"onboarding.03.title" = "Enable Accessibility";
+"onboarding.03.body" = "VibeCap needs accessibility permissions to detect active windows and handle shortcuts. This enables the magic of context-aware capturing.";
+"onboarding.03.cta.allow" = "Allow access";
+"onboarding.04.title" = "Preferences";
+"onboarding.04.body" = "Customize where to save and how to capture.";
+"onboarding.04.cta.continue" = "Continue";
+"onboarding.04.save_location" = "SAVE LOCATION";
+"onboarding.04.global_shortcut" = "GLOBAL SHORTCUT";
+"onboarding.04.shortcut_row_title" = "Capture Screen";
+"onboarding.04.browse" = "Browse…";
+"onboarding.04.hint" = "You can change these later in Settings.";
+"onboarding.05.title" = "Start Free";
+"onboarding.05.subtitle" = "Experience the full power of VibeCap free for 14 days.";
+"onboarding.05.cta.trial" = "Start Your Free Trial";
+"onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
+"onboarding.05.pricing.then" = "Then %@/year";
+"onboarding.05.feature1.title" = "Full annotated feature";
+"onboarding.05.feature1.body" = "Annotate quickly and keep context.";
+"onboarding.05.feature2.title" = "Save queue";
+"onboarding.05.feature2.body" = "Never lose a capture mid-flow.";
+"onboarding.05.feature3.title" = "Keep screenshot clear";
+"onboarding.05.feature3.body" = "Make screenshots readable instantly.";
+"hud.configure_save_folder" = "To enable auto-save, click %@ to choose a folder.";
+"hud.configure_save_folder_in_settings" = "To enable auto-save, open Settings and click %@.";
+"settings.shortcut.recording_short" = "Type…";
+"settings.permissions.section_title" = "Permissions";
+"settings.permissions.screen_recording.title" = "Screen Recording";
+"settings.permissions.screen_recording.open" = "Open";
+"settings.permissions.accessibility.title" = "Accessibility";
+"settings.permissions.accessibility.open" = "Open";
+"paywall.error.payments_disabled" = "In-App Purchases are disabled on this Mac. Please enable purchases in Screen Time settings, then try again.";
+"paywall.plan_modal.trial_hint" = "Cancel anytime during the %d-day free trial.";

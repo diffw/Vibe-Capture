@@ -81,9 +81,9 @@ final class OnboardingPaywallView: NSView {
         PaywallFigma.configureLabel(titleLabel)
         titleLabel.attributedStringValue = PaywallFigma.attributedText(
             string: L("onboarding.05.title"),
-            font: NSFont.systemFont(ofSize: 24, weight: .heavy),
+            font: NSFont.systemFont(ofSize: 24, weight: .bold),
             color: primary,
-            lineHeightMultiple: 1.1
+            lineHeightMultiple: 1.0
         )
 
         subtitleLabel.maximumNumberOfLines = 0
@@ -93,7 +93,7 @@ final class OnboardingPaywallView: NSView {
             string: L("onboarding.05.subtitle"),
             font: NSFont.systemFont(ofSize: 16, weight: .regular),
             color: primary,
-            lineHeightMultiple: 1.5
+            lineHeightMultiple: 1.2
         )
 
         setupFeatureCard()

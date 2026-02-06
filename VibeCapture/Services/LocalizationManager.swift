@@ -37,18 +37,8 @@ final class LocalizationManager {
         ("fr", "Français"),
         ("es", "Español"),
         ("ko", "한국어"),
-        ("pt", "Português"),
         ("it", "Italiano"),
-        ("nl", "Nederlands"),
         ("sv", "Svenska"),
-        ("da", "Dansk"),
-        ("nb", "Norsk"),
-        ("fi", "Suomi"),
-        ("ru", "Русский"),
-        ("pl", "Polski"),
-        ("cs", "Čeština"),
-        ("tr", "Türkçe"),
-        ("el", "Ελληνικά")
     ]
     
     // MARK: - UserDefaults Key
