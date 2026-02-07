@@ -271,7 +271,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Actualizar a Pro";
 "paywall.step1.subtitle_no_trial" = "Paga solo si decides continuar, cancela en cualquier momento.";
 "paywall.step1.cta_no_trial" = "Actualizar a Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 días gratis, luego %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -299,18 +299,16 @@ Add: %@";
 "onboarding.cta.continue" = "Continuar";
 "onboarding.cta.granted" = "Concedido";
 "onboarding.error.title" = "Se requiere acción";
-"onboarding.01.title" = "Captura.
-Prompt.
-Copiar y pegar.";
-"onboarding.01.body" = "Tus capturas listas para IA con un clic.";
-"onboarding.01.detail" = "Desde el trabajo diario con ChatGPT hasta programar con herramientas como Cursor, mantén el flujo.";
+"onboarding.01.title" = "Captura.\nPrompt.\nCopiar y pegar.";
+"onboarding.01.body" = "Convierte capturas de pantalla en contenido de IA claro y listo para usar con un clic.";
+"onboarding.01.detail" = "Desde tareas de IA cotidianas como ChatGPT hasta flujos de trabajo avanzados con herramientas como Cursor y más.";
 "onboarding.01.cta" = "Empezar";
-"onboarding.02.title" = "Activar grabación de pantalla";
-"onboarding.02.body" = "macOS necesita permiso de grabación de pantalla para capturar.";
-"onboarding.02.body.bold" = "Sin este permiso, la app no funcionará.";
+"onboarding.02.title" = "Habilitar grabación de pantalla";
+"onboarding.02.body" = "VibeCap necesita permiso de grabación de pantalla para capturar capturas de pantalla.";
+"onboarding.02.body.bold" = "Este permiso es necesario para una captura precisa en macOS.";
 "onboarding.02.cta.allow" = "Permitir acceso";
-"onboarding.03.title" = "Activar accesibilidad";
-"onboarding.03.body" = "VibeCap necesita permisos de accesibilidad para detectar ventanas activas y manejar atajos. Esto habilita las capturas con contexto.";
+"onboarding.03.title" = "Habilitar accesibilidad";
+"onboarding.03.body" = "El acceso de accesibilidad permite a VibeCap detectar ventanas activas y atajos. Esto permite una captura contextual en macOS.";
 "onboarding.03.cta.allow" = "Permitir acceso";
 "onboarding.04.title" = "Preferencias";
 "onboarding.04.body" = "Personaliza dónde guardar y cómo capturar.";
@@ -324,7 +322,7 @@ Copiar y pegar.";
 "onboarding.05.subtitle" = "Prueba todas las funciones de VibeCap gratis por 14 días.";
 "onboarding.05.cta.trial" = "Iniciar prueba gratis";
 "onboarding.05.pricing.trial_then" = "%d días gratis, luego %@/año";
-"onboarding.05.pricing.then" = "Luego %@/año";
+"onboarding.05.pricing.then" = "14 días gratis, luego %@/año";
 "onboarding.05.feature1.title" = "Todas las herramientas de anotación, desbloqueadas";
 "onboarding.05.feature1.body" = "Acceso completo a cada herramienta de anotación.";
 "onboarding.05.feature2.title" = "Flujo de trabajo con cola (próximamente...)";

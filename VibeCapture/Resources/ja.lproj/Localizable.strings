@@ -163,7 +163,7 @@
 /* ===== IAP / Pro ===== */
 "settings.pro.section_title" = "Pro";
 "settings.pro.action.upgrade" = "Upgrade to Pro…";
-"settings.pro.action.restore" = "Restore Purchases";
+"settings.pro.action.restore" = "購入を復元";
 "settings.pro.action.manage" = "Manage Subscription";
 "settings.proStatus.free" = "Free";
 "settings.proStatus.pro" = "Pro";
@@ -184,11 +184,11 @@
 "menu.upgrade" = "Upgrade…";
 "paywall.window_title" = "Upgrade";
 "paywall.action.purchase" = "Purchase";
-"paywall.action.restore" = "Restore";
+"paywall.action.restore" = "購入を復元";
 "paywall.action.manage" = "Manage";
 "paywall.action.close" = "Close";
 "paywall.price.loading" = "Loading…";
-"paywall.status.already_pro" = "You're already Pro.";
+"paywall.status.already_pro" = "すでにProです。";
 "paywall.status.purchasing" = "Purchasing…";
 "paywall.status.pending" = "Pending approval…";
 "paywall.status.success" = "Success!";
@@ -273,7 +273,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Pro にアップグレード";
 "paywall.step1.subtitle_no_trial" = "続けるかどうかはお客様次第、いつでもキャンセル可能です。";
 "paywall.step1.cta_no_trial" = "Pro にアップグレード";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14日間無料、その後 %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -301,18 +301,16 @@ Add: %@";
 "onboarding.cta.continue" = "続行";
 "onboarding.cta.granted" = "付与済み";
 "onboarding.error.title" = "操作が必要です";
-"onboarding.01.title" = "キャプチャ。
-プロンプト。
-コピー＆ペースト。";
-"onboarding.01.body" = "スクリーンショットをワンクリックでAI対応に。";
-"onboarding.01.detail" = "日常の ChatGPT 作業から Cursor などのツールを使った開発まで、スムーズに進めましょう。";
+"onboarding.01.title" = "スクリーンショット。\nプロンプト。\nコピー&ペースト。";
+"onboarding.01.body" = "スクリーンショットをワンクリックで、明確で使いやすい AI 素材に変換。";
+"onboarding.01.detail" = "ChatGPT のような日常的な AI タスクから、Cursor などのツールを使った高度なワークフローまで対応。";
 "onboarding.01.cta" = "はじめる";
-"onboarding.02.title" = "画面収録を有効にする";
-"onboarding.02.body" = "macOS でスクリーンショットを撮るには画面収録の許可が必要です。";
-"onboarding.02.body.bold" = "許可がないとアプリは動作しません。";
+"onboarding.02.title" = "画面収録を許可";
+"onboarding.02.body" = "VibeCap は画面収録の権限を使ってスクリーンショットを記録します。";
+"onboarding.02.body.bold" = "macOS で正確にキャプチャするには、この権限が必要です。";
 "onboarding.02.cta.allow" = "アクセスを許可";
-"onboarding.03.title" = "アクセシビリティを有効にする";
-"onboarding.03.body" = "VibeCap はアクティブウィンドウ検出とショートカット処理のためにアクセシビリティ権限が必要です。これがコンテキスト対応キャプチャを可能にします。";
+"onboarding.03.title" = "アクセシビリティを許可";
+"onboarding.03.body" = "アクセシビリティアクセスにより、VibeCap はアクティブなウィンドウとショートカットを検出できます。これにより、macOS で状況に応じたキャプチャが可能になります。";
 "onboarding.03.cta.allow" = "アクセスを許可";
 "onboarding.04.title" = "環境設定";
 "onboarding.04.body" = "保存先とキャプチャ方法をカスタマイズ。";
@@ -326,7 +324,7 @@ Add: %@";
 "onboarding.05.subtitle" = "VibeCap の全機能を 14 日間無料で体験。";
 "onboarding.05.cta.trial" = "無料トライアルを開始";
 "onboarding.05.pricing.trial_then" = "%d日間無料、その後 %@/年";
-"onboarding.05.pricing.then" = "その後 %@/年";
+"onboarding.05.pricing.then" = "14日間無料、その後 %@/年";
 "onboarding.05.feature1.title" = "全ての注釈ツールを解放";
 "onboarding.05.feature1.body" = "すべての注釈ツールをフルアクセス。";
 "onboarding.05.feature2.title" = "キュー型ワークフロー（近日公開...）";

@@ -31,17 +31,17 @@
 "onboarding.error.title" = "Action needed";
 
 "onboarding.01.title" = "Capture.\nPrompt.\nCopy & Paste.";
-"onboarding.01.body" = "Your screenshots,\nAI-ready in one click.";
-"onboarding.01.detail" = "From everyday AI work like ChatGPT\nto vibe coding with tools like Cursor and more.";
+"onboarding.01.body" = "Turn screenshots into clear, ready-to-use AI context — in one click.";
+"onboarding.01.detail" = "From everyday AI tasks like ChatGPT to deeper workflows with tools like Cursor and more.";
 "onboarding.01.cta" = "Get Started";
 
 "onboarding.02.title" = "Enable Screen Recording";
-"onboarding.02.body" = "Screen Recording permission is required to capture screenshots on macOS.";
-"onboarding.02.body.bold" = "Without it, the app won’t work.";
+"onboarding.02.body" = "VibeCap needs screen recording permission to capture screenshots.";
+"onboarding.02.body.bold" = "This is required for accurate capturing on macOS.";
 "onboarding.02.cta.allow" = "Allow access";
 
 "onboarding.03.title" = "Enable Accessibility";
-"onboarding.03.body" = "VibeCap needs accessibility permissions to detect active windows and handle shortcuts. This enables the magic of context-aware capturing.";
+"onboarding.03.body" = "Accessibility access allows VibeCap to detect active windows and shortcuts. This enables context-aware capturing on macOS.";
 "onboarding.03.cta.allow" = "Allow access";
 
 "onboarding.04.title" = "Preferences";
@@ -58,7 +58,7 @@
 "onboarding.05.subtitle" = "Experience the full power of VibeCap free for 14 days.";
 "onboarding.05.cta.trial" = "Start Your Free Trial";
 "onboarding.05.pricing.trial_then" = "%d days free, then %@/year";
-"onboarding.05.pricing.then" = "Then %@/year";
+"onboarding.05.pricing.then" = "14 days free, then %@/year";
 
 "onboarding.05.feature1.title" = "All annotation tools, unlocked";
 "onboarding.05.feature1.body" = "Full access to every annotation tool.";
@@ -555,7 +555,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Upgrade to Pro";
 "paywall.step1.subtitle_no_trial" = "Pay only if you choose to continue, or cancel at any time.";
 "paywall.step1.cta_no_trial" = "Upgrade to Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 days free, then %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 

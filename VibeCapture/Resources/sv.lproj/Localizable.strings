@@ -271,7 +271,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Uppgradera till Pro";
 "paywall.step1.subtitle_no_trial" = "Betala bara om du väljer att fortsätta, avbryt när som helst.";
 "paywall.step1.cta_no_trial" = "Uppgradera till Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 dagar gratis, sedan %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -299,18 +299,16 @@ Add: %@";
 "onboarding.cta.continue" = "Fortsätt";
 "onboarding.cta.granted" = "Beviljad";
 "onboarding.error.title" = "Åtgärd krävs";
-"onboarding.01.title" = "Fånga.
-Fråga.
-Kopiera och klistra.";
-"onboarding.01.body" = "Dina skärmdumpar, AI-klara med ett klick.";
-"onboarding.01.detail" = "Från dagligt ChatGPT-arbete till kodning med verktyg som Cursor – behåll flödet.";
+"onboarding.01.title" = "Skärmdump.\nPrompt.\nKopiera & klistra in.";
+"onboarding.01.body" = "Förvandla skärmdumpar till tydligt, användbart AI-innehåll med ett klick.";
+"onboarding.01.detail" = "Från vardagliga AI-uppgifter som ChatGPT till djupare arbetsflöden med verktyg som Cursor och mer.";
 "onboarding.01.cta" = "Kom igång";
 "onboarding.02.title" = "Aktivera skärminspelning";
-"onboarding.02.body" = "macOS behöver behörighet för skärminspelning för att ta skärmdumpar.";
-"onboarding.02.body.bold" = "Utan den fungerar inte appen.";
+"onboarding.02.body" = "VibeCap behöver behörighet för skärminspelning för att fånga skärmdumpar.";
+"onboarding.02.body.bold" = "Denna behörighet krävs för exakt bildupptagning på macOS.";
 "onboarding.02.cta.allow" = "Tillåt åtkomst";
-"onboarding.03.title" = "Aktivera hjälpmedel";
-"onboarding.03.body" = "VibeCap behöver hjälpmedelsbehörighet för att upptäcka aktiva fönster och hantera genvägar. Det möjliggör kontextmedveten fångst.";
+"onboarding.03.title" = "Aktivera tillgänglighet";
+"onboarding.03.body" = "Tillgänglighetsåtkomst gör det möjligt för VibeCap att upptäcka aktiva fönster och genvägar. Detta möjliggör kontextmedveten bildupptagning på macOS.";
 "onboarding.03.cta.allow" = "Tillåt åtkomst";
 "onboarding.04.title" = "Inställningar";
 "onboarding.04.body" = "Anpassa var du sparar och hur du fångar.";
@@ -324,7 +322,7 @@ Kopiera och klistra.";
 "onboarding.05.subtitle" = "Upplev VibeCaps fulla kraft med 14 dagars gratis provperiod.";
 "onboarding.05.cta.trial" = "Starta din gratis provperiod";
 "onboarding.05.pricing.trial_then" = "%d dagar gratis, därefter %@/år";
-"onboarding.05.pricing.then" = "Sedan %@/år";
+"onboarding.05.pricing.then" = "14 dagar gratis, därefter %@/år";
 "onboarding.05.feature1.title" = "Alla annoteringsverktyg, upplåsta";
 "onboarding.05.feature1.body" = "Full åtkomst till alla annoteringsverktyg.";
 "onboarding.05.feature2.title" = "Köbaserat arbetsflöde (kommer snart...)";

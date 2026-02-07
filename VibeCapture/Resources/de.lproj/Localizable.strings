@@ -271,7 +271,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Auf Pro upgraden";
 "paywall.step1.subtitle_no_trial" = "Zahle nur, wenn du weitermachen möchtest, oder kündige jederzeit.";
 "paywall.step1.cta_no_trial" = "Auf Pro upgraden";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 Tage kostenlos, dann %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -299,18 +299,16 @@ Add: %@";
 "onboarding.cta.continue" = "Weiter";
 "onboarding.cta.granted" = "Erteilt";
 "onboarding.error.title" = "Aktion erforderlich";
-"onboarding.01.title" = "Aufnehmen.
-Prompt.
-Kopieren & Einfügen.";
-"onboarding.01.body" = "Deine Screenshots, mit einem Klick KI‑bereit.";
-"onboarding.01.detail" = "Von täglicher KI-Arbeit wie ChatGPT bis zum Coden mit Tools wie Cursor – immer im Flow.";
+"onboarding.01.title" = "Screenshot.\nPrompt.\nKopieren & Einfügen.";
+"onboarding.01.body" = "Verwandeln Sie Screenshots mit einem Klick in klaren, nutzbaren KI-Input.";
+"onboarding.01.detail" = "Von alltäglichen KI-Aufgaben wie ChatGPT bis zu komplexen Workflows mit Tools wie Cursor und mehr.";
 "onboarding.01.cta" = "Los geht's";
 "onboarding.02.title" = "Bildschirmaufnahme aktivieren";
-"onboarding.02.body" = "Zum Erfassen von Screenshots benötigt macOS die Berechtigung für Bildschirmaufnahme.";
-"onboarding.02.body.bold" = "Ohne diese Berechtigung funktioniert die App nicht.";
+"onboarding.02.body" = "VibeCap benötigt die Berechtigung für Bildschirmaufnahme, um Screenshots zu erfassen.";
+"onboarding.02.body.bold" = "Diese Berechtigung ist für eine präzise Erfassung unter macOS erforderlich.";
 "onboarding.02.cta.allow" = "Zugriff erlauben";
 "onboarding.03.title" = "Bedienungshilfen aktivieren";
-"onboarding.03.body" = "VibeCap braucht Bedienungshilfe-Berechtigungen, um aktive Fenster zu erkennen und Shortcuts zu verarbeiten. Das ermöglicht kontextbasiertes Capturing.";
+"onboarding.03.body" = "Der Zugriff auf Bedienungshilfen ermöglicht VibeCap, aktive Fenster und Tastenkombinationen zu erkennen. Dies ermöglicht kontextbewusste Erfassung unter macOS.";
 "onboarding.03.cta.allow" = "Zugriff erlauben";
 "onboarding.04.title" = "Einstellungen";
 "onboarding.04.body" = "Speicherort und Aufnahmeart anpassen.";
@@ -324,7 +322,7 @@ Kopieren & Einfügen.";
 "onboarding.05.subtitle" = "Teste die volle Leistung von VibeCap 14 Tage gratis.";
 "onboarding.05.cta.trial" = "Kostenlose Testphase starten";
 "onboarding.05.pricing.trial_then" = "%d Tage gratis, danach %@/Jahr";
-"onboarding.05.pricing.then" = "Danach %@/Jahr";
+"onboarding.05.pricing.then" = "14 Tage gratis, danach %@/Jahr";
 "onboarding.05.feature1.title" = "Alle Annotations-Tools freigeschaltet";
 "onboarding.05.feature1.body" = "Voller Zugriff auf jedes Annotations-Tool.";
 "onboarding.05.feature2.title" = "Queue-basierter Workflow (kommt bald ...)";

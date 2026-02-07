@@ -55,6 +55,30 @@ final class OnboardingPillButton: NSButton {
         didSet { needsDisplay = true }
     }
 
+    override var intrinsicContentSize: NSSize {
+        let titleAttrs: [NSAttributedString.Key: Any] = [
+            .font: titleFont,
+        ]
+        let titleString = NSAttributedString(string: title, attributes: titleAttrs)
+        let titleSize = titleString.size()
+        let hasImage = (image != nil)
+        let spacing = (hasImage && !title.isEmpty) ? imageTitleSpacing : 0
+        let imageSize = hasImage ? imageDrawSize : .zero
+
+        let contentWidth: CGFloat = {
+            switch imagePosition {
+            case .imageLeading, .imageTrailing:
+                return titleSize.width + spacing + imageSize.width
+            default:
+                return titleSize.width
+            }
+        }()
+        let contentHeight = max(titleSize.height, imageSize.height)
+        let width = contentWidth + contentInsets.left + contentInsets.right
+        let height = contentHeight + contentInsets.top + contentInsets.bottom
+        return NSSize(width: ceil(width), height: ceil(height))
+    }
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setup()
@@ -490,22 +514,36 @@ final class OnboardingViewController: NSViewController {
         guard let window = view.window else { return }
         var target = Self.preferredContentSize(for: currentStep)
         let isPaywall = currentStep == .paywall
-        if isPaywall {
+        let isPermissionStep = currentStep == .screenRecording || currentStep == .accessibility
+        let isWelcomeStep = currentStep == .welcome
+        if isPaywall || isPermissionStep || isWelcomeStep {
             if !isHandlingPaywallLayout {
                 view.layoutSubtreeIfNeeded()
             }
-            let fit = paywallView.fittingSize
+            let fit: NSSize
+            if isPaywall {
+                fit = paywallView.fittingSize
+            } else if isWelcomeStep {
+                fit = welcomeView.fittingSize
+            } else if currentStep == .screenRecording {
+                fit = screenRecordingView.fittingSize
+            } else {
+                fit = accessibilityView.fittingSize
+            }
             let fitWidth = fit.width.isFinite ? fit.width : 0
             let fitHeight = fit.height.isFinite ? fit.height : 0
-            target = NSSize(width: max(560, fitWidth), height: max(540, fitHeight))
-            AppLog.log(.info, "onboarding", "applyPreferredWindowSize step=paywall fit=(\(formatSize(fit.width))x\(formatSize(fit.height))) target=(\(formatSize(target.width))x\(formatSize(target.height)))")
+            target = NSSize(
+                width: max(target.width, fitWidth),
+                height: max(target.height, fitHeight)
+            )
+            AppLog.log(.info, "onboarding", "applyPreferredWindowSize step=\(currentStep.rawValue) fit=(\(formatSize(fit.width))x\(formatSize(fit.height))) target=(\(formatSize(target.width))x\(formatSize(target.height)))")
         } else {
             AppLog.log(.info, "onboarding", "applyPreferredWindowSize step=\(currentStep.rawValue) target=(\(formatSize(target.width))x\(formatSize(target.height)))")
         }
         guard window.contentView?.frame.size != target else { return }
 
         window.contentMinSize = target
-        if isPaywall {
+        if isPaywall || isPermissionStep || isWelcomeStep {
             window.contentMaxSize = NSSize(width: target.width, height: .greatestFiniteMagnitude)
         } else {
             window.contentMaxSize = target
@@ -521,6 +559,8 @@ final class OnboardingViewController: NSViewController {
                 frame.origin.y = frame.midY - newFrameSize.height / 2
                 frame.size = newFrameSize
                 window.animator().setFrame(frame, display: true)
+            } else if isPermissionStep {
+                window.animator().setContentSize(target)
             } else {
                 window.animator().setContentSize(target)
             }
@@ -817,6 +857,7 @@ private final class OnboardingWelcomeStepView: NSView {
     let subheadlineLabel = NSTextField(wrappingLabelWithString: "")
     let bodyLabel = NSTextField(wrappingLabelWithString: "")
     let primaryButton = OnboardingPillButton()
+    private var subheadlineHeightConstraint: NSLayoutConstraint?
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -859,6 +900,10 @@ private final class OnboardingWelcomeStepView: NSView {
             v.translatesAutoresizingMaskIntoConstraints = false
         }
 
+        let subheadlineHeightConstraint = subheadlineLabel.heightAnchor.constraint(equalToConstant: 0)
+        subheadlineHeightConstraint.priority = .required
+        self.subheadlineHeightConstraint = subheadlineHeightConstraint
+
         NSLayoutConstraint.activate([
             logoImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
             logoImageView.topAnchor.constraint(equalTo: topAnchor, constant: 80),
@@ -866,21 +911,22 @@ private final class OnboardingWelcomeStepView: NSView {
             logoImageView.heightAnchor.constraint(equalToConstant: 36),
 
             headlineLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            headlineLabel.topAnchor.constraint(equalTo: topAnchor, constant: 148),
+            headlineLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 32),
             headlineLabel.widthAnchor.constraint(equalToConstant: 416),
 
             subheadlineLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            subheadlineLabel.topAnchor.constraint(equalTo: topAnchor, constant: 289),
+            subheadlineLabel.topAnchor.constraint(equalTo: headlineLabel.bottomAnchor, constant: 12),
             subheadlineLabel.widthAnchor.constraint(equalToConstant: 416),
+            subheadlineHeightConstraint,
 
             bodyLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            bodyLabel.topAnchor.constraint(equalTo: topAnchor, constant: 349),
+            bodyLabel.topAnchor.constraint(equalTo: subheadlineLabel.bottomAnchor, constant: 8),
             bodyLabel.widthAnchor.constraint(equalToConstant: 416),
 
             primaryButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            primaryButton.topAnchor.constraint(equalTo: topAnchor, constant: 415),
-            primaryButton.widthAnchor.constraint(equalToConstant: 201),
+            primaryButton.topAnchor.constraint(equalTo: bodyLabel.bottomAnchor, constant: 32),
             primaryButton.heightAnchor.constraint(equalToConstant: 50),
+            primaryButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -48),
         ])
     }
 
@@ -899,6 +945,8 @@ private final class OnboardingWelcomeStepView: NSView {
             color: OnboardingFigma.primary,
             lineHeightMultiple: 1.05
         )
+        subheadlineLabel.isHidden = true
+        subheadlineHeightConstraint?.constant = 0
         bodyLabel.attributedStringValue = OnboardingFigma.attributedText(
             string: body,
             font: NSFont.systemFont(ofSize: 14, weight: .regular),
@@ -998,33 +1046,33 @@ private final class OnboardingPermissionStepView: NSView {
             logoImageView.heightAnchor.constraint(equalToConstant: 36),
 
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: contentTop + 68),
+            titleLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 32),
             titleLabel.widthAnchor.constraint(equalToConstant: 416),
 
             bodyLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            bodyLabel.topAnchor.constraint(equalTo: topAnchor, constant: contentTop + 106),
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
             bodyLabel.widthAnchor.constraint(equalToConstant: 416),
 
             screenshotView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            screenshotView.topAnchor.constraint(equalTo: topAnchor, constant: contentTop + 190),
+            screenshotView.topAnchor.constraint(equalTo: bodyLabel.bottomAnchor, constant: 24),
             screenshotView.widthAnchor.constraint(equalToConstant: 416),
             screenshotView.heightAnchor.constraint(equalToConstant: 228),
 
             allowButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            allowButton.topAnchor.constraint(equalTo: topAnchor, constant: contentTop + 450),
-            allowButton.widthAnchor.constraint(equalToConstant: 179),
+            allowButton.topAnchor.constraint(equalTo: screenshotView.bottomAnchor, constant: 24),
             allowButton.heightAnchor.constraint(equalToConstant: 48),
+            allowButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -48),
 
             continueButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
-            continueButton.topAnchor.constraint(equalTo: topAnchor, constant: contentTop + 450),
-            continueButton.widthAnchor.constraint(equalToConstant: 179),
+            continueButton.topAnchor.constraint(equalTo: allowButton.topAnchor),
             continueButton.heightAnchor.constraint(equalToConstant: 48),
+            continueButton.bottomAnchor.constraint(equalTo: allowButton.bottomAnchor),
 
             restartButton.leadingAnchor.constraint(equalTo: continueButton.leadingAnchor),
             restartButton.topAnchor.constraint(equalTo: continueButton.bottomAnchor, constant: 10),
 
             skipButton.trailingAnchor.constraint(equalTo: leadingAnchor, constant: 72 + 416),
-            skipButton.centerYAnchor.constraint(equalTo: continueButton.centerYAnchor),
+            skipButton.centerYAnchor.constraint(equalTo: allowButton.centerYAnchor),
         ])
     }
 
@@ -1283,7 +1331,6 @@ private final class OnboardingPreferencesStepView: NSView {
             // Bottom actions row
             allowButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 72),
             allowButton.topAnchor.constraint(equalTo: topAnchor, constant: 412),
-            allowButton.widthAnchor.constraint(equalToConstant: 179),
             allowButton.heightAnchor.constraint(equalToConstant: 48),
 
             skipButton.trailingAnchor.constraint(equalTo: leadingAnchor, constant: 72 + 416),

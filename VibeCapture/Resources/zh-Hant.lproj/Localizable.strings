@@ -275,7 +275,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "升級到 Pro";
 "paywall.step1.subtitle_no_trial" = "滿意後再付費，可隨時取消。";
 "paywall.step1.cta_no_trial" = "升級到 Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 天免費，之後 %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -304,18 +304,16 @@ Add: %@";
 "onboarding.cta.continue" = "繼續";
 "onboarding.cta.granted" = "已授權";
 "onboarding.error.title" = "需要操作";
-"onboarding.01.title" = "截圖。
-提問。
-複製貼上。";
-"onboarding.01.body" = "你的截圖，一鍵即成 AI 就緒。";
-"onboarding.01.detail" = "從日常 ChatGPT 等 AI 工作，到用 Cursor 等工具寫程式，都能保持順暢。";
+"onboarding.01.title" = "截圖\n提示詞\n複製貼上";
+"onboarding.01.body" = "一鍵將截圖轉為清晰好用的 AI 素材。";
+"onboarding.01.detail" = "從 ChatGPT 等日常 AI 任務,到 Cursor 等工具的進階工作流程。";
 "onboarding.01.cta" = "開始使用";
 "onboarding.02.title" = "啟用螢幕錄製";
-"onboarding.02.body" = "macOS 需要螢幕錄製權限才能擷取截圖。";
-"onboarding.02.body.bold" = "沒有此權限，App 將無法運作。";
+"onboarding.02.body" = "VibeCap 需要螢幕錄製權限來擷取截圖內容。";
+"onboarding.02.body.bold" = "在 macOS 上精準擷取需要此權限。";
 "onboarding.02.cta.allow" = "允許存取";
 "onboarding.03.title" = "啟用輔助使用";
-"onboarding.03.body" = "VibeCap 需要輔助使用權限以偵測作用中的視窗並處理快捷鍵，這讓情境截圖成為可能。";
+"onboarding.03.body" = "輔助使用權限讓 VibeCap 能偵測作用中視窗和快速鍵,實現智慧擷取。";
 "onboarding.03.cta.allow" = "允許存取";
 "onboarding.04.title" = "偏好設定";
 "onboarding.04.body" = "自訂儲存位置與截圖方式。";
@@ -329,7 +327,7 @@ Add: %@";
 "onboarding.05.subtitle" = "免費體驗 VibeCap 全功能 14 天。";
 "onboarding.05.cta.trial" = "開始免費試用";
 "onboarding.05.pricing.trial_then" = "%d 天免費，之後 %@/年";
-"onboarding.05.pricing.then" = "之後 %@/年";
+"onboarding.05.pricing.then" = "14 天免費，之後 %@/年";
 "onboarding.05.feature1.title" = "所有標註工具已解鎖";
 "onboarding.05.feature1.body" = "完整使用每一個標註工具。";
 "onboarding.05.feature2.title" = "佇列式工作流（即將推出...）";

@@ -271,7 +271,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Passer à Pro";
 "paywall.step1.subtitle_no_trial" = "Payez seulement si vous continuez, annulez à tout moment.";
 "paywall.step1.cta_no_trial" = "Passer à Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 jours gratuits, puis %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -299,18 +299,16 @@ Add: %@";
 "onboarding.cta.continue" = "Continuer";
 "onboarding.cta.granted" = "Autorisé";
 "onboarding.error.title" = "Action requise";
-"onboarding.01.title" = "Capturer.
-Prompter.
-Copier-coller.";
-"onboarding.01.body" = "Vos captures prêtes pour l’IA en un clic.";
-"onboarding.01.detail" = "Du travail quotidien sur ChatGPT au code avec des outils comme Cursor, restez dans le flow.";
+"onboarding.01.title" = "Capture.\nPrompt.\nCopier-coller.";
+"onboarding.01.body" = "Transformez vos captures d'écran en contenu IA clair et prêt à l'emploi en un clic.";
+"onboarding.01.detail" = "Des tâches IA quotidiennes comme ChatGPT aux flux de travail approfondis avec des outils comme Cursor et plus encore.";
 "onboarding.01.cta" = "Commencer";
 "onboarding.02.title" = "Activer l’enregistrement d’écran";
-"onboarding.02.body" = "macOS a besoin de l’autorisation d’enregistrement d’écran pour capturer.";
-"onboarding.02.body.bold" = "Sans cela, l’app ne fonctionnera pas.";
+"onboarding.02.body" = "VibeCap nécessite l'autorisation d'enregistrement d'écran pour capturer les captures d'écran.";
+"onboarding.02.body.bold" = "Cette autorisation est requise pour une capture précise sur macOS.";
 "onboarding.02.cta.allow" = "Autoriser l’accès";
 "onboarding.03.title" = "Activer l’accessibilité";
-"onboarding.03.body" = "VibeCap a besoin des autorisations d’accessibilité pour détecter les fenêtres actives et gérer les raccourcis. Cela permet les captures contextuelles.";
+"onboarding.03.body" = "L'accès à l'accessibilité permet à VibeCap de détecter les fenêtres actives et les raccourcis. Cela permet une capture contextuelle sur macOS.";
 "onboarding.03.cta.allow" = "Autoriser l’accès";
 "onboarding.04.title" = "Préférences";
 "onboarding.04.body" = "Personnalisez l’emplacement d’enregistrement et la façon de capturer.";
@@ -324,7 +322,7 @@ Copier-coller.";
 "onboarding.05.subtitle" = "Profitez de toutes les fonctions de VibeCap pendant 14 jours gratuitement.";
 "onboarding.05.cta.trial" = "Démarrer l’essai gratuit";
 "onboarding.05.pricing.trial_then" = "%d jours gratuits, puis %@/an";
-"onboarding.05.pricing.then" = "Ensuite %@/an";
+"onboarding.05.pricing.then" = "14 jours gratuits, puis %@/an";
 "onboarding.05.feature1.title" = "Tous les outils d’annotation, débloqués";
 "onboarding.05.feature1.body" = "Accès complet à chaque outil d’annotation.";
 "onboarding.05.feature2.title" = "Workflow en file d’attente (bientôt disponible...)";

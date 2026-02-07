@@ -275,7 +275,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "升级到 Pro";
 "paywall.step1.subtitle_no_trial" = "满意后再付费，可随时取消。";
 "paywall.step1.cta_no_trial" = "升级到 Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 天免费，之后 %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -304,18 +304,16 @@ Add: %@";
 "onboarding.cta.continue" = "继续";
 "onboarding.cta.granted" = "已授予";
 "onboarding.error.title" = "需要操作";
-"onboarding.01.title" = "截屏。
-提问。
-复制粘贴。";
-"onboarding.01.body" = "你的截图，一键即成 AI 就绪。";
-"onboarding.01.detail" = "从日常 ChatGPT 等 AI 工作，到用 Cursor 等工具进行编程，都能保持顺畅。";
+"onboarding.01.title" = "截屏\n提示词\n复制粘贴";
+"onboarding.01.body" = "你的截图，一键复制到任意输入框。";
+"onboarding.01.detail" = "适用于日常使用，也适用于更深入的创作与研发工作流。";
 "onboarding.01.cta" = "开始使用";
 "onboarding.02.title" = "启用屏幕录制";
-"onboarding.02.body" = "macOS 需要屏幕录制权限来截屏。";
-"onboarding.02.body.bold" = "没有它，应用将无法工作。";
+"onboarding.02.body" = "VibeCap 需要屏幕录制权限来捕获截图内容。";
+"onboarding.02.body.bold" = "在 macOS 上精准捕获需要此权限。";
 "onboarding.02.cta.allow" = "允许访问";
 "onboarding.03.title" = "启用辅助功能";
-"onboarding.03.body" = "VibeCap 需要辅助功能权限来检测活动窗口并处理快捷键，这让智能截屏成为可能。";
+"onboarding.03.body" = "辅助功能权限让 VibeCap 能识别活动窗口和快捷键,实现智能捕获。";
 "onboarding.03.cta.allow" = "允许访问";
 "onboarding.04.title" = "偏好设置";
 "onboarding.04.body" = "自定义保存位置和截屏方式。";
@@ -329,7 +327,7 @@ Add: %@";
 "onboarding.05.subtitle" = "体验 VibeCap 全部功能，享 14 天免费试用。";
 "onboarding.05.cta.trial" = "开始免费试用";
 "onboarding.05.pricing.trial_then" = "%d 天免费，之后 %@/年";
-"onboarding.05.pricing.then" = "之后 %@/年";
+"onboarding.05.pricing.then" = "14 天免费，之后 %@/年";
 "onboarding.05.feature1.title" = "所有标注工具已解锁";
 "onboarding.05.feature1.body" = "完整使用每一个标注工具。";
 "onboarding.05.feature2.title" = "队列式工作流（即将推出...）";

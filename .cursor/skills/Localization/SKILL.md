@@ -13,8 +13,7 @@ description: Localization and multi-language management skill. Handles tasks inc
 - 10+ years experience in software localization for global products
 - Native-level fluency in English with deep understanding of regional variants (US/UK/AU)
 - Expertise in CJK (Chinese, Japanese, Korean) localization nuances
-- Familiar with European languages (German, French, Spanish, Portuguese, Italian) localization patterns
-- Experience with RTL languages (Arabic, Hebrew) layout considerations
+- Familiar with European languages (German, French, Spanish, Italian) localization patterns
 
 **Core Competencies**:
 - UX writing and microcopy best practices
@@ -23,12 +22,10 @@ description: Localization and multi-language management skill. Handles tasks inc
 - Localization file formats (.strings, .stringsdict, .xliff, JSON, XML)
 - Translation memory and terminology management
 
-**Supported Languages** (22 total):
+**Supported Languages** (10 total):
 - **CJK**: 简体中文 (zh-Hans), 繁體中文 (zh-Hant), 日本語 (ja), 한국어 (ko)
-- **Western European**: Deutsch (de), Français (fr), Español (es), Português (pt), Italiano (it), Nederlands (nl)
-- **Nordic**: Svenska (sv), Dansk (da), Norsk (no), Suomi (fi)
-- **Eastern European**: Русский (ru), Polski (pl), Čeština (cs)
-- **Other**: Türkçe (tr), Ελληνικά (el)
+- **Western European**: Deutsch (de), Français (fr), Español (es), Italiano (it)
+- **Nordic**: Svenska (sv)
 - **Base**: English (en)
 
 **Guiding Principles**:
@@ -68,7 +65,7 @@ English (`en.lproj/Localizable.strings`) is the single source of truth.
 | Adapt, don't translate | "Got it" → 简中 "好的" / 日本語 "了解" | "Got it" → "得到它" |
 | Match platform conventions | iOS: "Settings" → 简中 "设置" | "设定" (Android style) |
 | Respect formality norms | German: formal "Sie" for B2B, "du" for consumer apps | Mix formality levels |
-| Handle length expansion | German/Russian can be 30% longer—test UI | Truncate without ellipsis |
+| Handle length expansion | German can be 30% longer—test UI | Truncate without ellipsis |
 | Use native punctuation | Chinese: "，" "。" Japanese: "、" "。" | Latin punctuation in CJK |
 | Localize units/formats | Dates, currencies, measurements | Hardcode US formats |
 
@@ -80,15 +77,8 @@ English (`en.lproj/Localizable.strings`) is the single source of truth.
 - **Deutsch (de)**: Compound nouns are normal. Allow for 30%+ text expansion.
 - **Français (fr)**: France French by default. Formal "vous" for app UI.
 - **Español (es)**: Latin America Spanish by default unless specified. Watch "voseo" usage.
-- **Português (pt)**: Brazilian Portuguese by default. European Portuguese if specified.
 - **Italiano (it)**: Formal "Lei" for professional apps, informal "tu" for consumer.
-- **Nederlands (nl)**: Informal "je" is standard for apps. Watch for text expansion.
-- **Nordic (sv/da/no/fi)**: Generally informal. Finnish (fi) has significant length expansion.
-- **Русский (ru)**: Allow for significant text expansion (up to 40%). Formal "вы" for UI.
-- **Polski (pl)**: Formal "Pan/Pani" or informal "ty" based on app tone.
-- **Čeština (cs)**: Formal "vy" typical. Watch for diacritics rendering.
-- **Türkçe (tr)**: Formal "siz" for UI. Agglutinative—can create long words.
-- **Ελληνικά (el)**: Formal "εσείς" for apps. Note monotonic spelling system.
+- **Svenska (sv)**: Generally informal. Watch for text expansion.
 
 ### Step 3: Validate Key Parity
 
@@ -97,7 +87,7 @@ English (`en.lproj/Localizable.strings`) is the single source of truth.
 ```bash
 # Example validation approach
 diff <(grep -o '^"[^"]*"' en.lproj/Localizable.strings | sort) \
-     <(grep -o '^"[^"]*"' zh-Hans.lproj/Localizable.strings | sort)
+     <(grep -o '^"[^"]*"' sv.lproj/Localizable.strings | sort)
 ```
 
 **Checklist**:

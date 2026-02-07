@@ -273,7 +273,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Pro로 업그레이드";
 "paywall.step1.subtitle_no_trial" = "계속 사용할지는 나중에 결정하고, 언제든 취소할 수 있습니다.";
 "paywall.step1.cta_no_trial" = "Pro로 업그레이드";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14일 무료, 이후 %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -301,18 +301,16 @@ Add: %@";
 "onboarding.cta.continue" = "계속";
 "onboarding.cta.granted" = "허용됨";
 "onboarding.error.title" = "조치 필요";
-"onboarding.01.title" = "캡처.
-프롬프트.
-복사 & 붙여넣기.";
-"onboarding.01.body" = "스크린샷을 한 번에 AI 준비 완료.";
-"onboarding.01.detail" = "일상적인 ChatGPT 작업부터 Cursor 같은 도구로 코딩할 때까지 흐름을 유지하세요.";
+"onboarding.01.title" = "캡처.\n프롬프트.\n복사 및 붙여넣기.";
+"onboarding.01.body" = "스크린샷을 클릭 한 번으로 명확하고 사용 가능한 AI 소스로 변환합니다.";
+"onboarding.01.detail" = "ChatGPT와 같은 일상적인 AI 작업부터 Cursor 등의 도구를 활용한 심화 워크플로까지.";
 "onboarding.01.cta" = "시작하기";
 "onboarding.02.title" = "화면 기록 활성화";
-"onboarding.02.body" = "macOS에서 스크린샷을 찍으려면 화면 기록 권한이 필요합니다.";
-"onboarding.02.body.bold" = "권한이 없으면 앱이 동작하지 않습니다.";
+"onboarding.02.body" = "VibeCap은 화면 기록 권한을 사용해 스크린샷을 캡처합니다.";
+"onboarding.02.body.bold" = "macOS에서 정확한 캡처를 위해 이 권한이 필요합니다.";
 "onboarding.02.cta.allow" = "접근 허용";
 "onboarding.03.title" = "손쉬운 사용 활성화";
-"onboarding.03.body" = "VibeCap은 활성 창 감지와 단축키 처리를 위해 손쉬운 사용 권한이 필요합니다. 이것이 컨텍스트 기반 캡처를 가능하게 합니다.";
+"onboarding.03.body" = "손쉬운 사용 접근 권한을 통해 VibeCap은 활성 윈도우와 단축키를 감지할 수 있습니다. 이를 통해 macOS에서 상황 인식 캡처가 가능합니다.";
 "onboarding.03.cta.allow" = "접근 허용";
 "onboarding.04.title" = "환경설정";
 "onboarding.04.body" = "저장 위치와 캡처 방식을 설정하세요.";
@@ -326,7 +324,7 @@ Add: %@";
 "onboarding.05.subtitle" = "VibeCap 전체 기능을 14일간 무료로 사용해 보세요.";
 "onboarding.05.cta.trial" = "무료 체험 시작";
 "onboarding.05.pricing.trial_then" = "%d일 무료, 이후 %@/년";
-"onboarding.05.pricing.then" = "이후 %@/년";
+"onboarding.05.pricing.then" = "14일 무료, 이후 %@/년";
 "onboarding.05.feature1.title" = "모든 주석 도구 잠금 해제";
 "onboarding.05.feature1.body" = "모든 주석 도구를 완전히 사용할 수 있어요.";
 "onboarding.05.feature2.title" = "큐 기반 워크플로(곧 출시...)";

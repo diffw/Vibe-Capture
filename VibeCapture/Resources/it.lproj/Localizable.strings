@@ -271,7 +271,7 @@ Add: %@";
 "paywall.step1.title_no_trial" = "Passa a Pro";
 "paywall.step1.subtitle_no_trial" = "Paga solo se decidi di continuare, annulla in qualsiasi momento.";
 "paywall.step1.cta_no_trial" = "Passa a Pro";
-"paywall.step1.price_no_trial" = "%@/%@";
+"paywall.step1.price_no_trial" = "14 giorni gratis, poi %@/%@";
 
 /* ===== Paywall: Step 2 (Plan Choose Modal) ===== */
 
@@ -299,18 +299,16 @@ Add: %@";
 "onboarding.cta.continue" = "Continua";
 "onboarding.cta.granted" = "Concesso";
 "onboarding.error.title" = "Azione necessaria";
-"onboarding.01.title" = "Cattura.
-Prompt.
-Copia e Incolla.";
-"onboarding.01.body" = "I tuoi screenshot pronti per l’IA con un clic.";
-"onboarding.01.detail" = "Dal lavoro quotidiano con ChatGPT al coding con strumenti come Cursor, resta nel flusso.";
+"onboarding.01.title" = "Screenshot.\nPrompt.\nCopia e incolla.";
+"onboarding.01.body" = "Trasforma gli screenshot in contenuto IA chiaro e pronto all'uso con un clic.";
+"onboarding.01.detail" = "Dalle attività IA quotidiane come ChatGPT ai flussi di lavoro avanzati con strumenti come Cursor e altri.";
 "onboarding.01.cta" = "Inizia";
-"onboarding.02.title" = "Attiva Registrazione Schermo";
-"onboarding.02.body" = "macOS richiede il permesso di registrazione schermo per acquisire screenshot.";
-"onboarding.02.body.bold" = "Senza questo permesso l’app non funziona.";
+"onboarding.02.title" = "Abilita registrazione schermo";
+"onboarding.02.body" = "VibeCap necessita dell'autorizzazione per la registrazione dello schermo per acquisire gli screenshot.";
+"onboarding.02.body.bold" = "Questa autorizzazione è necessaria per un'acquisizione precisa su macOS.";
 "onboarding.02.cta.allow" = "Consenti accesso";
-"onboarding.03.title" = "Attiva Accessibilità";
-"onboarding.03.body" = "VibeCap ha bisogno dei permessi di accessibilità per rilevare le finestre attive e gestire le scorciatoie. Questo abilita le acquisizioni contestuali.";
+"onboarding.03.title" = "Abilita accessibilità";
+"onboarding.03.body" = "L'accesso all'accessibilità consente a VibeCap di rilevare finestre attive e scorciatoie. Questo abilita l'acquisizione contestuale su macOS.";
 "onboarding.03.cta.allow" = "Consenti accesso";
 "onboarding.04.title" = "Preferenze";
 "onboarding.04.body" = "Personalizza dove salvare e come acquisire.";
@@ -324,7 +322,7 @@ Copia e Incolla.";
 "onboarding.05.subtitle" = "Prova tutte le funzioni di VibeCap gratis per 14 giorni.";
 "onboarding.05.cta.trial" = "Avvia prova gratuita";
 "onboarding.05.pricing.trial_then" = "%d giorni gratis, poi %@/anno";
-"onboarding.05.pricing.then" = "Poi %@/anno";
+"onboarding.05.pricing.then" = "14 giorni gratis, poi %@/anno";
 "onboarding.05.feature1.title" = "Tutti gli strumenti di annotazione, sbloccati";
 "onboarding.05.feature1.body" = "Accesso completo a ogni strumento di annotazione.";
 "onboarding.05.feature2.title" = "Workflow con coda (in arrivo...)";

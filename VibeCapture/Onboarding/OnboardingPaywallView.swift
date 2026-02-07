@@ -584,14 +584,7 @@ final class OnboardingPaywallView: NSView {
         } else if isEligibleForTrial {
             planModalCTAButton.title = L("paywall.plan_modal.cta_start_trial")
         } else {
-            if let product = allProducts[modalSelectedProductID] {
-                let unit = modalSelectedProductID == EntitlementsService.ProductID.monthly
-                    ? L("paywall.unit.month")
-                    : L("paywall.unit.year")
-                planModalCTAButton.title = L("paywall.plan_modal.cta_subscribe", product.displayPrice, unit)
-            } else {
-                planModalCTAButton.title = L("paywall.plan_modal.cta_subscribe_generic")
-            }
+            planModalCTAButton.title = L("paywall.plan_modal.cta_subscribe_generic")
         }
         updatePlanModalTrialHint()
     }
