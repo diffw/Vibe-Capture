@@ -754,19 +754,31 @@ private enum OnboardingFigma {
         return nil
     }
 
-    /// Load a localized image, using the same localization mechanism as NSLocalizedString.
+    /// Load a localized image, matching the app's current UI language (from LocalizationManager).
     static func localizedImage(named assetName: String, ext: String) -> NSImage? {
-        // Use Bundle's built-in localization: it will look for the resource
-        // in the appropriate lproj directory based on user's language preferences
+        let currentLang = LocalizationManager.shared.currentLanguage
+        
+        // Try current app language first
+        if let img = loadImageFromLproj(assetName: assetName, ext: ext, lang: currentLang) {
+            return img
+        }
+        // Fallback to English
+        if currentLang != "en", let img = loadImageFromLproj(assetName: assetName, ext: ext, lang: "en") {
+            return img
+        }
+        return nil
+    }
+
+    private static func loadImageFromLproj(assetName: String, ext: String, lang: String) -> NSImage? {
         let bundle = Bundle.main
+        let subdir = "\(lang).lproj"
         
         // Try @2x version first (our files are named with @2x suffix)
-        if let url = bundle.url(forResource: "\(assetName)@2x", withExtension: ext) {
-            AppLog.log(.info, "onboarding", "localizedImage: loaded \(url.lastPathComponent) from \(url.deletingLastPathComponent().lastPathComponent)")
+        if let url = bundle.url(forResource: "\(assetName)@2x", withExtension: ext, subdirectory: subdir) {
             return loadRetinaImage(from: url)
         }
         // Try without @2x suffix
-        if let url = bundle.url(forResource: assetName, withExtension: ext),
+        if let url = bundle.url(forResource: assetName, withExtension: ext, subdirectory: subdir),
            let img = NSImage(contentsOf: url) {
             return img
         }
@@ -901,8 +913,11 @@ private final class OnboardingWelcomeStepView: NSView {
         logoImageView.imageAlignment = .alignLeft
 
         headlineLabel.maximumNumberOfLines = 0
+        headlineLabel.preferredMaxLayoutWidth = 416
         subheadlineLabel.maximumNumberOfLines = 0
+        subheadlineLabel.preferredMaxLayoutWidth = 416
         bodyLabel.maximumNumberOfLines = 0
+        bodyLabel.preferredMaxLayoutWidth = 416
         OnboardingFigma.configureLabel(headlineLabel)
         OnboardingFigma.configureLabel(subheadlineLabel)
         OnboardingFigma.configureLabel(bodyLabel)
@@ -1023,7 +1038,9 @@ private final class OnboardingPermissionStepView: NSView {
         logoImageView.image = OnboardingFigma.image(named: logoAssetName, ext: "svg")
 
         titleLabel.maximumNumberOfLines = 0
+        titleLabel.preferredMaxLayoutWidth = 416
         bodyLabel.maximumNumberOfLines = 0
+        bodyLabel.preferredMaxLayoutWidth = 416
         OnboardingFigma.configureLabel(titleLabel)
         OnboardingFigma.configureLabel(bodyLabel)
 
@@ -1254,7 +1271,9 @@ private final class OnboardingPreferencesStepView: NSView {
         logoImageView.imageAlignment = .alignLeft
 
         titleLabel.maximumNumberOfLines = 0
+        titleLabel.preferredMaxLayoutWidth = 416
         bodyLabel.maximumNumberOfLines = 0
+        bodyLabel.preferredMaxLayoutWidth = 416
         OnboardingFigma.configureLabel(titleLabel)
         OnboardingFigma.configureLabel(bodyLabel)
 
@@ -1357,10 +1376,10 @@ private final class OnboardingPreferencesStepView: NSView {
 
             saveIcon.leadingAnchor.constraint(equalTo: saveField.leadingAnchor, constant: 13),
             saveIcon.centerYAnchor.constraint(equalTo: saveField.centerYAnchor),
-            saveIcon.widthAnchor.constraint(equalToConstant: 16),
-            saveIcon.heightAnchor.constraint(equalToConstant: 16),
+            saveIcon.widthAnchor.constraint(equalToConstant: 0),
+            saveIcon.heightAnchor.constraint(equalToConstant: 0),
 
-            savePathLabel.leadingAnchor.constraint(equalTo: saveIcon.trailingAnchor, constant: 8),
+            savePathLabel.leadingAnchor.constraint(equalTo: saveField.leadingAnchor, constant: 13),
             savePathLabel.centerYAnchor.constraint(equalTo: saveField.centerYAnchor),
             savePathLabel.trailingAnchor.constraint(lessThanOrEqualTo: saveField.trailingAnchor, constant: -12),
 
@@ -1520,10 +1539,10 @@ private final class ShortcutRowControl: OnboardingFieldChromeView {
         NSLayoutConstraint.activate([
             iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 13),
             iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 16),
-            iconView.heightAnchor.constraint(equalToConstant: 16),
+            iconView.widthAnchor.constraint(equalToConstant: 0),
+            iconView.heightAnchor.constraint(equalToConstant: 0),
 
-            titleLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 8),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 13),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             pillView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -13),

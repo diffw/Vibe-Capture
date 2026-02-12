@@ -90,6 +90,7 @@ final class OnboardingPaywallView: NSView {
         logoImageView.image = PaywallFigma.image(named: "logo", ext: "svg")
 
         titleLabel.maximumNumberOfLines = 0
+        titleLabel.preferredMaxLayoutWidth = 416
         titleLabel.textColor = primary
         PaywallFigma.configureLabel(titleLabel)
         titleLabel.attributedStringValue = PaywallFigma.attributedText(
@@ -100,6 +101,7 @@ final class OnboardingPaywallView: NSView {
         )
 
         subtitleLabel.maximumNumberOfLines = 0
+        subtitleLabel.preferredMaxLayoutWidth = 416
         subtitleLabel.textColor = primary
         PaywallFigma.configureLabel(subtitleLabel)
         subtitleLabel.attributedStringValue = PaywallFigma.attributedText(

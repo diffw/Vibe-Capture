@@ -8,7 +8,7 @@ final class ScreenRecordingGateWindowController: NSWindowController, NSWindowDel
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 600, height: 640),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 640),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -19,8 +19,8 @@ final class ScreenRecordingGateWindowController: NSWindowController, NSWindowDel
         window.isMovableByWindowBackground = true
         window.backgroundColor = .white
         window.isReleasedWhenClosed = false
-        window.contentMinSize = NSSize(width: 600, height: 640)
-        window.contentMaxSize = NSSize(width: 600, height: 640)
+        window.contentMinSize = NSSize(width: 560, height: 400)
+        window.contentMaxSize = NSSize(width: 560, height: CGFloat.greatestFiniteMagnitude)
         window.center()
         window.contentViewController = vc
         window.level = NSWindow.Level(rawValue: NSWindow.Level.floating.rawValue + 1)
@@ -51,8 +51,13 @@ final class ScreenRecordingGateWindowController: NSWindowController, NSWindowDel
             }
             self.vc.refreshStatus()
             
-            // Ensure window has correct size before centering
-            let targetSize = NSSize(width: 600, height: 640)
+            // Calculate fitting size based on content
+            self.vc.view.layoutSubtreeIfNeeded()
+            let fittingSize = self.vc.view.fittingSize
+            let targetSize = NSSize(
+                width: 560,
+                height: max(fittingSize.height.isFinite ? fittingSize.height : 640, 400)
+            )
             window.setContentSize(targetSize)
             
             NSApp.activate(ignoringOtherApps: true)
@@ -97,6 +102,7 @@ private final class ScreenRecordingGateViewController: NSViewController {
         logoImageView.image = GateFigma.image(named: "logo", ext: "svg")
 
         titleLabel.maximumNumberOfLines = 0
+        titleLabel.preferredMaxLayoutWidth = 416
         GateFigma.configureLabel(titleLabel)
         titleLabel.attributedStringValue = GateFigma.attributedText(
             string: L("onboarding.02.title"),
@@ -106,6 +112,7 @@ private final class ScreenRecordingGateViewController: NSViewController {
         )
 
         bodyLabel.maximumNumberOfLines = 0
+        bodyLabel.preferredMaxLayoutWidth = 416
         GateFigma.configureLabel(bodyLabel)
         bodyLabel.attributedStringValue = GateFigma.attributedBodyWithBoldTailInline(
             regular: L("onboarding.02.body"),
@@ -144,7 +151,7 @@ private final class ScreenRecordingGateViewController: NSViewController {
             v.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        // Use same layout as OnboardingPermissionStepView (contentTop=80)
+        // Use relative layout (same as OnboardingPermissionStepView) for adaptive height
         let contentTop: CGFloat = 80
         NSLayoutConstraint.activate([
             logoImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
@@ -153,22 +160,22 @@ private final class ScreenRecordingGateViewController: NSViewController {
             logoImageView.heightAnchor.constraint(equalToConstant: 36),
 
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 68),
+            titleLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 32),
             titleLabel.widthAnchor.constraint(equalToConstant: 416),
 
             bodyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            bodyLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 106),
+            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
             bodyLabel.widthAnchor.constraint(equalToConstant: 416),
 
             screenshotView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            screenshotView.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 190),
+            screenshotView.topAnchor.constraint(equalTo: bodyLabel.bottomAnchor, constant: 24),
             screenshotView.widthAnchor.constraint(equalToConstant: 416),
             screenshotView.heightAnchor.constraint(equalToConstant: 228),
 
             allowButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
-            allowButton.topAnchor.constraint(equalTo: view.topAnchor, constant: contentTop + 450),
-            allowButton.widthAnchor.constraint(equalToConstant: 179),
+            allowButton.topAnchor.constraint(equalTo: screenshotView.bottomAnchor, constant: 24),
             allowButton.heightAnchor.constraint(equalToConstant: 48),
+            allowButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -48),
 
             skipButton.trailingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72 + 416),
             skipButton.centerYAnchor.constraint(equalTo: allowButton.centerYAnchor),
@@ -258,16 +265,31 @@ private enum GateFigma {
         return nil
     }
 
-    /// Load a localized image, using the same localization mechanism as NSLocalizedString.
+    /// Load a localized image, matching the app's current UI language (from LocalizationManager).
     static func localizedImage(named assetName: String, ext: String) -> NSImage? {
+        let currentLang = LocalizationManager.shared.currentLanguage
+        
+        // Try current app language first
+        if let img = loadImageFromLproj(assetName: assetName, ext: ext, lang: currentLang) {
+            return img
+        }
+        // Fallback to English
+        if currentLang != "en", let img = loadImageFromLproj(assetName: assetName, ext: ext, lang: "en") {
+            return img
+        }
+        return nil
+    }
+
+    private static func loadImageFromLproj(assetName: String, ext: String, lang: String) -> NSImage? {
         let bundle = Bundle.main
+        let subdir = "\(lang).lproj"
         
         // Try @2x version first (our files are named with @2x suffix)
-        if let url = bundle.url(forResource: "\(assetName)@2x", withExtension: ext) {
+        if let url = bundle.url(forResource: "\(assetName)@2x", withExtension: ext, subdirectory: subdir) {
             return loadRetinaImage(from: url)
         }
         // Try without @2x suffix
-        if let url = bundle.url(forResource: assetName, withExtension: ext),
+        if let url = bundle.url(forResource: assetName, withExtension: ext, subdirectory: subdir),
            let img = NSImage(contentsOf: url) {
             return img
         }
