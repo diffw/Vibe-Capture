@@ -2,6 +2,11 @@ import AppKit
 
 final class SettingsViewController: NSViewController {
     private let shortcutRecorder = ShortcutRecorderView()
+    private let contentInset: CGFloat = 24
+    private let sectionSpacing: CGFloat = 10
+    private let rowSpacing: CGFloat = 10
+    private let leadingLabelWidth: CGFloat = 140
+    private let statusLabelWidth: CGFloat = 76
 
     // Permissions section
     private let permissionsTitleLabel = NSTextField(labelWithString: "")
@@ -17,6 +22,7 @@ final class SettingsViewController: NSViewController {
     private let chooseFolderButton = NSButton(title: "", target: nil, action: nil)
 
     private let launchAtLoginCheckbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
+    private let versionLabel = NSTextField(labelWithString: "")
     
     // Pro section (IAP)
     private let proTitleLabel = NSTextField(labelWithString: "")
@@ -32,6 +38,9 @@ final class SettingsViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        AppLog.log(.info, "settings", "SettingsViewController viewDidLoad layout=v2")
+        view.wantsLayer = true
+        view.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
 
         shortcutRecorder.onChange = { [weak self] combo in
             self?.applyShortcut(combo)
@@ -39,26 +48,35 @@ final class SettingsViewController: NSViewController {
 
         // Permissions section
         permissionsTitleLabel.stringValue = L("settings.permissions.section_title")
-        permissionsTitleLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
+        permissionsTitleLabel.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
+        permissionsTitleLabel.textColor = .secondaryLabelColor
 
         screenRecordingButton.title = L("settings.permissions.screen_recording.open")
         screenRecordingButton.target = self
         screenRecordingButton.action = #selector(openScreenRecordingSettings)
         screenRecordingButton.bezelStyle = .rounded
+        screenRecordingButton.controlSize = .small
+        screenRecordingButton.font = NSFont.systemFont(ofSize: 12, weight: .medium)
 
         accessibilityButton.title = L("settings.permissions.accessibility.open")
         accessibilityButton.target = self
         accessibilityButton.action = #selector(openAccessibilitySettings)
         accessibilityButton.bezelStyle = .rounded
+        accessibilityButton.controlSize = .small
+        accessibilityButton.font = NSFont.systemFont(ofSize: 12, weight: .medium)
 
         [screenRecordingStatusLabel, accessibilityStatusLabel].forEach { label in
             label.textColor = .secondaryLabelColor
             label.font = NSFont.systemFont(ofSize: 12)
+            label.alignment = .right
         }
+        screenRecordingStatusLabel.widthAnchor.constraint(equalToConstant: statusLabelWidth).isActive = true
+        accessibilityStatusLabel.widthAnchor.constraint(equalToConstant: statusLabelWidth).isActive = true
 
         // Pro section
         proTitleLabel.stringValue = L("settings.pro.section_title")
-        proTitleLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
+        proTitleLabel.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
+        proTitleLabel.textColor = .secondaryLabelColor
 
         proStatusLabel.textColor = .secondaryLabelColor
         proStatusLabel.font = NSFont.systemFont(ofSize: 12)
@@ -67,14 +85,23 @@ final class SettingsViewController: NSViewController {
         upgradeButton.title = L("settings.pro.action.upgrade")
         upgradeButton.target = self
         upgradeButton.action = #selector(upgradePressed)
+        upgradeButton.controlSize = .small
+        upgradeButton.font = NSFont.systemFont(ofSize: 12, weight: .medium)
+        upgradeButton.bezelStyle = .rounded
 
         restoreButton.title = L("settings.pro.action.restore")
         restoreButton.target = self
         restoreButton.action = #selector(restorePressed)
+        restoreButton.controlSize = .small
+        restoreButton.font = NSFont.systemFont(ofSize: 12, weight: .regular)
+        restoreButton.bezelStyle = .rounded
 
         manageButton.title = L("settings.pro.action.manage")
         manageButton.target = self
         manageButton.action = #selector(managePressed)
+        manageButton.controlSize = .small
+        manageButton.font = NSFont.systemFont(ofSize: 12, weight: .regular)
+        manageButton.bezelStyle = .rounded
 
         // Save section
         saveCheckbox.title = L("settings.save.checkbox")
@@ -89,11 +116,19 @@ final class SettingsViewController: NSViewController {
         chooseFolderButton.title = L("settings.save.choose_folder")
         chooseFolderButton.target = self
         chooseFolderButton.action = #selector(chooseFolderPressed)
+        chooseFolderButton.controlSize = .small
+        chooseFolderButton.font = NSFont.systemFont(ofSize: 12, weight: .medium)
+        chooseFolderButton.bezelStyle = .rounded
 
         launchAtLoginCheckbox.title = L("settings.login.checkbox")
         launchAtLoginCheckbox.target = self
         launchAtLoginCheckbox.action = #selector(launchAtLoginToggled)
         launchAtLoginCheckbox.state = LaunchAtLoginService.shared.isEnabled ? .on : .off
+
+        versionLabel.stringValue = versionString()
+        versionLabel.textColor = .secondaryLabelColor
+        versionLabel.font = NSFont.systemFont(ofSize: 11)
+        versionLabel.alignment = .left
 
         // Save row
         let saveRow = NSStackView(views: [chooseFolderButton, NSView(), saveFolderLabel])
@@ -103,64 +138,86 @@ final class SettingsViewController: NSViewController {
 
         let saveSection = NSStackView(views: [saveCheckbox, saveRow])
         saveSection.orientation = .vertical
-        saveSection.spacing = 6
+        saveSection.alignment = .leading
+        saveSection.spacing = rowSpacing
 
         // Permissions rows
+        let screenRecordingLabel = NSTextField(labelWithString: L("settings.permissions.screen_recording.title"))
+        screenRecordingLabel.font = NSFont.systemFont(ofSize: 13, weight: .regular)
+        screenRecordingLabel.widthAnchor.constraint(equalToConstant: leadingLabelWidth).isActive = true
+
         let screenRecordingRow = NSStackView(views: [
-            NSTextField(labelWithString: L("settings.permissions.screen_recording.title")),
+            screenRecordingLabel,
             NSView(),
             screenRecordingStatusLabel,
             screenRecordingButton
         ])
         screenRecordingRow.orientation = .horizontal
         screenRecordingRow.alignment = .centerY
-        screenRecordingRow.spacing = 8
+        screenRecordingRow.spacing = rowSpacing
+
+        let accessibilityLabel = NSTextField(labelWithString: L("settings.permissions.accessibility.title"))
+        accessibilityLabel.font = NSFont.systemFont(ofSize: 13, weight: .regular)
+        accessibilityLabel.widthAnchor.constraint(equalToConstant: leadingLabelWidth).isActive = true
 
         let accessibilityRow = NSStackView(views: [
-            NSTextField(labelWithString: L("settings.permissions.accessibility.title")),
+            accessibilityLabel,
             NSView(),
             accessibilityStatusLabel,
             accessibilityButton
         ])
         accessibilityRow.orientation = .horizontal
         accessibilityRow.alignment = .centerY
-        accessibilityRow.spacing = 8
+        accessibilityRow.spacing = rowSpacing
 
         let permissionsSection = NSStackView(views: [permissionsTitleLabel, screenRecordingRow, accessibilityRow])
         permissionsSection.orientation = .vertical
-        permissionsSection.spacing = 6
+        permissionsSection.alignment = .leading
+        permissionsSection.spacing = sectionSpacing
 
         // Pro section layout
         let proButtonsRow = NSStackView(views: [upgradeButton, restoreButton, manageButton, NSView()])
         proButtonsRow.orientation = .horizontal
         proButtonsRow.alignment = .centerY
-        proButtonsRow.spacing = 8
+        proButtonsRow.spacing = rowSpacing
         let proSection = NSStackView(views: [proTitleLabel, proStatusLabel, proButtonsRow])
         proSection.orientation = .vertical
-        proSection.spacing = 6
+        proSection.alignment = .leading
+        proSection.spacing = sectionSpacing
         
+        let divider1 = divider()
+        let divider2 = divider()
+        let divider3 = divider()
+        let divider4 = divider()
         let stack = NSStackView(views: [
             shortcutRecorder,
-            divider(),
+            divider1,
             permissionsSection,
-            divider(),
+            divider2,
             saveSection,
-            divider(),
+            divider3,
             proSection,
-            divider(),
+            divider4,
             launchAtLoginCheckbox,
+            versionLabel,
             NSView()
         ])
         stack.orientation = .vertical
-        stack.spacing = 14
+        stack.alignment = .leading
+        stack.spacing = 16
+        stack.setCustomSpacing(12, after: divider1)
+        stack.setCustomSpacing(12, after: divider2)
+        stack.setCustomSpacing(12, after: divider3)
+        stack.setCustomSpacing(12, after: divider4)
+        stack.setCustomSpacing(8, after: launchAtLoginCheckbox)
 
         view.addSubview(stack)
         stack.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: contentInset),
+            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -contentInset),
+            stack.topAnchor.constraint(equalTo: view.topAnchor, constant: contentInset),
+            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -contentInset),
         ])
 
         refreshSaveFolderLabel()
@@ -253,6 +310,13 @@ final class SettingsViewController: NSViewController {
         alert.informativeText = message
         alert.addButton(withTitle: L("button.ok"))
         alert.runModal()
+    }
+
+    private func versionString() -> String {
+        let bundle = Bundle.main
+        let shortVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "-"
+        let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-"
+        return "Version \(shortVersion) (\(build))"
     }
 
     // MARK: - Permissions

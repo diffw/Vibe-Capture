@@ -32,6 +32,7 @@ final class ShortcutRecorderView: NSView {
         titleLabel.stringValue = L("settings.shortcut.title")
         titleLabel.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
         titleLabel.textColor = .secondaryLabelColor
+        titleLabel.alignment = .left
 
         recordButton.bezelStyle = .rounded
         recordButton.setButtonType(.momentaryPushIn)
@@ -41,15 +42,18 @@ final class ShortcutRecorderView: NSView {
         helpLabel.stringValue = L("settings.shortcut.help")
         helpLabel.font = NSFont.systemFont(ofSize: 11)
         helpLabel.textColor = .tertiaryLabelColor
+        helpLabel.alignment = .left
 
         let row = NSStackView(views: [recordButton, NSView()])
         row.orientation = .horizontal
         row.alignment = .centerY
         row.spacing = 8
+        row.distribution = .fill
 
         let stack = NSStackView(views: [titleLabel, row, helpLabel])
         stack.orientation = .vertical
         stack.spacing = 6
+        stack.alignment = .leading
 
         addSubview(stack)
         stack.translatesAutoresizingMaskIntoConstraints = false

@@ -442,7 +442,7 @@ final class OnboardingViewController: NSViewController {
             )
             screenRecordingView.allowButton.title = L("onboarding.02.cta.allow")
             screenRecordingView.restartButton.isHidden = true
-            screenRecordingView.configureScreenshot(assetName: "system-settings")
+            screenRecordingView.configureScreenshot(assetName: "image-screen-recording", localized: true)
             updateScreenRecordingStatusAndMaybeAdvance()
             startPolling()
 
@@ -464,7 +464,7 @@ final class OnboardingViewController: NSViewController {
             accessibilityView.allowButton.title = L("onboarding.03.cta.allow")
             accessibilityView.skipButton.title = L("onboarding.cta.skip")
             accessibilityView.restartButton.isHidden = true
-            accessibilityView.configureScreenshot(assetName: "system-settings")
+            accessibilityView.configureScreenshot(assetName: "image-accessibility", localized: true)
             updateAccessibilityStatusAndMaybeAdvance()
             startPolling()
 
@@ -752,6 +752,33 @@ private enum OnboardingFigma {
             }
         }
         return nil
+    }
+
+    /// Load a localized image, using the same localization mechanism as NSLocalizedString.
+    static func localizedImage(named assetName: String, ext: String) -> NSImage? {
+        // Use Bundle's built-in localization: it will look for the resource
+        // in the appropriate lproj directory based on user's language preferences
+        let bundle = Bundle.main
+        
+        // Try @2x version first (our files are named with @2x suffix)
+        if let url = bundle.url(forResource: "\(assetName)@2x", withExtension: ext) {
+            AppLog.log(.info, "onboarding", "localizedImage: loaded \(url.lastPathComponent) from \(url.deletingLastPathComponent().lastPathComponent)")
+            return loadRetinaImage(from: url)
+        }
+        // Try without @2x suffix
+        if let url = bundle.url(forResource: assetName, withExtension: ext),
+           let img = NSImage(contentsOf: url) {
+            return img
+        }
+        return nil
+    }
+
+    /// Load a @2x image and configure it for proper retina display.
+    private static func loadRetinaImage(from url: URL) -> NSImage? {
+        guard let imageRep = NSImageRep(contentsOf: url) else { return nil }
+        let img = NSImage(size: NSSize(width: imageRep.pixelsWide / 2, height: imageRep.pixelsHigh / 2))
+        img.addRepresentation(imageRep)
+        return img
     }
 
     static func configureLabel(_ label: NSTextField) {
@@ -1076,8 +1103,8 @@ private final class OnboardingPermissionStepView: NSView {
         ])
     }
 
-    func configureScreenshot(assetName: String) {
-        screenshotView.configure(assetName: assetName)
+    func configureScreenshot(assetName: String, localized: Bool = false) {
+        screenshotView.configure(assetName: assetName, localized: localized)
     }
 
     func setPermissionGranted(_ granted: Bool, allowTitle: String, grantedTitle: String, continueTitle: String) {
@@ -1135,7 +1162,7 @@ private final class OnboardingScreenshotCardView: NSView {
         clipView.layer?.masksToBounds = true
         clipView.layer?.backgroundColor = NSColor.white.cgColor
 
-        imageView.imageScaling = .scaleAxesIndependently
+        imageView.imageScaling = .scaleProportionallyUpOrDown
 
         addSubview(shadowView)
         shadowView.addSubview(clipView)
@@ -1155,16 +1182,40 @@ private final class OnboardingScreenshotCardView: NSView {
             clipView.trailingAnchor.constraint(equalTo: shadowView.trailingAnchor),
             clipView.topAnchor.constraint(equalTo: shadowView.topAnchor),
             clipView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor),
+        ])
 
+        // Default constraints for legacy large images (system-settings.png)
+        legacyConstraints = [
             imageView.widthAnchor.constraint(equalToConstant: 1036),
             imageView.heightAnchor.constraint(equalToConstant: 670),
             imageView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor, constant: -225),
             imageView.topAnchor.constraint(equalTo: clipView.topAnchor, constant: -121),
-        ])
+        ]
+        // Constraints for new localized images that fill the card
+        localizedConstraints = [
+            imageView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: clipView.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: clipView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: clipView.bottomAnchor),
+        ]
+        NSLayoutConstraint.activate(legacyConstraints)
     }
 
-    func configure(assetName: String) {
-        imageView.image = OnboardingFigma.image(named: assetName, ext: "png")
+    private var legacyConstraints: [NSLayoutConstraint] = []
+    private var localizedConstraints: [NSLayoutConstraint] = []
+
+    func configure(assetName: String, localized: Bool = false) {
+        // Switch constraints based on image type
+        NSLayoutConstraint.deactivate(legacyConstraints)
+        NSLayoutConstraint.deactivate(localizedConstraints)
+
+        if localized {
+            imageView.image = OnboardingFigma.localizedImage(named: assetName, ext: "png")
+            NSLayoutConstraint.activate(localizedConstraints)
+        } else {
+            imageView.image = OnboardingFigma.image(named: assetName, ext: "png")
+            NSLayoutConstraint.activate(legacyConstraints)
+        }
     }
 }
 

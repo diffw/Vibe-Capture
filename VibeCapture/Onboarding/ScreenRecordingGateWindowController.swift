@@ -115,7 +115,7 @@ private final class ScreenRecordingGateViewController: NSViewController {
             lineHeightMultiple: 1.2
         )
 
-        screenshotView.configure(assetName: "system-settings")
+        screenshotView.configure(assetName: "image-screen-recording", localized: true)
 
         allowButton.title = L("onboarding.02.cta.allow")
         allowButton.target = self
@@ -258,6 +258,30 @@ private enum GateFigma {
         return nil
     }
 
+    /// Load a localized image, using the same localization mechanism as NSLocalizedString.
+    static func localizedImage(named assetName: String, ext: String) -> NSImage? {
+        let bundle = Bundle.main
+        
+        // Try @2x version first (our files are named with @2x suffix)
+        if let url = bundle.url(forResource: "\(assetName)@2x", withExtension: ext) {
+            return loadRetinaImage(from: url)
+        }
+        // Try without @2x suffix
+        if let url = bundle.url(forResource: assetName, withExtension: ext),
+           let img = NSImage(contentsOf: url) {
+            return img
+        }
+        return nil
+    }
+
+    /// Load a @2x image and configure it for proper retina display.
+    private static func loadRetinaImage(from url: URL) -> NSImage? {
+        guard let imageRep = NSImageRep(contentsOf: url) else { return nil }
+        let img = NSImage(size: NSSize(width: imageRep.pixelsWide / 2, height: imageRep.pixelsHigh / 2))
+        img.addRepresentation(imageRep)
+        return img
+    }
+
     static func configureLabel(_ label: NSTextField) {
         label.isEditable = false
         label.isSelectable = false
@@ -348,7 +372,7 @@ private final class GateScreenshotCardView: NSView {
         clipView.layer?.masksToBounds = true
         clipView.layer?.backgroundColor = NSColor.white.cgColor
 
-        imageView.imageScaling = .scaleAxesIndependently
+        imageView.imageScaling = .scaleProportionallyUpOrDown
 
         addSubview(shadowView)
         shadowView.addSubview(clipView)
@@ -368,16 +392,39 @@ private final class GateScreenshotCardView: NSView {
             clipView.trailingAnchor.constraint(equalTo: shadowView.trailingAnchor),
             clipView.topAnchor.constraint(equalTo: shadowView.topAnchor),
             clipView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor),
+        ])
 
+        // Default constraints for legacy large images
+        legacyConstraints = [
             imageView.widthAnchor.constraint(equalToConstant: 1036),
             imageView.heightAnchor.constraint(equalToConstant: 670),
             imageView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor, constant: -225),
             imageView.topAnchor.constraint(equalTo: clipView.topAnchor, constant: -121),
-        ])
+        ]
+        // Constraints for new localized images that fill the card
+        localizedConstraints = [
+            imageView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: clipView.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: clipView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: clipView.bottomAnchor),
+        ]
+        NSLayoutConstraint.activate(legacyConstraints)
     }
 
-    func configure(assetName: String) {
-        imageView.image = GateFigma.image(named: assetName, ext: "png")
+    private var legacyConstraints: [NSLayoutConstraint] = []
+    private var localizedConstraints: [NSLayoutConstraint] = []
+
+    func configure(assetName: String, localized: Bool = false) {
+        NSLayoutConstraint.deactivate(legacyConstraints)
+        NSLayoutConstraint.deactivate(localizedConstraints)
+
+        if localized {
+            imageView.image = GateFigma.localizedImage(named: assetName, ext: "png")
+            NSLayoutConstraint.activate(localizedConstraints)
+        } else {
+            imageView.image = GateFigma.image(named: assetName, ext: "png")
+            NSLayoutConstraint.activate(legacyConstraints)
+        }
     }
 }
 
