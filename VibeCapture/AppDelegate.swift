@@ -9,6 +9,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var uiTestCaptureModal: CaptureModalWindowController?
     private var shouldForceShowOnboarding = false
     private var shouldResetOnboardingAtLaunch = false
+    
+    // Internal menus: enabled in DEBUG or when compiled with INTERNAL_MENU.
+    private var isInternalMenuEnabled: Bool {
+        #if DEBUG
+        return true
+        #elseif INTERNAL_MENU
+        return true
+        #else
+        return false
+        #endif
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppLog.bootstrap()
@@ -182,29 +193,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsItem.target = self
         menu.addItem(settingsItem)
 
-        // Diagnostics (always available; helps debug permission + onboarding relaunch issues).
-        menu.addItem(.separator())
-        let diagnosticsItem = NSMenuItem(title: "Diagnostics", action: nil, keyEquivalent: "")
-        let diagnosticsMenu = NSMenu()
-        diagnosticsMenu.autoenablesItems = false
-        let openLogsItem = NSMenuItem(title: "Open Log File", action: #selector(openLogFile(_:)), keyEquivalent: "")
-        openLogsItem.target = self
-        diagnosticsMenu.addItem(openLogsItem)
-        let copyLogsItem = NSMenuItem(title: "Copy Recent Logs", action: #selector(copyRecentLogs(_:)), keyEquivalent: "")
-        copyLogsItem.target = self
-        diagnosticsMenu.addItem(copyLogsItem)
-        diagnosticsMenu.addItem(.separator())
-        let copyStateItem = NSMenuItem(title: "Copy Onboarding State", action: #selector(copyOnboardingState(_:)), keyEquivalent: "")
-        copyStateItem.target = self
-        diagnosticsMenu.addItem(copyStateItem)
-        let logStateItem = NSMenuItem(title: "Log Onboarding Diagnostics", action: #selector(logOnboardingDiagnostics(_:)), keyEquivalent: "")
-        logStateItem.target = self
-        diagnosticsMenu.addItem(logStateItem)
-        diagnosticsItem.submenu = diagnosticsMenu
-        menu.addItem(diagnosticsItem)
+        if isInternalMenuEnabled {
+            // Diagnostics (internal only)
+            menu.addItem(.separator())
+            let diagnosticsItem = NSMenuItem(title: "Diagnostics", action: nil, keyEquivalent: "")
+            let diagnosticsMenu = NSMenu()
+            diagnosticsMenu.autoenablesItems = false
+            let openLogsItem = NSMenuItem(title: "Open Log File", action: #selector(openLogFile(_:)), keyEquivalent: "")
+            openLogsItem.target = self
+            diagnosticsMenu.addItem(openLogsItem)
+            let copyLogsItem = NSMenuItem(title: "Copy Recent Logs", action: #selector(copyRecentLogs(_:)), keyEquivalent: "")
+            copyLogsItem.target = self
+            diagnosticsMenu.addItem(copyLogsItem)
+            diagnosticsMenu.addItem(.separator())
+            let copyStateItem = NSMenuItem(title: "Copy Onboarding State", action: #selector(copyOnboardingState(_:)), keyEquivalent: "")
+            copyStateItem.target = self
+            diagnosticsMenu.addItem(copyStateItem)
+            let logStateItem = NSMenuItem(title: "Log Onboarding Diagnostics", action: #selector(logOnboardingDiagnostics(_:)), keyEquivalent: "")
+            logStateItem.target = self
+            diagnosticsMenu.addItem(logStateItem)
+            diagnosticsItem.submenu = diagnosticsMenu
+            menu.addItem(diagnosticsItem)
 
-        // Debug utilities (only shown when explicitly enabled via launch args).
-        if shouldForceShowOnboarding {
+            // Debug utilities
             menu.addItem(.separator())
             let showOnboardingItem = NSMenuItem(title: "Show Onboarding (Debug)", action: #selector(showOnboardingDebug(_:)), keyEquivalent: "")
             showOnboardingItem.target = self
@@ -213,16 +224,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let resetAndShowOnboardingItem = NSMenuItem(title: "Reset + Show Onboarding (Debug)", action: #selector(resetAndShowOnboardingDebug(_:)), keyEquivalent: "")
             resetAndShowOnboardingItem.target = self
             menu.addItem(resetAndShowOnboardingItem)
+
+            // Language submenu
+            menu.addItem(.separator())
+            let languageItem = NSMenuItem(title: L("menu.language"), action: nil, keyEquivalent: "")
+            let languageMenu = NSMenu()
+            buildLanguageMenu(languageMenu)
+            languageItem.submenu = languageMenu
+            menu.addItem(languageItem)
         }
-        menu.addItem(.separator())
-        
-        // Language submenu
-        let languageItem = NSMenuItem(title: L("menu.language"), action: nil, keyEquivalent: "")
-        let languageMenu = NSMenu()
-        buildLanguageMenu(languageMenu)
-        languageItem.submenu = languageMenu
-        menu.addItem(languageItem)
-        
+
         menu.addItem(.separator())
         let quitItem = NSMenuItem(title: L("menu.quit"), action: #selector(quit(_:)), keyEquivalent: "q")
         quitItem.keyEquivalentModifierMask = [.command]
