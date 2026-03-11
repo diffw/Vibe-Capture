@@ -60,6 +60,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "--debug-show-onboarding"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--debug-reset-onboarding"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference

@@ -1,0 +1,62 @@
+{
+    "$schema": "design-tokens",
+    "version": "1.0",
+    "projectName": "",
+    "lastUpdated": "",
+  
+    "brand": {
+      "primary": "",
+      "primary-hover": "",
+      "primary-active": "",
+      "secondary": ""
+    },
+  
+    "font": {
+      "family": {
+        "sans": "",
+        "mono": ""
+      }
+    },
+  
+    "semantic": {
+      "success": "",
+      "success-light": "",
+      "warning": "",
+      "warning-light": "",
+      "error": "",
+      "error-light": "",
+      "info": "",
+      "info-light": ""
+    },
+  
+    "radius": {
+      "none": "",
+      "sm": "",
+      "base": "",
+      "lg": "",
+      "full": ""
+    },
+  
+    "color": {
+      "light": {
+        "bg-primary": "",
+        "bg-secondary": "",
+        "bg-tertiary": "",
+        "text-primary": "",
+        "text-secondary": "",
+        "text-disabled": "",
+        "border": "",
+        "border-strong": ""
+      },
+      "dark": {
+        "bg-primary": "",
+        "bg-secondary": "",
+        "bg-tertiary": "",
+        "text-primary": "",
+        "text-secondary": "",
+        "text-disabled": "",
+        "border": "",
+        "border-strong": ""
+      }
+    }
+  }
