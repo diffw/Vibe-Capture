@@ -1,11 +1,20 @@
 import AppKit
 
+extension Notification.Name {
+    static let requestOpenLibrary = Notification.Name("RequestOpenLibrary")
+    static let requestOpenCleanupSettings = Notification.Name("RequestOpenCleanupSettings")
+}
+
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let captureManager = CaptureManager()
     private var settingsWindowController: SettingsWindowController?
+    private var libraryWindowController: LibraryWindowController?
     private var onboardingWindowController: OnboardingWindowController?
     private var didBecomeActiveObserver: Any?
+    private var openLibraryObserver: Any?
+    private var openCleanupSettingsObserver: Any?
+    private var proStatusObserver: Any?
     private var uiTestCaptureModal: CaptureModalWindowController?
     private var shouldForceShowOnboarding = false
     private var shouldResetOnboardingAtLaunch = false
@@ -30,13 +39,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
 
         let beforePolicy = NSApp.activationPolicy()
-        let didSet = NSApp.setActivationPolicy(.accessory)
+        let didSet = NSApp.setActivationPolicy(.regular)
         let afterPolicy = NSApp.activationPolicy()
         NSLog("VibeCapture launch: activationPolicy before=%{public}@ after=%{public}@ didSet=%{public}@", "\(beforePolicy)", "\(afterPolicy)", "\(didSet)")
 
         // Read launch args early so menus can include debug items.
         let args = ProcessInfo.processInfo.arguments
         let isUITesting = args.contains(where: { $0.hasPrefix("--uitesting-") })
+        let forceFreeForUITest = args.contains("--force-free") || args.contains("--free-mode")
+        let forceProForUITest = args.contains("--force-pro")
+        let hasForcedEntitlements = forceFreeForUITest || forceProForUITest
         shouldForceShowOnboarding = args.contains("--debug-show-onboarding") || args.contains("--show-onboarding")
         shouldResetOnboardingAtLaunch = args.contains("--reset-onboarding") || args.contains("--debug-reset-onboarding")
 
@@ -48,28 +60,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         ShortcutManager.shared.start()
 
-        // IAP: start entitlements service and refresh on foreground.
-        EntitlementsService.shared.start()
-        didBecomeActiveObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.didBecomeActiveNotification,
+        openLibraryObserver = NotificationCenter.default.addObserver(
+            forName: .requestOpenLibrary,
             object: nil,
             queue: .main
-        ) { _ in
-            Task { await EntitlementsService.shared.refreshEntitlements() }
+        ) { [weak self] _ in
+            self?.openLibrary(nil)
         }
 
-        // UI testing helpers (launch-arg gated).
-        if args.contains("--force-free") || args.contains("--free-mode") {
+        openCleanupSettingsObserver = NotificationCenter.default.addObserver(
+            forName: .requestOpenCleanupSettings,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.openSettingsWindow(focusAutoCleanup: true)
+        }
+
+        // UI testing helper: force deterministic entitlement state when requested.
+        if forceFreeForUITest {
             EntitlementsService.shared.setStatus(
                 ProStatus(tier: .free, source: .none, lastRefreshedAt: Date())
             )
-        } else if args.contains("--force-pro") {
+        } else if forceProForUITest {
             EntitlementsService.shared.setStatus(
                 ProStatus(tier: .pro, source: .lifetime, lastRefreshedAt: Date())
             )
         }
 
-        // This is a menu bar app (no Dock icon/window). Show a one-time hint so launch doesn't feel like "nothing happened".
+        // IAP: start entitlements service and refresh on foreground unless a test forced a status.
+        if !hasForcedEntitlements {
+            EntitlementsService.shared.start()
+            didBecomeActiveObserver = NotificationCenter.default.addObserver(
+                forName: NSApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: .main
+            ) { _ in
+                Task { await EntitlementsService.shared.refreshEntitlements() }
+            }
+        }
+
+        proStatusObserver = NotificationCenter.default.addObserver(
+            forName: .proStatusDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard EntitlementsService.shared.isPro else { return }
+            guard PendingNavigationState.shared.openCleanupSettingsAfterUpgrade else { return }
+            PendingNavigationState.shared.openCleanupSettingsAfterUpgrade = false
+            self?.openSettingsWindow(focusAutoCleanup: true)
+        }
+
+        // Show a one-time hint on first launch.
         let key = "didShowLaunchHUD"
         if !UserDefaults.standard.bool(forKey: key) {
             UserDefaults.standard.set(true, forKey: key)
@@ -81,6 +122,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if args.contains("--uitesting-open-paywall") {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 PaywallWindowController.shared.show()
+            }
+        }
+
+        if args.contains("--uitesting-open-library") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.openLibrary(nil)
             }
         }
 
@@ -110,7 +157,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             } else {
                 showOnboardingIfNeeded()
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                self?.openLibrary(nil)
+            }
         }
+
+        CleanupSchedulerService.shared.start()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -118,7 +170,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NotificationCenter.default.removeObserver(didBecomeActiveObserver)
             self.didBecomeActiveObserver = nil
         }
+        if let openLibraryObserver {
+            NotificationCenter.default.removeObserver(openLibraryObserver)
+            self.openLibraryObserver = nil
+        }
+        if let openCleanupSettingsObserver {
+            NotificationCenter.default.removeObserver(openCleanupSettingsObserver)
+            self.openCleanupSettingsObserver = nil
+        }
+        if let proStatusObserver {
+            NotificationCenter.default.removeObserver(proStatusObserver)
+            self.proStatusObserver = nil
+        }
         EntitlementsService.shared.stop()
+        CleanupSchedulerService.shared.stop()
     }
 
     /// Setup main menu with Edit menu so ⌘+A/C/V/X work in text fields
@@ -184,6 +249,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let captureItem = NSMenuItem(title: L("menu.capture_area"), action: #selector(captureArea(_:)), keyEquivalent: "")
         captureItem.target = self
         menu.addItem(captureItem)
+
+        let libraryItem = NSMenuItem(title: "Open Library", action: #selector(openLibrary(_:)), keyEquivalent: "")
+        libraryItem.target = self
+        menu.addItem(libraryItem)
 
         let upgradeItem = NSMenuItem(title: L("menu.upgrade"), action: #selector(openUpgrade(_:)), keyEquivalent: "")
         upgradeItem.target = self
@@ -309,11 +378,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openSettings(_ sender: Any?) {
+        openSettingsWindow(focusAutoCleanup: false)
+    }
+
+    private func openSettingsWindow(focusAutoCleanup: Bool) {
         if interceptMenuActionToResumeOnboardingIfNeeded() { return }
         if settingsWindowController == nil {
             settingsWindowController = SettingsWindowController()
         }
-        settingsWindowController?.show()
+        settingsWindowController?.show(focusAutoCleanup: focusAutoCleanup)
     }
 
     @objc private func openUpgrade(_ sender: Any?) {
@@ -321,8 +394,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         PaywallWindowController.shared.show()
     }
 
+    @objc private func openLibrary(_ sender: Any?) {
+        if interceptMenuActionToResumeOnboardingIfNeeded() { return }
+        if libraryWindowController == nil {
+            libraryWindowController = LibraryWindowController()
+        }
+        libraryWindowController?.show()
+    }
+
     @objc private func quit(_ sender: Any?) {
         NSApp.terminate(nil)
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        openLibrary(nil)
+        return true
     }
 
     // MARK: - Onboarding

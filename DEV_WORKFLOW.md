@@ -48,11 +48,66 @@
 建议：
 - 调试 IAP/发送粘贴时，先把旧安装版 **Quit**，只保留 Xcode 启动的一份。
 
-### 5) Bundle ID / Product ID / `.storekit` 的关系（最容易混乱的点）
+### 5) 明早验收的一键命令（build + tests）
+
+使用仓库内固定脚本：
+
+```bash
+./scripts/run-local-ci.sh
+```
+
+脚本会按顺序执行：
+
+1. `./scripts/check-localization.sh VibeCapture/Resources`
+2. `./build.sh`
+3. Unit tests（`VibeCapTests`，跳过 `PurchaseFlowTests` 与 `LibraryFlowIntegrationTests`）
+4. Integration tests（`LibraryFlowIntegrationTests`）
+5. UI tests（`VibeCapUITests`）
+
+如需额外回归购买链路，可单独执行：
+
+```bash
+xcodebuild -scheme VibeCap -destination 'platform=macOS' test -only-testing:VibeCapTests/PurchaseFlowTests
+```
+
+如果 UI 测试环境报 `Timed out while enabling automation mode`，通常是当前系统会话无法进入自动化模式（非代码问题），请在可用的本地 GUI 会话下重跑该脚本。
+
+### 6) Bundle ID / Product ID / `.storekit` 的关系（最容易混乱的点）
 
 - **Bundle ID**（例如 `art.nanwang.VibeCap` 或 `com.luke.vibecapture`）是在 Xcode Target 的 `PRODUCT_BUNDLE_IDENTIFIER` 里设置的。
 - **Product ID**（例如 `*.pro.monthly/yearly/lifetime`）是你在 App Store Connect（或 `.storekit`）里创建的商品标识。
 - **规则**：
   - 代码里请求的 Product ID 必须和 `.storekit`（或 App Store Connect）里的 Product ID **完全一致**，否则价格会一直 Loading。
   - 最佳实践：Product ID 前缀与 Bundle ID 保持一致（方便长期维护与排查）。
+
+### 7) 自动 Clear + Run（替代手动 Shift+Cmd+K / Cmd+R）
+
+新增脚本：
+
+```bash
+./scripts/run-dev.sh
+```
+
+默认行为：
+
+1. 关闭当前运行中的 VibeCap 进程（避免双开冲突）
+2. 清理本地开发用 DerivedData（等效 Clear）
+3. 用 `xcodebuild` 重新构建 Debug app
+4. 自动启动构建出的 app（等效 Run）
+5. 失败时自动重试 1 次
+
+常用参数：
+
+```bash
+# 只 Clear + Build，不自动启动 app
+./scripts/run-dev.sh --no-open
+
+# 调整失败重试次数
+./scripts/run-dev.sh --retry 2
+```
+
+说明：
+
+- 你仍然可以随时手动使用 Xcode 的 `Shift+Cmd+K` 和 `Cmd+R`，两种方式并行不冲突。
+- 作为默认开发约定：当 AI 完成会影响 app 行为的改动后，应优先执行 `./scripts/run-dev.sh`，不再要求你手动点 Run。
 

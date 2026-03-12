@@ -16,6 +16,10 @@
 		<data>
 		J7p+2F6p2kMd4WwgXF7+pH3xcC0=
 		</data>
+		<key>Resources/Onboarding/annotation.svg</key>
+		<data>
+		qnWPHXwVJjDOedq0MQs6xHIv8Ps=
+		</data>
 		<key>Resources/Onboarding/arrow-down-s-line.svg</key>
 		<data>
 		0b87nDdvNTiklciO3B/dnK6Ww68=
@@ -24,9 +28,17 @@
 		<data>
 		1+aYJfhxO1Ut/ACCZZB3ne0OYqA=
 		</data>
+		<key>Resources/Onboarding/bg_vc.png</key>
+		<data>
+		+Avy+pcxezLYciDiwSqE3CUe6J4=
+		</data>
 		<key>Resources/Onboarding/bullet-circle.svg</key>
 		<data>
 		YRTd1mL/E1ovQ/uEWD5k43HbbYI=
+		</data>
+		<key>Resources/Onboarding/cleanup.svg</key>
+		<data>
+		cSJglOhqLCwFJl3zwKQTBOWzp7E=
 		</data>
 		<key>Resources/Onboarding/icon-folder.svg</key>
 		<data>
@@ -56,6 +68,10 @@
 		<data>
 		WmOpPyaJdZnOhI++r5ZI3INk+Po=
 		</data>
+		<key>Resources/Onboarding/queue.svg</key>
+		<data>
+		SrDTu8ANtHtHj10aFvDsAf2T1ps=
+		</data>
 		<key>Resources/Onboarding/system-settings.png</key>
 		<data>
 		nSgrQSq9efx0/gjU9mxhSBUSmdA=
@@ -72,29 +88,29 @@
 		<data>
 		0uB2FCvBe7C27YZeQU80ZMsd08I=
 		</data>
-		<key>Resources/cs.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			la6IT5EkVnNlIu8U5sOsy1UarIo=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/da.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			bZ2gO2wE8KLhEwAN8HUypDH41tw=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
 		<key>Resources/de.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			HxQIhHjyEbKIZKsSxhJJA+oX8h4=
+			PKdsipnvBpC5tDBhyKB7rtVdlMI=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/de.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HYjPw4nG36fk31Qbg55H4WRUdXk=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/de.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RFFtxqOe/xM3dBTXEW42hKQMDs0=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -103,20 +119,29 @@
 		<data>
 		tECBPPODRwmwILrVPVG0llo8OpY=
 		</data>
-		<key>Resources/el.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			aDG4bTa+UcpRsiDJVuaFxi/adX0=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
 		<key>Resources/en.lproj/Localizable.strings</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			C8ge6gOnBKYy748J4CVKP5pl4js=
+			lfVr8udniYIqozY9vY8vDdEKiVU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/en.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4APdBTwixBlEBzJqq6fK236w7Pw=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/en.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			MO5J+t2/FOb6idfgCyOxD1SZuLo=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -125,16 +150,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			W5PYwCfE99OkmiKbdHZHVWBJ32c=
+			SBph7fh++4ByguML8MKYPEF/AIs=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/fi.lproj/Localizable.strings</key>
+		<key>Resources/es.lproj/image-accessibility@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			WevhcYKP56E2hDya7cCIPZpy48w=
+			hhEEPM3veuvv6qXD9eTurbPtfbo=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/es.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4o7HaNjC+LeWUoAEAQ6/F/f9Hjg=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -147,7 +181,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			C6mNs5af0pbiCl9RiiaHc/j8+Ys=
+			p+xicI1rSgG+op96vv2Ju3AckaA=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/fr.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cRE3Lpwu8brA0LZNHHmVUKZmtYo=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/fr.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			0jpdco+cuxERnaZnbus2mscPcsY=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -156,7 +208,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			yPgOUIP0lUTGzo3MojppNin682k=
+			9qK8g232NFD4nPV721t7uuN+tpc=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/it.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			8Dj4QTGmXCPPSCaGEbiYtWgGCJA=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/it.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			TRSfmkVNV81xKSYHVCOmlyULLDk=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -165,7 +235,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			Qz9QJbhHJ23i00kObTNGHueNOkU=
+			55J60e174yUlcRjvQVQEIUQ4ScU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/ja.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ArlbKFZ6bvVbwNKCUjDAFiFlHcc=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/ja.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cwatCj0q5uO1eC+9/khztHIj+uE=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -174,52 +262,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			tCDBsh+moJJpUzo7hgJ6KTvTsUY=
+			5BMHdR/Clxsy7UIeyIZ9H65ahUM=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/nb.lproj/Localizable.strings</key>
+		<key>Resources/ko.lproj/image-accessibility@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			IOqB5LRfhZaOPbLgyiX5bf51LLA=
+			51tYtESnkcUblPPViO6aHwB1+LY=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/nl.lproj/Localizable.strings</key>
+		<key>Resources/ko.lproj/image-screen-recording@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			RglytB9MXd7eE7rUhIsWkHpmZtc=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/pl.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			AzgeFOyVJhOQbBj01aRhqtlr63c=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/pt.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			qTomaHTPfL9am/wNxRDUoJ6XpMw=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/ru.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			kKLUJvDG7TM7xlOxO4aHaXeRbq4=
+			HCQ9xtMSuckaO90pVtl8PZuX2KY=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -228,16 +289,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			uqhf3Fs5YM4ihwmwuKl+zIyEAOI=
+			/AB0JOcLqSkhiHaY4YMLqGTA+0Y=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/tr.lproj/Localizable.strings</key>
+		<key>Resources/sv.lproj/image-accessibility@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			dhrTYYCb0wJKjRcYtHtP66tLYZg=
+			L2jTKg6WIl45C0RGVEzknOKzvb0=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/sv.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			AcBk+Ezwz3ZvQ7m9aB+ccjRqt1Y=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -246,7 +316,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			H66RKe78Dt8PY2wKMyu64TyzmDY=
+			QMvzsrOgiQeaOV6dZxhuzqr19QE=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hans.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Y2o0gjvls3thjK0kuS0ncR+Ya/8=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hans.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			aUpda8kvJsUDXbhXqliAnAXqbGo=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -255,7 +343,25 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			mUtiMyG8EZcDoGI7rxqfEYWQsjQ=
+			53Jhm9pmgYJTu/I8qIGVeNM0ZTU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hant.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			F+wABF4R6Z4ZdPRE6G/Dmw9FtFU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hant.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			GTPJW8fCF2zJK/e6xHAaL2gexYs=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -267,13 +373,17 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			wEg2JqDzFUnKsAzRFIL7pVTOqSo=
+			vUoeBJeZTd3LGNjnK7BXd7JleMA=
 			</data>
 			<key>requirement</key>
-			<string>identifier VibeCap and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "2257B2LRRF"</string>
+			<string>cdhash H"bd4a1e0497994dddcb18d8e72bb05777b26578c0"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			Uskks0P8EQA9XCutaVWEx1Gqr3k=
+			</data>
 			<key>hash2</key>
 			<data>
 			cmrv2FmicFcYvQi93hIZaKEGEbSc1Z57xnYpN7mVYMo=
@@ -281,6 +391,10 @@
 		</dict>
 		<key>Resources/MenuBarIcon.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			ugNoVhK8JWYq5VkzB0cNqZW221c=
+			</data>
 			<key>hash2</key>
 			<data>
 			VgxNeZkK454RzynIAa1s/ROp5WXUo+dkq/bIaiPCbU8=
@@ -288,13 +402,32 @@
 		</dict>
 		<key>Resources/MenuBarIcon@2x.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			J7p+2F6p2kMd4WwgXF7+pH3xcC0=
+			</data>
 			<key>hash2</key>
 			<data>
 			UdN7PkukmRoF66HJiRUga78icpgMDJxUGAqkfnkJ5Lg=
 			</data>
 		</dict>
+		<key>Resources/Onboarding/annotation.svg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			qnWPHXwVJjDOedq0MQs6xHIv8Ps=
+			</data>
+			<key>hash2</key>
+			<data>
+			FGxu7hXoHfX5BZEI8tGvuSdihRAITloQUBi+QFG5LnU=
+			</data>
+		</dict>
 		<key>Resources/Onboarding/arrow-down-s-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			0b87nDdvNTiklciO3B/dnK6Ww68=
+			</data>
 			<key>hash2</key>
 			<data>
 			QL+w2WbOdzoOxH5HXsjDOC8Z51PPQUtIDh6w71eIf7E=
@@ -302,20 +435,54 @@
 		</dict>
 		<key>Resources/Onboarding/arrow-right-long-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			1+aYJfhxO1Ut/ACCZZB3ne0OYqA=
+			</data>
 			<key>hash2</key>
 			<data>
 			s70Y7MJTDXsOxVzGel8mllohrzRUMfugH9mYv64JyuM=
 			</data>
 		</dict>
+		<key>Resources/Onboarding/bg_vc.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			+Avy+pcxezLYciDiwSqE3CUe6J4=
+			</data>
+			<key>hash2</key>
+			<data>
+			jkId2bLTPka7Fh+g6FAVLVAL2j2yJGLNXkaTQVgKw/s=
+			</data>
+		</dict>
 		<key>Resources/Onboarding/bullet-circle.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			YRTd1mL/E1ovQ/uEWD5k43HbbYI=
+			</data>
 			<key>hash2</key>
 			<data>
 			RKJx+JsvGtZpJ5vBq3K2jGVoDIGBJKlDZVWYGmRAW8I=
 			</data>
 		</dict>
+		<key>Resources/Onboarding/cleanup.svg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cSJglOhqLCwFJl3zwKQTBOWzp7E=
+			</data>
+			<key>hash2</key>
+			<data>
+			IOcrEJLuQ5chPBpYKEDS3rkHP7dgbEd9tKVMtyyqOcI=
+			</data>
+		</dict>
 		<key>Resources/Onboarding/icon-folder.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			I0ohIVlEZPJahIWT3tIaOszfHJM=
+			</data>
 			<key>hash2</key>
 			<data>
 			4QFzDE+CECgok26qxiZBeRxTXkB7W9MZ8aJ96hqnpVY=
@@ -323,6 +490,10 @@
 		</dict>
 		<key>Resources/Onboarding/icon-shortcut.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			MJecmQkEsRW6+l3/y9mcAkNd+t4=
+			</data>
 			<key>hash2</key>
 			<data>
 			qRcCSUxbpvNfNnd15LwEKTj4BvSNS9BszyJv8ZewWqk=
@@ -330,6 +501,10 @@
 		</dict>
 		<key>Resources/Onboarding/logo-blue.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			+UEfkmew+qU0nazUigGWbqQu+Bo=
+			</data>
 			<key>hash2</key>
 			<data>
 			CXh8/C7bJSr1JaJdWbCRvzT1mshwYI8WBRp0GvEgf9o=
@@ -337,6 +512,10 @@
 		</dict>
 		<key>Resources/Onboarding/logo-brown.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			VXcpuy62kvLs7W1EAutNeUdlFYs=
+			</data>
 			<key>hash2</key>
 			<data>
 			LEo7I8x/jL4evlMWW9BHgBQDce4lCAH0zDW2Zq8uBBw=
@@ -344,6 +523,10 @@
 		</dict>
 		<key>Resources/Onboarding/logo.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			7FkkNESqS3Yma5Qo6edpYWJLj7w=
+			</data>
 			<key>hash2</key>
 			<data>
 			VBoLpay5rBLOG4QClrKpUxYjLc585XMbF/+m/8r8ciE=
@@ -351,6 +534,10 @@
 		</dict>
 		<key>Resources/Onboarding/paywall-card-bg.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			2PBw3vdU5y85ZyWTsQW9wiAt8ZY=
+			</data>
 			<key>hash2</key>
 			<data>
 			tKrrimUcAZsPtGmWI2bppoReuJ/Q+iXJsmRvb0qmpk4=
@@ -358,13 +545,32 @@
 		</dict>
 		<key>Resources/Onboarding/pro-badge.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			WmOpPyaJdZnOhI++r5ZI3INk+Po=
+			</data>
 			<key>hash2</key>
 			<data>
 			SW5++wzyUBT9LQozCuvZ/Ei3YmajjrWmaJjhdLItG5k=
 			</data>
 		</dict>
+		<key>Resources/Onboarding/queue.svg</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			SrDTu8ANtHtHj10aFvDsAf2T1ps=
+			</data>
+			<key>hash2</key>
+			<data>
+			hO5hmXcBvT7cYEQdpsRA8ucaoXzTdxAlmEhwi2wBLzs=
+			</data>
+		</dict>
 		<key>Resources/Onboarding/system-settings.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			nSgrQSq9efx0/gjU9mxhSBUSmdA=
+			</data>
 			<key>hash2</key>
 			<data>
 			4HHTWjW4eHMV/kHTQMuDwETMlerrwHwvI7TaDvgSH2k=
@@ -372,6 +578,10 @@
 		</dict>
 		<key>Resources/add-circle-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			FKFuYLcalSI0ccZcJwtGcaJzJ0g=
+			</data>
 			<key>hash2</key>
 			<data>
 			ZeVGx2ufo3KRyXHhfaZE+Fziy1bV1T+Xbz6WBoGIx7w=
@@ -379,6 +589,10 @@
 		</dict>
 		<key>Resources/arrow-down-s-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			USGeNLeW4Po+gtlS2H2aZH122mY=
+			</data>
 			<key>hash2</key>
 			<data>
 			J2RGJTS/NADYh9XohMipNI3IU+n6atgO9GWYb5JCfKE=
@@ -386,83 +600,149 @@
 		</dict>
 		<key>Resources/close-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			0uB2FCvBe7C27YZeQU80ZMsd08I=
+			</data>
 			<key>hash2</key>
 			<data>
 			/vzrkRLqBzJ/0rEo+tOxTUABm408qvSK3svkLCNbs9o=
 			</data>
 		</dict>
-		<key>Resources/cs.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			A6magPY2IINSA7GRho0asHX90oCM5E0MZ7M1N05SB3w=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/da.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			vLoAjeRC6axQO4nRZHJDzFSk0rzRkOGhd2ZqwUA3UP8=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
 		<key>Resources/de.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			PKdsipnvBpC5tDBhyKB7rtVdlMI=
+			</data>
 			<key>hash2</key>
 			<data>
-			I3B7cN7Zqw1Pgnk0P9Bv8FXIpYHlwSuQ1Lawqryo5CE=
+			mnzqdZOIf/fikQGucZBNrOkAPjGrHvs9frDJ6T0FxVk=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/de.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			HYjPw4nG36fk31Qbg55H4WRUdXk=
+			</data>
+			<key>hash2</key>
+			<data>
+			61/g9Us7l51XDZA5VtYzIXt3vswBlMKWHp3rZ04wNDo=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/de.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			RFFtxqOe/xM3dBTXEW42hKQMDs0=
+			</data>
+			<key>hash2</key>
+			<data>
+			wBWUz/4J49ha4LLtluO+pd/8ba1N/HMfK7zrCDzknV4=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/download-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			tECBPPODRwmwILrVPVG0llo8OpY=
+			</data>
 			<key>hash2</key>
 			<data>
 			TZC+TQbUbRMIcBxO+m8N7sP89JlYlfDuzxj3GaRvNzI=
 			</data>
 		</dict>
-		<key>Resources/el.lproj/Localizable.strings</key>
+		<key>Resources/en.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			lfVr8udniYIqozY9vY8vDdEKiVU=
+			</data>
 			<key>hash2</key>
 			<data>
-			PEAlZjX/CVwKDBEx4lpluX3upOY6HPuEiV+gpbw4cRg=
+			qqZfG1SLXGTQNpXoyYW7yjUqsHiz1D8pbThXlB1729c=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/en.lproj/Localizable.strings</key>
+		<key>Resources/en.lproj/image-accessibility@2x.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			4APdBTwixBlEBzJqq6fK236w7Pw=
+			</data>
 			<key>hash2</key>
 			<data>
-			VP1VME15DBsYu1EhYDbYEyQ+4dWYKL7ZCk8PbJubTjY=
+			TV9MDHbnrzGXgc00Ooy+E4eJNHS4YQRvDw+uZdhQ9DM=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/en.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			MO5J+t2/FOb6idfgCyOxD1SZuLo=
+			</data>
+			<key>hash2</key>
+			<data>
+			edcHx/IvLVpmpTvskvxHzG6++wjl0+RKxtmsW3IoKT4=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/es.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			SBph7fh++4ByguML8MKYPEF/AIs=
+			</data>
 			<key>hash2</key>
 			<data>
-			q2zhTyz2TcHnOvruDSZPG/EjSKByBqCbMKvR6Z/+mig=
+			zovB7V35VZp6H33p3DjopqEjIwR1lCp0Vh1SrYzZx7k=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/fi.lproj/Localizable.strings</key>
+		<key>Resources/es.lproj/image-accessibility@2x.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			hhEEPM3veuvv6qXD9eTurbPtfbo=
+			</data>
 			<key>hash2</key>
 			<data>
-			kUT6vQNodg3KBirpqq3EYhinroDN/IvkOupelDMOrDQ=
+			XoduAMYh+rGdSYIEi8GIcvXMNchvqe4lSWZcVvrGhOk=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/es.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			4o7HaNjC+LeWUoAEAQ6/F/f9Hjg=
+			</data>
+			<key>hash2</key>
+			<data>
+			6hS986x2m49E0/XRylEqsLicC3twUa95g4iCFdE0NGw=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/file-copy-line.svg</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			rTcTmDnSrWytlNGfrvTWMtAhWbM=
+			</data>
 			<key>hash2</key>
 			<data>
 			5iQKVkid5MSbgkE2cygJ44DKyWrZWwJgjeCn1cvJUow=
@@ -470,117 +750,273 @@
 		</dict>
 		<key>Resources/fr.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			p+xicI1rSgG+op96vv2Ju3AckaA=
+			</data>
 			<key>hash2</key>
 			<data>
-			ovSBEhFufpSM7SGnI/K92vpSsWc2YiFm652uUGfEG6w=
+			7Ig+fHRxTDfDmH0ZnQktif5jIkuLuDribDS16kptUk4=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/fr.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cRE3Lpwu8brA0LZNHHmVUKZmtYo=
+			</data>
+			<key>hash2</key>
+			<data>
+			JYucvGzikJcfYkE0QPgc/jFoeAyLygwILnEQyc6AxOQ=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/fr.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			0jpdco+cuxERnaZnbus2mscPcsY=
+			</data>
+			<key>hash2</key>
+			<data>
+			qgwWaq2qr+L78Xb7JDZHaLWXbsLc0+Fa/f4EWcpUhr8=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/it.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			9qK8g232NFD4nPV721t7uuN+tpc=
+			</data>
 			<key>hash2</key>
 			<data>
-			THXDYOrtxGa9SDbmLhvjMa9/X0R+mSnd1cKmke2S2x0=
+			VM3Miiv/ol87phVo9l9wf0iG6xU/GWttBAumKvX8pvc=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/it.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			8Dj4QTGmXCPPSCaGEbiYtWgGCJA=
+			</data>
+			<key>hash2</key>
+			<data>
+			PZayEHHupw9aKbt9KYsUgxPZxCgmuZaIymY62BrUn9M=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/it.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			TRSfmkVNV81xKSYHVCOmlyULLDk=
+			</data>
+			<key>hash2</key>
+			<data>
+			oehAZPUkALtznfpNvW1fF2arltQwQHwoLIi/VfRtDhI=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/ja.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			55J60e174yUlcRjvQVQEIUQ4ScU=
+			</data>
 			<key>hash2</key>
 			<data>
-			CF5gR6o+9CVSzjbOJuu2ADwWVpEidoMGlAZOsM5neSc=
+			kV6Hg1YgjQGyl+Kg3JjDgtoIBISkxkfR4cJy9li9T9M=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/ja.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ArlbKFZ6bvVbwNKCUjDAFiFlHcc=
+			</data>
+			<key>hash2</key>
+			<data>
+			WP7oDjA2ATqFrXT0vXUo0FRmgvM6+BvCT/e/yKhPFXo=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/ja.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			cwatCj0q5uO1eC+9/khztHIj+uE=
+			</data>
+			<key>hash2</key>
+			<data>
+			ObmV7alSFl+ueSb/m0qvlFLpiMmlajCNDiUma7cM8IU=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/ko.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			5BMHdR/Clxsy7UIeyIZ9H65ahUM=
+			</data>
 			<key>hash2</key>
 			<data>
-			7WJxg0snxuWLHHxyJSOckbStoGgPm8C+kPNwVL33LU4=
+			1+pXN7y58DGW6OTKeg8LWQWHaOu/MJ60HDI3cni0d8Y=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/nb.lproj/Localizable.strings</key>
+		<key>Resources/ko.lproj/image-accessibility@2x.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			51tYtESnkcUblPPViO6aHwB1+LY=
+			</data>
 			<key>hash2</key>
 			<data>
-			2Md8YfgtEpSZrmUt5LxurAkI7CDnwhWEvUAtlInEShY=
+			8CvnS3f04EHu2pkcVyhb/AIwnBaBLxLjT6TJ+CypIRc=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/nl.lproj/Localizable.strings</key>
+		<key>Resources/ko.lproj/image-screen-recording@2x.png</key>
 		<dict>
-			<key>hash2</key>
+			<key>hash</key>
 			<data>
-			oo9RYD03BoQLuYPhxqI5IJeYinH0IFK2PY2+biVBEFs=
+			HCQ9xtMSuckaO90pVtl8PZuX2KY=
 			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/pl.lproj/Localizable.strings</key>
-		<dict>
 			<key>hash2</key>
 			<data>
-			tiE36Vw/S2t83+ZwhTYezgaD4R0EfQeJy+V4FE3OsxQ=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/pt.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			htbZzr04rlU3I/DmAP6+nJNtDO1QUZVN7ADkR5J3ptA=
-			</data>
-			<key>optional</key>
-			<true/>
-		</dict>
-		<key>Resources/ru.lproj/Localizable.strings</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			/1k+q84t+wdL21igLg54Jot+wra8e3bl/wmUBIN4U4Y=
+			ksw5GGP+/8OEX2680lOLNjvNKe8+99zV92mWClFOBxA=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/sv.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			/AB0JOcLqSkhiHaY4YMLqGTA+0Y=
+			</data>
 			<key>hash2</key>
 			<data>
-			lXUqSKtF58aGRJ4rlLIImTzP4XEB0YVwFjA08QxKGkk=
+			laVg3eV6yJsSrtJC/TdCdtygK2zBco7kGgbZRpcVhfA=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
-		<key>Resources/tr.lproj/Localizable.strings</key>
+		<key>Resources/sv.lproj/image-accessibility@2x.png</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			L2jTKg6WIl45C0RGVEzknOKzvb0=
+			</data>
 			<key>hash2</key>
 			<data>
-			0whPukSaXVgLUfYMXGrxjfyluG3AiCgCHGqVXlxCH8I=
+			NWA7YGfWQQFzkCAcIK0x98EkMO+qTooerXA9iDlgKgU=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/sv.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			AcBk+Ezwz3ZvQ7m9aB+ccjRqt1Y=
+			</data>
+			<key>hash2</key>
+			<data>
+			RX1CxT3GiASygEmOkTNM/eBaUUHIX/o2SAsTEhyu6T0=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/zh-Hans.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			QMvzsrOgiQeaOV6dZxhuzqr19QE=
+			</data>
 			<key>hash2</key>
 			<data>
-			HW0aVXMVgzCgUc/lO2YDDWNpgx6UtXd9/UuedTU2S8U=
+			r/FxrRB3/l6XqbXMJ4x2zKeiAWXRWdYKJ8mSbItInKI=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hans.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Y2o0gjvls3thjK0kuS0ncR+Ya/8=
+			</data>
+			<key>hash2</key>
+			<data>
+			vkLztT1D58X3yciL0tISmUMOKF1jgAaj7Gnr70uHM84=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hans.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			aUpda8kvJsUDXbhXqliAnAXqbGo=
+			</data>
+			<key>hash2</key>
+			<data>
+			XjkNR9qj5+4TcZppmCREBMz31+u0DjXg+qf8F7vmCmM=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/zh-Hant.lproj/Localizable.strings</key>
 		<dict>
+			<key>hash</key>
+			<data>
+			53Jhm9pmgYJTu/I8qIGVeNM0ZTU=
+			</data>
 			<key>hash2</key>
 			<data>
-			dgUAd77Zi1B0moSrUOFhPp/ZR+dmUQ2bbL+H82Cyql4=
+			bE07PjKBUXJVy+bLrxrn0Hea2jhrtljyWGWpvWAJg6g=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hant.lproj/image-accessibility@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			F+wABF4R6Z4ZdPRE6G/Dmw9FtFU=
+			</data>
+			<key>hash2</key>
+			<data>
+			Uqj/7E/EykUoGQwmSYAJvDseMTNh/VHHw6G8Fp05m00=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Resources/zh-Hant.lproj/image-screen-recording@2x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			GTPJW8fCF2zJK/e6xHAaL2gexYs=
+			</data>
+			<key>hash2</key>
+			<data>
+			m1aUdS9wZUn6whaAUgKHk92h+obwwLlnF4AUcYbsL1Y=
 			</data>
 			<key>optional</key>
 			<true/>

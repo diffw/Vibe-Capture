@@ -81,6 +81,7 @@ final class OnboardingPaywallView: NSView {
     private func setup() {
         wantsLayer = true
         layer?.backgroundColor = NSColor.white.cgColor
+        setAccessibilityIdentifier("paywall.root")
 
         let primary = NSColor(srgbRed: 115.0 / 255.0, green: 69.0 / 255.0, blue: 46.0 / 255.0, alpha: 1.0) // #73452E
         let secondary = NSColor(srgbRed: 139.0 / 255.0, green: 107.0 / 255.0, blue: 92.0 / 255.0, alpha: 1.0) // #8B6B5C
@@ -124,6 +125,7 @@ final class OnboardingPaywallView: NSView {
         ctaButton.cornerRadius = 1000
         ctaButton.imagePosition = .noImage
         ctaButton.setButtonType(.momentaryPushIn)
+        ctaButton.setAccessibilityIdentifier("paywall.cta")
 
         pricingLabel.font = NSFont.systemFont(ofSize: 14, weight: .regular)
         pricingLabel.textColor = primary
@@ -151,6 +153,7 @@ final class OnboardingPaywallView: NSView {
         priceTapButton.bezelStyle = .inline
         priceTapButton.title = ""
         priceTapButton.setButtonType(.momentaryChange)
+        priceTapButton.setAccessibilityIdentifier("paywall.priceSelector")
         priceTapButton.translatesAutoresizingMaskIntoConstraints = false
         addSubview(pricingLabel)
         addSubview(pricingArrowImageView)
@@ -328,6 +331,7 @@ final class OnboardingPaywallView: NSView {
         termsButton.isBordered = false
         termsButton.target = self
         termsButton.action = #selector(openTerms)
+        termsButton.setAccessibilityIdentifier("paywall.legal.terms")
         termsButton.font = NSFont.systemFont(ofSize: 12)
         termsButton.contentTintColor = secondary
 
@@ -335,6 +339,7 @@ final class OnboardingPaywallView: NSView {
         privacyButton.isBordered = false
         privacyButton.target = self
         privacyButton.action = #selector(openPrivacy)
+        privacyButton.setAccessibilityIdentifier("paywall.legal.privacy")
         privacyButton.font = NSFont.systemFont(ofSize: 12)
         privacyButton.contentTintColor = secondary
 
@@ -342,6 +347,7 @@ final class OnboardingPaywallView: NSView {
         restoreButton.isBordered = false
         restoreButton.target = self
         restoreButton.action = #selector(restorePressed)
+        restoreButton.setAccessibilityIdentifier("paywall.restore")
         restoreButton.font = NSFont.systemFont(ofSize: 12)
         restoreButton.contentTintColor = secondary
     }

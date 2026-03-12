@@ -4,6 +4,8 @@ final class ScreenshotPreviewPanelController: NSWindowController {
     private let imageView = DraggableImageView()
     private let closeButton = CountdownCloseButton()
     private let showInFinderButton = NSButton(title: L("preview.button.show_in_finder"), target: nil, action: nil)
+    private let keepButton = NSButton(title: "Keep", target: nil, action: nil)
+    private let openLibraryButton = NSButton(title: "Library", target: nil, action: nil)
     private let thumbnailSize: NSSize
     private var fileURL: URL?
     private let autoCloseDuration: TimeInterval = 5.0
@@ -17,7 +19,7 @@ final class ScreenshotPreviewPanelController: NSWindowController {
 
         let panel = NSPanel(
             contentRect: NSRect(origin: .zero, size: NSSize(width: thumbnailSize.width, height: thumbnailSize.height)),
-            styleMask: [.borderless],
+            styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
@@ -68,9 +70,28 @@ final class ScreenshotPreviewPanelController: NSWindowController {
         showInFinderButton.action = #selector(showInFinderClicked)
         showInFinderButton.isEnabled = fileURL != nil
 
+        keepButton.translatesAutoresizingMaskIntoConstraints = false
+        keepButton.bezelStyle = .rounded
+        keepButton.controlSize = .small
+        keepButton.target = self
+        keepButton.action = #selector(keepClicked)
+        keepButton.isEnabled = fileURL != nil
+
+        openLibraryButton.translatesAutoresizingMaskIntoConstraints = false
+        openLibraryButton.bezelStyle = .rounded
+        openLibraryButton.controlSize = .small
+        openLibraryButton.target = self
+        openLibraryButton.action = #selector(openLibraryClicked)
+
         contentView.addSubview(imageView)
         contentView.addSubview(closeButton)
-        contentView.addSubview(showInFinderButton)
+        let actionStack = NSStackView(views: [showInFinderButton, keepButton, openLibraryButton])
+        actionStack.orientation = .horizontal
+        actionStack.alignment = .centerY
+        actionStack.distribution = .fillEqually
+        actionStack.spacing = 6
+        actionStack.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(actionStack)
 
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
@@ -84,13 +105,15 @@ final class ScreenshotPreviewPanelController: NSWindowController {
             closeButton.widthAnchor.constraint(equalToConstant: CountdownCloseButton.buttonSize),
             closeButton.heightAnchor.constraint(equalToConstant: CountdownCloseButton.buttonSize),
 
-            showInFinderButton.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            showInFinderButton.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            showInFinderButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
+            actionStack.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
+            actionStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            actionStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            actionStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
 
         self.window = panel
         closeButton.start(duration: autoCloseDuration)
+        updateKeepButtonTitle()
     }
 
     required init?(coder: NSCoder) { nil }
@@ -116,6 +139,8 @@ final class ScreenshotPreviewPanelController: NSWindowController {
         fileURL = url
         imageView.fileURL = url
         showInFinderButton.isEnabled = url != nil
+        keepButton.isEnabled = url != nil
+        updateKeepButtonTitle()
     }
 
     func closePreview() {
@@ -131,6 +156,39 @@ final class ScreenshotPreviewPanelController: NSWindowController {
     @objc private func showInFinderClicked() {
         guard let url = fileURL else { return }
         NSWorkspace.shared.activateFileViewerSelecting([url])
+    }
+
+    @objc private func keepClicked() {
+        guard let url = fileURL else { return }
+        if !CapabilityService.shared.canUse(.libraryKeep) {
+            PaywallWindowController.shared.show()
+            return
+        }
+
+        let currentlyKept = KeepMarkerService.shared.isKept(url)
+        do {
+            try KeepMarkerService.shared.setKept(!currentlyKept, for: url)
+            updateKeepButtonTitle()
+            HUDService.shared.show(
+                message: currentlyKept ? "Removed from kept." : "Marked as kept.",
+                style: .info,
+                duration: 1.0
+            )
+        } catch {
+            HUDService.shared.show(message: error.localizedDescription, style: .error, duration: 1.4)
+        }
+    }
+
+    @objc private func openLibraryClicked() {
+        NotificationCenter.default.post(name: .requestOpenLibrary, object: nil)
+    }
+
+    private func updateKeepButtonTitle() {
+        guard let url = fileURL else {
+            keepButton.title = "Keep"
+            return
+        }
+        keepButton.title = KeepMarkerService.shared.isKept(url) ? "Unkeep" : "Keep"
     }
 
     private static func makeThumbnailSize(for size: NSSize) -> NSSize {

@@ -1,4 +1,5 @@
 import XCTest
+import AppKit
 import StoreKit
 import StoreKitTest
 @testable import VibeCap
@@ -403,5 +404,93 @@ final class PurchaseFlowTests: XCTestCase {
         // Lifetime should be the final source (highest priority)
         XCTAssertTrue(entitlementsService.isPro)
         XCTAssertEqual(entitlementsService.status.source, .lifetime)
+    }
+}
+
+final class LibraryFlowIntegrationTests: XCTestCase {
+    private let fileManager = FileManager.default
+    private var temporaryFolderURL: URL!
+    private var originalBookmark: Data?
+    private var originalCleanupEnabled: Bool = false
+    private var originalCleanupInterval: Int = 30
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        temporaryFolderURL = fileManager.temporaryDirectory.appendingPathComponent("vibecap-library-integration-\(UUID().uuidString)", isDirectory: true)
+        try fileManager.createDirectory(at: temporaryFolderURL, withIntermediateDirectories: true)
+
+        originalBookmark = SettingsStore.shared.saveFolderBookmark
+        originalCleanupEnabled = SettingsStore.shared.autoCleanupEnabled
+        originalCleanupInterval = SettingsStore.shared.autoCleanupIntervalDays
+
+        let bookmark = try temporaryFolderURL.bookmarkData(
+            options: [.withSecurityScope],
+            includingResourceValuesForKeys: nil,
+            relativeTo: nil
+        )
+        SettingsStore.shared.saveFolderBookmark = bookmark
+        SettingsStore.shared.autoCleanupEnabled = false
+        SettingsStore.shared.autoCleanupIntervalDays = CleanupIntervalOption.day30.rawValue
+        SettingsStore.shared.autoCleanupLastRunAt = nil
+    }
+
+    override func tearDownWithError() throws {
+        SettingsStore.shared.saveFolderBookmark = originalBookmark
+        SettingsStore.shared.autoCleanupEnabled = originalCleanupEnabled
+        SettingsStore.shared.autoCleanupIntervalDays = originalCleanupInterval
+        SettingsStore.shared.autoCleanupLastRunAt = nil
+        if let temporaryFolderURL {
+            try? fileManager.removeItem(at: temporaryFolderURL)
+        }
+        temporaryFolderURL = nil
+        try super.tearDownWithError()
+    }
+
+    func testSaveFolderKeepAndListWorkflow() throws {
+        let keptURL = try createFixtureImage(name: "flow-kept.png", daysAgo: 0)
+        let normalURL = try createFixtureImage(name: "flow-normal.png", daysAgo: 0)
+        try KeepMarkerService.shared.setKept(true, for: keptURL)
+
+        let items = try LibraryFileService.shared.listItems(filter: .all)
+        XCTAssertEqual(items.count, 2)
+        XCTAssertTrue(items.contains(where: { $0.url == keptURL && $0.isKept }))
+        XCTAssertTrue(items.contains(where: { $0.url == normalURL && !$0.isKept }))
+    }
+
+    func testCleanupSkipsKeptAndRemovesExpiredUnkept() throws {
+        let keptURL = try createFixtureImage(name: "flow-cleanup-kept.png", daysAgo: 45)
+        let normalURL = try createFixtureImage(name: "flow-cleanup-normal.png", daysAgo: 45)
+        try KeepMarkerService.shared.setKept(true, for: keptURL)
+
+        SettingsStore.shared.autoCleanupEnabled = true
+        SettingsStore.shared.autoCleanupIntervalDays = CleanupIntervalOption.day1.rawValue
+
+        let summary = AutoCleanupService.shared.performCleanup(now: Date())
+
+        XCTAssertEqual(summary.scannedCount, 2)
+        XCTAssertEqual(summary.keptCount, 1)
+        XCTAssertTrue(fileManager.fileExists(atPath: keptURL.path))
+        if summary.errors.isEmpty {
+            XCTAssertFalse(fileManager.fileExists(atPath: normalURL.path))
+        }
+    }
+
+    private func createFixtureImage(name: String, daysAgo: Int) throws -> URL {
+        let url = temporaryFolderURL.appendingPathComponent(name)
+        let size = NSSize(width: 32, height: 32)
+        let image = NSImage(size: size)
+        image.lockFocus()
+        NSColor.systemPink.setFill()
+        NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
+        image.unlockFocus()
+        guard let data = image.pngData() else {
+            throw LibraryServiceError.failedToLoadImage
+        }
+        try data.write(to: url, options: .atomic)
+
+        let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: Date()) ?? Date()
+        try? fileManager.setAttributes([.creationDate: date], ofItemAtPath: url.path)
+        try? fileManager.setAttributes([.modificationDate: date], ofItemAtPath: url.path)
+        return url
     }
 }

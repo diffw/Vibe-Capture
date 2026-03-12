@@ -22,6 +22,10 @@ extension CapabilityKey {
     static let annotationsShapes = CapabilityKey(rawValue: "cap.annotations.shapes")
     static let annotationsNumbering = CapabilityKey(rawValue: "cap.annotations.numbering")
     static let annotationsColors = CapabilityKey(rawValue: "cap.annotations.colors")
+
+    // Library
+    static let libraryKeep = CapabilityKey(rawValue: "cap.library.keep")
+    static let libraryAutoCleanup = CapabilityKey(rawValue: "cap.library.auto_cleanup")
 }
 
 /// Capability gating service.
@@ -46,6 +50,8 @@ final class CapabilityService: CapabilityServiceProtocol {
         .annotationsShapes: .pro,
         .annotationsNumbering: .pro,
         .annotationsColors: .pro,
+        .libraryKeep: .pro,
+        .libraryAutoCleanup: .pro,
     ]
 
     /// Designated initializer with dependency injection support.

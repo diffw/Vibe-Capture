@@ -32,6 +32,13 @@ final class SettingsViewController: NSViewController {
     private let manageButton = NSButton(title: "", target: nil, action: nil)
     private var proStatusObserver: Any?
 
+    // Cleanup section
+    private let cleanupTitleLabel = NSTextField(labelWithString: "")
+    private let cleanupToggle = NSButton(checkboxWithTitle: "", target: nil, action: nil)
+    private let cleanupIntervalLabel = NSTextField(labelWithString: "")
+    private let cleanupIntervalPopup = NSPopUpButton(frame: .zero, pullsDown: false)
+    private let cleanupInfoLabel = NSTextField(labelWithString: "")
+
     override func loadView() {
         view = NSView()
     }
@@ -102,6 +109,35 @@ final class SettingsViewController: NSViewController {
         manageButton.controlSize = .small
         manageButton.font = NSFont.systemFont(ofSize: 12, weight: .regular)
         manageButton.bezelStyle = .rounded
+
+        // Cleanup section
+        cleanupTitleLabel.stringValue = "Auto Cleanup"
+        cleanupTitleLabel.font = NSFont.systemFont(ofSize: 12, weight: .semibold)
+        cleanupTitleLabel.textColor = .secondaryLabelColor
+
+        cleanupToggle.title = "Enable Auto Cleanup (Pro)"
+        cleanupToggle.target = self
+        cleanupToggle.action = #selector(cleanupToggled)
+        cleanupToggle.state = SettingsStore.shared.autoCleanupEnabled ? .on : .off
+
+        cleanupIntervalLabel.stringValue = "Interval"
+        cleanupIntervalLabel.font = NSFont.systemFont(ofSize: 13, weight: .regular)
+        cleanupIntervalLabel.widthAnchor.constraint(equalToConstant: leadingLabelWidth).isActive = true
+
+        cleanupIntervalPopup.target = self
+        cleanupIntervalPopup.action = #selector(cleanupIntervalChanged)
+        cleanupIntervalPopup.controlSize = .small
+        cleanupIntervalPopup.bezelStyle = .rounded
+        cleanupIntervalPopup.removeAllItems()
+        for option in CleanupIntervalOption.allCases {
+            cleanupIntervalPopup.addItem(withTitle: option.label)
+            cleanupIntervalPopup.lastItem?.tag = option.rawValue
+        }
+
+        cleanupInfoLabel.font = NSFont.systemFont(ofSize: 12)
+        cleanupInfoLabel.textColor = .secondaryLabelColor
+        cleanupInfoLabel.lineBreakMode = .byWordWrapping
+        cleanupInfoLabel.maximumNumberOfLines = 2
 
         // Save section
         saveCheckbox.title = L("settings.save.checkbox")
@@ -184,11 +220,22 @@ final class SettingsViewController: NSViewController {
         proSection.orientation = .vertical
         proSection.alignment = .leading
         proSection.spacing = sectionSpacing
+
+        let cleanupIntervalRow = NSStackView(views: [cleanupIntervalLabel, cleanupIntervalPopup, NSView()])
+        cleanupIntervalRow.orientation = .horizontal
+        cleanupIntervalRow.alignment = .centerY
+        cleanupIntervalRow.spacing = rowSpacing
+
+        let cleanupSection = NSStackView(views: [cleanupTitleLabel, cleanupToggle, cleanupIntervalRow, cleanupInfoLabel])
+        cleanupSection.orientation = .vertical
+        cleanupSection.alignment = .leading
+        cleanupSection.spacing = sectionSpacing
         
         let divider1 = divider()
         let divider2 = divider()
         let divider3 = divider()
         let divider4 = divider()
+        let divider5 = divider()
         let stack = NSStackView(views: [
             shortcutRecorder,
             divider1,
@@ -196,8 +243,10 @@ final class SettingsViewController: NSViewController {
             divider2,
             saveSection,
             divider3,
-            proSection,
+            cleanupSection,
             divider4,
+            proSection,
+            divider5,
             launchAtLoginCheckbox,
             versionLabel,
             NSView()
@@ -209,6 +258,7 @@ final class SettingsViewController: NSViewController {
         stack.setCustomSpacing(12, after: divider2)
         stack.setCustomSpacing(12, after: divider3)
         stack.setCustomSpacing(12, after: divider4)
+        stack.setCustomSpacing(12, after: divider5)
         stack.setCustomSpacing(8, after: launchAtLoginCheckbox)
 
         view.addSubview(stack)
@@ -223,6 +273,7 @@ final class SettingsViewController: NSViewController {
         refreshSaveFolderLabel()
         refreshPermissionStatus()
         refreshProStatus()
+        refreshCleanupControls()
         startProStatusObserver()
         startPermissionsObserver()
     }
@@ -252,6 +303,45 @@ final class SettingsViewController: NSViewController {
     @objc private func saveToggled() {
         SettingsStore.shared.saveEnabled = (saveCheckbox.state == .on)
         refreshSaveFolderLabel()
+    }
+
+    @objc private func cleanupToggled() {
+        let wantsOn = (cleanupToggle.state == .on)
+        if wantsOn && !CapabilityService.shared.canUse(.libraryAutoCleanup) {
+            cleanupToggle.state = .off
+            PaywallWindowController.shared.show()
+            refreshCleanupControls()
+            return
+        }
+
+        SettingsStore.shared.autoCleanupEnabled = wantsOn
+        if wantsOn && CleanupIntervalOption(rawValue: SettingsStore.shared.autoCleanupIntervalDays) == nil {
+            SettingsStore.shared.autoCleanupIntervalDays = CleanupIntervalOption.default.rawValue
+        }
+        CleanupSchedulerService.shared.refreshSchedule()
+        if wantsOn {
+            _ = CleanupSchedulerService.shared.runCleanup(reason: "enable", ignoreRunGap: true)
+        }
+        refreshCleanupControls()
+    }
+
+    @objc private func cleanupIntervalChanged() {
+        let selected = cleanupIntervalPopup.selectedTag()
+        let fallback = CleanupIntervalOption.default.rawValue
+        let interval = CleanupIntervalOption(rawValue: selected)?.rawValue ?? fallback
+
+        if !CapabilityService.shared.canUse(.libraryAutoCleanup) {
+            PaywallWindowController.shared.show()
+            refreshCleanupControls()
+            return
+        }
+
+        SettingsStore.shared.autoCleanupIntervalDays = interval
+        CleanupSchedulerService.shared.refreshSchedule()
+        if SettingsStore.shared.autoCleanupEnabled {
+            _ = CleanupSchedulerService.shared.runCleanup(reason: "interval", ignoreRunGap: true)
+        }
+        refreshCleanupControls()
     }
 
     @objc private func chooseFolderPressed() {
@@ -401,6 +491,27 @@ final class SettingsViewController: NSViewController {
 
         let sourceLabel = L(sourceLabelKey)
         proStatusLabel.stringValue = "\(tierLabel)\n\(L("settings.proStatus.lastRefreshed")) \(refreshed)\n\(L("settings.proStatus.source", sourceLabel))"
+        refreshCleanupControls()
+    }
+
+    private func refreshCleanupControls() {
+        let isPro = CapabilityService.shared.canUse(.libraryAutoCleanup)
+        cleanupToggle.state = SettingsStore.shared.autoCleanupEnabled ? .on : .off
+        cleanupIntervalPopup.selectItem(withTag: SettingsStore.shared.autoCleanupIntervalDays)
+        if cleanupIntervalPopup.selectedItem == nil {
+            cleanupIntervalPopup.selectItem(withTag: CleanupIntervalOption.default.rawValue)
+        }
+
+        cleanupIntervalPopup.isEnabled = isPro && SettingsStore.shared.autoCleanupEnabled
+        if isPro {
+            cleanupInfoLabel.stringValue = "Auto cleanup removes expired screenshots to Trash. Kept items are always excluded."
+        } else {
+            cleanupInfoLabel.stringValue = "Auto cleanup is a Pro feature. Upgrade to configure interval and enable it."
+        }
+    }
+
+    func focusAutoCleanupSection() {
+        view.window?.makeFirstResponder(cleanupToggle)
     }
 
     @objc private func upgradePressed() {

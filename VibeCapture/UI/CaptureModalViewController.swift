@@ -3,6 +3,7 @@ import AppKit
 final class CaptureModalViewController: NSViewController, NSTextViewDelegate, AnnotationToolbarViewDelegate, AnnotationCanvasViewDelegate {
     var onClose: (() -> Void)?
     var onSave: (() -> Void)?
+    var onSaveAndKeep: (() -> Void)?
 
     private let session: CaptureSession
     private let imageDisplayHeight: CGFloat
@@ -17,6 +18,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private let placeholderLabel = NSTextField(labelWithString: "")
     
     private let saveButton = RoundedHoverButton(title: "", target: nil, action: nil)
+    private let saveKeepButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let copyButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let closeButton = RoundedHoverButton(title: "", target: nil, action: nil)
     private let copyPromptButton = RoundedHoverButton(title: "", target: nil, action: nil)
@@ -24,6 +26,7 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private let saveHintLabel = NSTextField(labelWithString: "⌘S to save")
     private let copyHintLabel = NSTextField(labelWithString: "")
     private let saveStack = NSStackView()
+    private let saveKeepStack = NSStackView()
     private let copyStack = NSStackView()
     private let copyPromptStack = NSStackView()
     
@@ -292,6 +295,16 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         closeButton.imageTitleSpacing = 8
         closeButton.fixedHeight = 32
         closeButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+
+        // Setup Save & Keep button
+        saveKeepButton.target = self
+        saveKeepButton.action = #selector(saveKeepMenuItemClicked)
+        saveKeepButton.imagePosition = .imageLeading
+        saveKeepButton.imageScaling = .scaleProportionallyDown
+        saveKeepButton.imageHugsTitle = true
+        saveKeepButton.imageTitleSpacing = 8
+        saveKeepButton.fixedHeight = 32
+        saveKeepButton.contentInsets = NSEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
         
         // Setup Copy Prompt button (only shown in basic mode when there's prompt text)
         copyPromptButton.title = L("modal.button.copy_prompt")
@@ -334,6 +347,14 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         saveStack.addArrangedSubview(saveHintLabel)
         saveStack.addArrangedSubview(saveButton)
 
+        saveKeepStack.orientation = .vertical
+        saveKeepStack.alignment = .centerX
+        saveKeepStack.spacing = 4
+        let saveKeepHintLabel = NSTextField(labelWithString: "")
+        saveKeepHintLabel.alphaValue = 0
+        saveKeepStack.addArrangedSubview(saveKeepHintLabel)
+        saveKeepStack.addArrangedSubview(saveKeepButton)
+
         copyStack.orientation = .vertical
         copyStack.alignment = .centerX
         copyStack.spacing = 4
@@ -352,8 +373,8 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         copyPromptStack.addArrangedSubview(copyPromptButton)
         copyPromptStack.isHidden = true  // Hidden by default
 
-        // Layout: [Close stack] [spacer] [Save stack] [Copy stack] [Copy Prompt stack]
-        let buttonsRow = NSStackView(views: [closeStack, NSView(), saveStack, copyStack, copyPromptStack])
+        // Layout: [Close stack] [spacer] [Save stack] [Save&Keep stack] [Copy stack] [Copy Prompt stack]
+        let buttonsRow = NSStackView(views: [closeStack, NSView(), saveStack, saveKeepStack, copyStack, copyPromptStack])
         buttonsRow.orientation = .horizontal
         buttonsRow.alignment = .bottom
         buttonsRow.spacing = 12
@@ -785,6 +806,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
         onSave?()
     }
 
+    @objc private func saveKeepMenuItemClicked() {
+        onSaveAndKeep?()
+    }
+
     private func makeTemplateIcon(named name: String, size: CGFloat, fallbackSystemName: String? = nil) -> NSImage? {
         if let url = Bundle.main.url(forResource: name, withExtension: "svg") {
             if let image = NSImage(contentsOf: url) {
@@ -810,11 +835,13 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
     private func updateSendButtonTitle() {
         closeButton.image = makeTemplateIcon(named: "close-line", size: 12, fallbackSystemName: "xmark")
         saveButton.image = makeTemplateIcon(named: "download-line", size: 14, fallbackSystemName: "square.and.arrow.down")
+        saveKeepButton.image = makeTemplateIcon(named: "add-circle-line", size: 14, fallbackSystemName: "pin")
         copyButton.image = makeTemplateIcon(named: "file-copy-line", size: 14, fallbackSystemName: "doc.on.doc")
         copyPromptButton.image = makeTemplateIcon(named: "file-copy-line", size: 14, fallbackSystemName: "doc.on.doc")
 
         closeButton.title = L("modal.button.close")
         saveButton.title = L("modal.button.save_image")
+        saveKeepButton.title = "Save & Keep"
         escHintLabel.stringValue = L("modal.hint.esc_to_close")
 
         let hasPromptText = !promptTextView.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -868,10 +895,12 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
 
         closeButton.style = closeStyle
         saveButton.style = secondary
+        saveKeepButton.style = secondary
         copyButton.style = primary
         copyPromptButton.style = primary
         
         saveButton.isEnabled = true
+        saveKeepButton.isEnabled = true
         copyButton.isEnabled = true
         closeButton.isEnabled = true
         copyPromptButton.isEnabled = true

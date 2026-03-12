@@ -69,6 +69,16 @@ final class CapabilityServiceTests: XCTestCase {
         mockEntitlements.setFree()
         XCTAssertFalse(sut.canUse(.annotationsColors))
     }
+
+    func testLibraryKeepRequiresPro_FreeUser() {
+        mockEntitlements.setFree()
+        XCTAssertFalse(sut.canUse(.libraryKeep))
+    }
+
+    func testLibraryAutoCleanupRequiresPro_FreeUser() {
+        mockEntitlements.setFree()
+        XCTAssertFalse(sut.canUse(.libraryAutoCleanup))
+    }
     
     // MARK: - Pro Capabilities Tests (Pro User)
     
@@ -85,6 +95,16 @@ final class CapabilityServiceTests: XCTestCase {
     func testAnnotationsColorsAvailableForPro() {
         mockEntitlements.setPro()
         XCTAssertTrue(sut.canUse(.annotationsColors))
+    }
+
+    func testLibraryKeepAvailableForPro() {
+        mockEntitlements.setPro()
+        XCTAssertTrue(sut.canUse(.libraryKeep))
+    }
+
+    func testLibraryAutoCleanupAvailableForPro() {
+        mockEntitlements.setPro()
+        XCTAssertTrue(sut.canUse(.libraryAutoCleanup))
     }
     
     // MARK: - Pro Source Variations
@@ -138,7 +158,9 @@ final class CapabilityServiceTests: XCTestCase {
         let expectedProKeys: [CapabilityKey] = [
             .annotationsShapes,
             .annotationsNumbering,
-            .annotationsColors
+            .annotationsColors,
+            .libraryKeep,
+            .libraryAutoCleanup
         ]
         
         for key in expectedFreeKeys {

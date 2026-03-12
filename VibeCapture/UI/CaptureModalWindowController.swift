@@ -1,7 +1,10 @@
 import AppKit
 
-/// Custom NSWindow subclass that allows borderless windows to become key and accept input
-final class KeyableWindow: NSWindow {
+/// NSPanel subclass for the capture modal.
+/// Using NSPanel with isFloatingPanel = true ensures the window floats above
+/// all other applications' windows even when VibeCap is not the active app —
+/// matching how macOS's own screenshot tool and color picker behave.
+final class KeyablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
 }
@@ -15,6 +18,7 @@ enum CaptureModalResult {
 final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
     private let session: CaptureSession
     private let onResult: (CaptureModalResult) -> Void
+    private let isUITesting: Bool
 
     private var didFinish = false
     private var keyMonitor: Any?
@@ -30,10 +34,14 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
 
         // Calculate window size based on image aspect ratio (like macOS Screenshot preview)
         let windowSize = Self.calculateWindowSize(for: session.image.size)
+        let args = ProcessInfo.processInfo.arguments
+        let isUITesting = args.contains("--uitesting") || args.contains(where: { $0.hasPrefix("--uitesting-") })
+        self.isUITesting = isUITesting
+        let styleMask: NSWindow.StyleMask = isUITesting ? [.titled, .closable] : [.borderless, .nonactivatingPanel]
 
-        let window = KeyableWindow(
+        let window = KeyablePanel(
             contentRect: NSRect(origin: .zero, size: windowSize),
-            styleMask: [.borderless],
+            styleMask: styleMask,
             backing: .buffered,
             defer: false
         )
@@ -43,9 +51,24 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         window.backgroundColor = .clear
         window.isOpaque = false
         window.hasShadow = true
-        window.level = .floating
-        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        window.level = Self.preferredWindowLevel(isUITesting: isUITesting)
+        window.collectionBehavior = isUITesting
+            ? [.fullScreenAuxiliary]
+            : [.canJoinAllSpaces, .fullScreenAuxiliary]
+
+        if !isUITesting {
+            window.isFloatingPanel = true
+            window.hidesOnDeactivate = false
+        }
+
         window.contentViewController = viewController
+
+        if isUITesting {
+            window.titleVisibility = .hidden
+            window.titlebarAppearsTransparent = true
+            window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            window.standardWindowButton(.zoomButton)?.isHidden = true
+        }
         
         // Apply rounded corners to the window content view (match macOS system windows)
         if let contentView = window.contentView {
@@ -56,14 +79,16 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         }
 
         super.init(window: window)
-
         window.delegate = self
 
         viewController.onClose = { [weak self] in
             self?.finish(.cancelled)
         }
         viewController.onSave = { [weak self] in
-            self?.saveScreenshot()
+            self?.saveScreenshot(keep: false)
+        }
+        viewController.onSaveAndKeep = { [weak self] in
+            self?.saveScreenshot(keep: true)
         }
     }
 
@@ -89,8 +114,9 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         window.setContentSize(NSSize(width: contentWidth, height: finalHeight))
         window.layoutIfNeeded()
 
-        NSApp.activate(ignoringOtherApps: true)
         centerWindowOnCurrentScreen(window)
+        window.level = Self.preferredWindowLevel(isUITesting: isUITesting)
+        window.orderFrontRegardless()
         window.makeKeyAndOrderFront(nil)
         viewController.focusPrompt()
     }
@@ -136,8 +162,12 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
                     return nil
                 }
             }
+            if event.modifierFlags.contains([.command, .shift]), event.keyCode == 1 { // ⇧⌘S
+                self.saveScreenshot(keep: true)
+                return nil
+            }
             if event.modifierFlags.contains(.command), event.keyCode == 1 { // ⌘S
-                self.saveScreenshot()
+                self.saveScreenshot(keep: false)
                 return nil
             }
             if event.modifierFlags.contains(.command),
@@ -161,7 +191,7 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
         }
     }
 
-    private func saveScreenshot() {
+    private func saveScreenshot(keep: Bool) {
         // Composite annotations onto the image
         let annotations = viewController.annotations
         let finalImage = AnnotationRenderService.render(image: session.image, annotations: annotations)
@@ -170,8 +200,18 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
 
         do {
             if let savedURL = try ScreenshotSaveService.shared.saveScreenshotAndReturnURL(image: finalImage) {
+                if keep {
+                    if CapabilityService.shared.canUse(.libraryKeep) {
+                        try KeepMarkerService.shared.setKept(true, for: savedURL)
+                    } else {
+                        PaywallWindowController.shared.show()
+                    }
+                }
                 ScreenshotPreviewService.shared.updatePreviewFileURL(savedURL)
-                HUDService.shared.show(message: L("hud.screenshot_saved"), style: .success)
+                HUDService.shared.show(
+                    message: keep ? "Screenshot saved and kept." : L("hud.screenshot_saved"),
+                    style: .success
+                )
             } else {
                 ScreenshotPreviewService.shared.dismissPreview()
             }
@@ -282,6 +322,14 @@ final class CaptureModalWindowController: NSWindowController, NSWindowDelegate {
 
         return NSSize(width: finalWindowWidth, height: finalWindowHeight)
     }
+
+    /// Keep capture modal above most app windows in production, but keep
+    /// a plain .normal host during UI tests for stable accessibility queries.
+    static func preferredWindowLevel(isUITesting: Bool) -> NSWindow.Level {
+        if isUITesting { return .normal }
+        return .mainMenu
+    }
+
 }
 
 
