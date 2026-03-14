@@ -423,6 +423,264 @@ final class LibraryWindowControllerTests: XCTestCase {
         }
     }
 
+    func testLibraryToolbar_DoesNotContainRefreshButton() {
+        let sut = LibraryWindowController()
+        guard let rootView = sut.window?.contentViewController?.view else {
+            XCTFail("Expected library content view to be available.")
+            return
+        }
+
+        XCTAssertNil(findButton(titled: "Refresh", in: rootView))
+    }
+
+    func testCancelButton_ClearsCurrentSelection() throws {
+        try withLibraryWindowHavingItems { sut, collectionView in
+            collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: [])
+            XCTAssertEqual(collectionView.selectionIndexPaths.count, 1)
+
+            guard
+                let rootView = sut.window?.contentViewController?.view,
+                let cancelButton = findButton(identifier: "library.button.cancel", in: rootView)
+            else {
+                XCTFail("Expected Cancel button in library toolbar.")
+                return
+            }
+
+            guard let action = cancelButton.action else {
+                XCTFail("Expected Cancel button action.")
+                return
+            }
+            _ = NSApp.sendAction(action, to: cancelButton.target, from: cancelButton)
+            XCTAssertTrue(collectionView.selectionIndexPaths.isEmpty)
+        }
+    }
+
+    func testCancelButton_WhenSelectionExists_IsPositionedOnLeadingSide() throws {
+        try withLibraryWindowHavingItems { sut, collectionView in
+            collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: [])
+            guard
+                let rootView = sut.window?.contentViewController?.view,
+                let cancelButton = findButton(identifier: "library.button.cancel", in: rootView)
+            else {
+                XCTFail("Expected Cancel button in library toolbar.")
+                return
+            }
+
+            rootView.layoutSubtreeIfNeeded()
+            let cancelFrame = cancelButton.convert(cancelButton.bounds, to: rootView)
+            XCTAssertLessThan(cancelFrame.minX, rootView.bounds.midX)
+        }
+    }
+
+    func testFilterControl_DisplaysItemCountsInLabels() throws {
+        try withLibraryWindowHavingItems { sut, _ in
+            guard
+                let rootView = sut.window?.contentViewController?.view,
+                let filterControl = findSegmentedControl(identifier: "library.control.filter", in: rootView)
+            else {
+                XCTFail("Expected filter segmented control in library toolbar.")
+                return
+            }
+            XCTAssertEqual(filterControl.label(forSegment: 0), "All (2)")
+            XCTAssertEqual(filterControl.label(forSegment: 1), "Kept (0)")
+        }
+    }
+
+    func testResolveLibrarySelectionCountText_UsesExpectedFormat() {
+        XCTAssertEqual(resolveLibrarySelectionCountText(1), "1 selected")
+        XCTAssertEqual(resolveLibrarySelectionCountText(3), "3 selected")
+    }
+
+    func testResolveLibraryFilterLabelState_FormatsCounts() {
+        let labels = resolveLibraryFilterLabelState(allCount: 12, keptCount: 3)
+        XCTAssertEqual(labels.allLabel, "All (12)")
+        XCTAssertEqual(labels.keptLabel, "Kept (3)")
+    }
+
+    func testResolveLibraryItemBorderColor_UsesNeutralBorderForKeptWhenNotSelected() {
+        XCTAssertEqual(
+            resolveLibraryItemBorderColor(isSelected: false, isKept: true),
+            .separatorColor
+        )
+    }
+
+    func testResolveLibraryItemBorderColor_UsesAccentWhenSelected() {
+        XCTAssertEqual(
+            resolveLibraryItemBorderColor(isSelected: true, isKept: true),
+            .controlAccentColor
+        )
+    }
+
+    func testResolveLibraryKeepBadgeStyle_UsesCircularIconBadge() {
+        let style = resolveLibraryKeepBadgeStyle()
+        XCTAssertEqual(style.symbolName, "flag.fill")
+        XCTAssertEqual(style.iconTintColor, .white)
+        XCTAssertEqual(style.backgroundColor, .systemOrange)
+    }
+
+    func testResolveLibraryKeyboardAction_CommandDeleteTriggersDelete() {
+        XCTAssertEqual(
+            resolveLibraryKeyboardAction(keyCode: 51, modifierFlags: [.command]),
+            .deleteSelection
+        )
+        XCTAssertEqual(
+            resolveLibraryKeyboardAction(keyCode: 117, modifierFlags: [.command]),
+            .deleteSelection
+        )
+    }
+
+    func testResolveLibraryKeyboardAction_SpaceTriggersSpaceOpen() {
+        XCTAssertEqual(resolveLibraryKeyboardAction(keyCode: 49, modifierFlags: []), .openFromSpace)
+    }
+
+    func testResolveLibraryKeyboardAction_ReturnTriggersReturnOpen() {
+        XCTAssertEqual(resolveLibraryKeyboardAction(keyCode: 36, modifierFlags: []), .openFromReturn)
+    }
+
+    func testResolveLibraryKeyboardAction_OtherKeysReturnNone() {
+        XCTAssertEqual(resolveLibraryKeyboardAction(keyCode: 123, modifierFlags: []), .none)
+        XCTAssertEqual(resolveLibraryKeyboardAction(keyCode: 0, modifierFlags: [.command]), .none)
+    }
+
+    func testResolveLibraryPrimarySelectedIndex_ReturnsFirstForSingleSelection() {
+        let index = resolveLibraryPrimarySelectedIndex(selectedIndexes: [3], selectedItemCount: 1)
+        XCTAssertEqual(index, 3)
+    }
+
+    func testResolveLibraryPrimarySelectedIndex_ReturnsNilWhenNotSingleSelection() {
+        XCTAssertNil(resolveLibraryPrimarySelectedIndex(selectedIndexes: [3, 4], selectedItemCount: 2))
+        XCTAssertNil(resolveLibraryPrimarySelectedIndex(selectedIndexes: [], selectedItemCount: 0))
+    }
+
+    func testResolveImageViewerCloseAction_WhenOpenedBySpace_AllowsSpaceAndEsc() {
+        XCTAssertTrue(resolveImageViewerCloseAction(for: 49, entryMode: .spaceToggleClosable))
+        XCTAssertTrue(resolveImageViewerCloseAction(for: 53, entryMode: .spaceToggleClosable))
+    }
+
+    func testResolveImageViewerCloseAction_WhenOpenedByDoubleClick_DoesNotCloseOnSpace() {
+        XCTAssertFalse(resolveImageViewerCloseAction(for: 49, entryMode: .closeButtonOnly))
+        XCTAssertTrue(resolveImageViewerCloseAction(for: 53, entryMode: .closeButtonOnly))
+    }
+
+    func testResolveImageViewerNavigationIconAssets_UsesLocalArrowResourceNames() {
+        let assets = resolveImageViewerNavigationIconAssets()
+        XCTAssertEqual(assets.previous, "arrow-left-line")
+        XCTAssertEqual(assets.next, "arrow-right-line")
+    }
+
+    func testResolveImageViewerBackdropStyle_UsesFullscreenGaussianBlur() {
+        let style = resolveImageViewerBackdropStyle()
+        XCTAssertEqual(style.material, .underWindowBackground)
+        XCTAssertEqual(style.blendingMode, .behindWindow)
+    }
+
+    func testResolveImageViewerBackdropStyle_UsesSubtleDarkTintForReadability() {
+        let style = resolveImageViewerBackdropStyle()
+        XCTAssertEqual(style.tintAlpha, 0.08, accuracy: 0.001)
+        XCTAssertGreaterThan(style.tintAlpha, 0)
+        XCTAssertLessThan(style.tintAlpha, 0.2)
+    }
+
+    func testResolveImageViewerBackdropStyle_UsesStrongerSnapshotBlurRadius() {
+        let style = resolveImageViewerBackdropStyle()
+        XCTAssertEqual(style.snapshotBlurRadius, 34, accuracy: 0.001)
+        XCTAssertGreaterThan(style.snapshotBlurRadius, 24)
+    }
+
+    func testResolveImageViewerBackdropStyle_UsesFastFadeTransition() {
+        let style = resolveImageViewerBackdropStyle()
+        XCTAssertEqual(style.transitionDuration, 0.16, accuracy: 0.001)
+        XCTAssertGreaterThan(style.transitionDuration, 0)
+        XCTAssertLessThanOrEqual(style.transitionDuration, 0.2)
+    }
+
+    func testResolveImageViewerBackdropRenderMode_UsesSnapshotWhenReduceTransparencyEnabled() {
+        XCTAssertEqual(
+            resolveImageViewerBackdropRenderMode(reduceTransparencyEnabled: true),
+            .capturedBlurSnapshot
+        )
+    }
+
+    func testResolveImageViewerBackdropRenderMode_UsesSystemMaterialWhenTransparencyAllowed() {
+        XCTAssertEqual(
+            resolveImageViewerBackdropRenderMode(reduceTransparencyEnabled: false),
+            .systemMaterial
+        )
+    }
+
+    func testResolveImageViewerSwipeNavigation_LeftSwipeMovesNext() {
+        XCTAssertEqual(resolveImageViewerSwipeNavigation(deltaX: 1), .next)
+    }
+
+    func testResolveImageViewerSwipeNavigation_RightSwipeMovesPrevious() {
+        XCTAssertEqual(resolveImageViewerSwipeNavigation(deltaX: -1), .previous)
+    }
+
+    func testResolveImageViewerOverlayFrame_PrefersLibraryWindowScreen() {
+        let screens = [
+            NSRect(x: 0, y: 0, width: 1920, height: 1080),
+            NSRect(x: 1920, y: 0, width: 2560, height: 1440)
+        ]
+        let anchorWindowFrame = NSRect(x: 2100, y: 200, width: 900, height: 700)
+        let resolved = resolveImageViewerOverlayFrame(
+            anchorWindowFrame: anchorWindowFrame,
+            mouseLocation: NSPoint(x: 100, y: 100),
+            screenFrames: screens,
+            mainScreenFrame: screens[0]
+        )
+        XCTAssertEqual(resolved, screens[1])
+    }
+
+    func testResolveImageViewerOverlayFrame_FallsBackToMouseScreenWhenAnchorMissing() {
+        let screens = [
+            NSRect(x: 0, y: 0, width: 1920, height: 1080),
+            NSRect(x: 1920, y: 0, width: 2560, height: 1440)
+        ]
+        let resolved = resolveImageViewerOverlayFrame(
+            anchorWindowFrame: nil,
+            mouseLocation: NSPoint(x: 2500, y: 500),
+            screenFrames: screens,
+            mainScreenFrame: screens[0]
+        )
+        XCTAssertEqual(resolved, screens[1])
+    }
+
+    func testResolveImageViewerOverlayFrame_FallsBackToMainScreenWhenMouseOutsideAllScreens() {
+        let screens = [NSRect(x: 0, y: 0, width: 1728, height: 1117)]
+        let main = NSRect(x: 100, y: 50, width: 1512, height: 982)
+        let resolved = resolveImageViewerOverlayFrame(
+            anchorWindowFrame: nil,
+            mouseLocation: NSPoint(x: -9999, y: -9999),
+            screenFrames: screens,
+            mainScreenFrame: main
+        )
+        XCTAssertEqual(resolved, main)
+    }
+
+    func testResolveImageViewerOverlayFrame_UsesConservativeDefaultWhenNoScreens() {
+        let resolved = resolveImageViewerOverlayFrame(
+            anchorWindowFrame: nil,
+            mouseLocation: NSPoint(x: 0, y: 0),
+            screenFrames: [],
+            mainScreenFrame: nil
+        )
+        XCTAssertEqual(resolved, NSRect(x: 0, y: 0, width: 1440, height: 900))
+    }
+
+    func testResolveImageViewerIndexAfterDelete_PrefersNextWhenAvailable() {
+        let resolved = resolveImageViewerIndexAfterDelete(currentIndex: 1, itemCountAfterDeletion: 3)
+        XCTAssertEqual(resolved, 1)
+    }
+
+    func testResolveImageViewerIndexAfterDelete_FallsBackToPreviousAtEnd() {
+        let resolved = resolveImageViewerIndexAfterDelete(currentIndex: 2, itemCountAfterDeletion: 2)
+        XCTAssertEqual(resolved, 1)
+    }
+
+    func testResolveImageViewerIndexAfterDelete_ReturnsNilWhenNoItemsRemain() {
+        XCTAssertNil(resolveImageViewerIndexAfterDelete(currentIndex: 0, itemCountAfterDeletion: 0))
+    }
+
     func testResolveLibraryActionState_WhenNoSelection_HidesAndDisablesAllActions() {
         let state = resolveLibraryActionState(selectionCount: 0, allSelectedKept: false)
         XCTAssertFalse(state.showsSelectionActions)
@@ -531,6 +789,42 @@ final class LibraryWindowControllerTests: XCTestCase {
         for subview in view.subviews {
             if let collectionView = findCollectionView(in: subview) {
                 return collectionView
+            }
+        }
+        return nil
+    }
+
+    private func findButton(titled title: String, in view: NSView) -> NSButton? {
+        if let button = view as? NSButton, button.title == title {
+            return button
+        }
+        for subview in view.subviews {
+            if let match = findButton(titled: title, in: subview) {
+                return match
+            }
+        }
+        return nil
+    }
+
+    private func findButton(identifier: String, in view: NSView) -> NSButton? {
+        if let button = view as? NSButton, button.identifier?.rawValue == identifier {
+            return button
+        }
+        for subview in view.subviews {
+            if let match = findButton(identifier: identifier, in: subview) {
+                return match
+            }
+        }
+        return nil
+    }
+
+    private func findSegmentedControl(identifier: String, in view: NSView) -> NSSegmentedControl? {
+        if let control = view as? NSSegmentedControl, control.identifier?.rawValue == identifier {
+            return control
+        }
+        for subview in view.subviews {
+            if let match = findSegmentedControl(identifier: identifier, in: subview) {
+                return match
             }
         }
         return nil

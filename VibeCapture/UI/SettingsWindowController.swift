@@ -1,4 +1,6 @@
 import AppKit
+import CoreImage
+import QuartzCore
 
 final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     private let settingsVC = SettingsViewController()
@@ -95,6 +97,13 @@ struct LibraryActionState {
     let keepTitle: String
 }
 
+enum LibraryKeyboardAction: Equatable {
+    case none
+    case openFromSpace
+    case openFromReturn
+    case deleteSelection
+}
+
 func resolveLibraryActionState(selectionCount: Int, allSelectedKept: Bool) -> LibraryActionState {
     let hasSelection = selectionCount > 0
     let isSingleSelection = selectionCount == 1
@@ -106,6 +115,24 @@ func resolveLibraryActionState(selectionCount: Int, allSelectedKept: Bool) -> Li
         deleteEnabled: hasSelection,
         keepTitle: keepTitle
     )
+}
+
+func resolveLibraryKeyboardAction(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags) -> LibraryKeyboardAction {
+    if modifierFlags.contains(.command), (keyCode == 51 || keyCode == 117) {
+        return .deleteSelection
+    }
+    if keyCode == 49 {
+        return .openFromSpace
+    }
+    if keyCode == 36 {
+        return .openFromReturn
+    }
+    return .none
+}
+
+func resolveLibraryPrimarySelectedIndex(selectedIndexes: [Int], selectedItemCount: Int) -> Int? {
+    guard selectedItemCount == 1 else { return nil }
+    return selectedIndexes.first
 }
 
 func resolveLibraryMarqueeSelection(
@@ -130,6 +157,13 @@ struct LibraryMarqueeStyle {
     let strokeColor: NSColor
 }
 
+struct LibraryKeepBadgeStyle {
+    let symbolName: String
+    let iconTintColor: NSColor
+    let backgroundColor: NSColor
+    let borderColor: NSColor
+}
+
 func resolveLibraryMarqueeStyle() -> LibraryMarqueeStyle {
     // Match desktop-style marquee: neutral tint, low contrast fill, subtle border.
     LibraryMarqueeStyle(
@@ -138,8 +172,43 @@ func resolveLibraryMarqueeStyle() -> LibraryMarqueeStyle {
     )
 }
 
+func resolveLibraryKeepBadgeStyle() -> LibraryKeepBadgeStyle {
+    LibraryKeepBadgeStyle(
+        symbolName: "flag.fill",
+        iconTintColor: .white,
+        backgroundColor: .systemOrange,
+        borderColor: NSColor.black.withAlphaComponent(0.18)
+    )
+}
+
+func resolveLibrarySelectionCountText(_ selectionCount: Int) -> String {
+    selectionCount == 1 ? "1 selected" : "\(selectionCount) selected"
+}
+
+struct LibraryFilterLabelState {
+    let allLabel: String
+    let keptLabel: String
+}
+
+func resolveLibraryFilterLabelState(allCount: Int, keptCount: Int) -> LibraryFilterLabelState {
+    LibraryFilterLabelState(
+        allLabel: "All (\(allCount))",
+        keptLabel: "Kept (\(keptCount))"
+    )
+}
+
+func resolveLibraryItemBorderColor(isSelected: Bool, isKept: Bool) -> NSColor {
+    if isSelected {
+        return .controlAccentColor
+    }
+    // Kept state is indicated by badge only; keep neutral card border.
+    _ = isKept
+    return .separatorColor
+}
+
 private final class LibraryCollectionView: NSCollectionView {
     var onSelectionDragStateChanged: ((Bool) -> Void)?
+    var onItemDoubleClicked: ((IndexPath) -> Void)?
     private var isTrackingSelectionDrag = false
     private var dragStartPoint: NSPoint?
     private var initialSelection: Set<IndexPath> = []
@@ -168,6 +237,9 @@ private final class LibraryCollectionView: NSCollectionView {
     override func mouseDown(with event: NSEvent) {
         let location = convert(event.locationInWindow, from: nil)
         let clickedItem = indexPathForItem(at: location)
+        if event.clickCount == 2, let clickedItem {
+            onItemDoubleClicked?(clickedItem)
+        }
         if clickedItem == nil {
             dragStartPoint = location
             initialSelection = selectionIndexPaths
@@ -270,8 +342,10 @@ private final class LibraryCollectionItem: NSCollectionViewItem {
     private let previewImageView = NSImageView()
     private let titleLabel = NSTextField(labelWithString: "")
     private let subtitleLabel = NSTextField(labelWithString: "")
-    private let keepBadgeLabel = NSTextField(labelWithString: "📌 Kept")
+    private let keepBadgeContainerView = NSView()
+    private let keepBadgeIconView = NSImageView()
     private var imageHeightConstraint: NSLayoutConstraint?
+    private var isKeptItem = false
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -306,14 +380,29 @@ private final class LibraryCollectionItem: NSCollectionViewItem {
         subtitleLabel.lineBreakMode = .byTruncatingTail
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        keepBadgeLabel.font = NSFont.systemFont(ofSize: 11, weight: .semibold)
-        keepBadgeLabel.textColor = NSColor.systemOrange
-        keepBadgeLabel.translatesAutoresizingMaskIntoConstraints = false
+        let keepStyle = resolveLibraryKeepBadgeStyle()
+        keepBadgeContainerView.wantsLayer = true
+        keepBadgeContainerView.layer?.backgroundColor = keepStyle.backgroundColor.cgColor
+        keepBadgeContainerView.layer?.borderColor = keepStyle.borderColor.cgColor
+        keepBadgeContainerView.layer?.borderWidth = 1
+        keepBadgeContainerView.translatesAutoresizingMaskIntoConstraints = false
+        keepBadgeContainerView.setAccessibilityIdentifier("library.item.keepBadge")
+
+        if #available(macOS 11.0, *) {
+            keepBadgeIconView.image = NSImage(
+                systemSymbolName: keepStyle.symbolName,
+                accessibilityDescription: "Kept"
+            )
+        }
+        keepBadgeIconView.contentTintColor = keepStyle.iconTintColor
+        keepBadgeIconView.imageScaling = .scaleProportionallyDown
+        keepBadgeIconView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(previewImageView)
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
-        view.addSubview(keepBadgeLabel)
+        view.addSubview(keepBadgeContainerView)
+        keepBadgeContainerView.addSubview(keepBadgeIconView)
 
         NSLayoutConstraint.activate([
             previewImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
@@ -328,10 +417,17 @@ private final class LibraryCollectionItem: NSCollectionViewItem {
             subtitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 2),
 
-            keepBadgeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            keepBadgeLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 4),
-            keepBadgeLabel.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -8)
+            keepBadgeContainerView.topAnchor.constraint(equalTo: previewImageView.topAnchor, constant: 6),
+            keepBadgeContainerView.trailingAnchor.constraint(equalTo: previewImageView.trailingAnchor, constant: -6),
+            keepBadgeContainerView.widthAnchor.constraint(equalToConstant: 32),
+            keepBadgeContainerView.heightAnchor.constraint(equalToConstant: 32),
+
+            keepBadgeIconView.centerXAnchor.constraint(equalTo: keepBadgeContainerView.centerXAnchor),
+            keepBadgeIconView.centerYAnchor.constraint(equalTo: keepBadgeContainerView.centerYAnchor),
+            keepBadgeIconView.widthAnchor.constraint(equalToConstant: 18),
+            keepBadgeIconView.heightAnchor.constraint(equalToConstant: 18)
         ])
+        keepBadgeContainerView.layer?.cornerRadius = 16
         imageHeightConstraint = previewImageView.heightAnchor.constraint(equalToConstant: 120)
         imageHeightConstraint?.isActive = true
     }
@@ -340,16 +436,17 @@ private final class LibraryCollectionItem: NSCollectionViewItem {
         previewImageView.image = try? fileService.loadImage(for: item)
         titleLabel.stringValue = item.url.lastPathComponent
         subtitleLabel.stringValue = dateFormatter.string(from: item.createdAt)
-        keepBadgeLabel.isHidden = !item.isKept
+        isKeptItem = item.isKept
+        keepBadgeContainerView.isHidden = !item.isKept
         imageHeightConstraint?.constant = 120
         titleLabel.font = NSFont.systemFont(ofSize: 12, weight: .medium)
         subtitleLabel.isHidden = false
+        updateSelectionStyle()
     }
 
     private func updateSelectionStyle() {
-        view.layer?.borderColor = isSelected
-            ? NSColor.controlAccentColor.cgColor
-            : NSColor.separatorColor.cgColor
+        let borderColor = resolveLibraryItemBorderColor(isSelected: isSelected, isKept: isKeptItem)
+        view.layer?.borderColor = borderColor.cgColor
         view.layer?.borderWidth = isSelected ? 2 : 1
     }
 }
@@ -372,10 +469,13 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         action: nil
     )
     private let cleanupButton = NSButton(title: "Cleanup Settings", target: nil, action: nil)
-    private let refreshButton = NSButton(title: "Refresh", target: nil, action: nil)
+    private let cancelButton = NSButton(title: "Cancel", target: nil, action: nil)
+    private let selectionCountLabel = NSTextField(labelWithString: "")
     private let openButton = NSButton(title: "Open", target: nil, action: nil)
     private let keepButton = NSButton(title: "Keep", target: nil, action: nil)
     private let deleteButton = NSButton(title: "Delete", target: nil, action: nil)
+    private let leftToolbarStack = NSStackView()
+    private let rightToolbarStack = NSStackView()
     private let normalActionsStack = NSStackView()
     private let selectionActionsStack = NSStackView()
 
@@ -386,6 +486,12 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
     private let collectionView = LibraryCollectionView()
     private let flowLayout = NSCollectionViewFlowLayout()
     private var isSelectionDragInProgress = false
+
+    private enum PreviewOpenSource {
+        case spaceKey
+        case doubleClick
+        case other
+    }
 
     override func loadView() {
         view = NSView()
@@ -408,6 +514,7 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
             NotificationCenter.default.removeObserver(libraryContentObserver)
         }
         pendingReloadWorkItem?.cancel()
+        viewerWindowController?.close()
     }
 
     override func viewDidLayout() {
@@ -425,6 +532,7 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
                 emptyLabel.stringValue = "No screenshots found in selected folder."
             }
             collectionView.reloadData()
+            refreshFilterLabels()
             updateActionButtons()
         } catch LibraryServiceError.folderNotConfigured {
             items = []
@@ -433,6 +541,7 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
             emptyLabel.stringValue = "No screenshot folder configured yet."
             chooseFolderButton.isHidden = false
             scrollView.isHidden = true
+            applyFilterLabels(allCount: 0, keptCount: 0)
             updateActionButtons()
         } catch {
             items = []
@@ -441,6 +550,7 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
             emptyLabel.stringValue = error.localizedDescription
             chooseFolderButton.isHidden = false
             scrollView.isHidden = true
+            applyFilterLabels(allCount: 0, keptCount: 0)
             updateActionButtons()
         }
     }
@@ -449,12 +559,18 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
 
+        leftToolbarStack.orientation = .horizontal
+        leftToolbarStack.alignment = .centerY
+        leftToolbarStack.spacing = 8
+        leftToolbarStack.translatesAutoresizingMaskIntoConstraints = false
+        leftToolbarStack.addArrangedSubview(cancelButton)
+        leftToolbarStack.addArrangedSubview(selectionCountLabel)
+
         normalActionsStack.orientation = .horizontal
         normalActionsStack.alignment = .centerY
         normalActionsStack.spacing = 8
         normalActionsStack.translatesAutoresizingMaskIntoConstraints = false
         normalActionsStack.addArrangedSubview(cleanupButton)
-        normalActionsStack.addArrangedSubview(refreshButton)
 
         selectionActionsStack.orientation = .horizontal
         selectionActionsStack.alignment = .centerY
@@ -465,16 +581,12 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         selectionActionsStack.addArrangedSubview(keepButton)
         selectionActionsStack.isHidden = true
 
-        let toolbarStack = NSStackView(views: [
-            filterControl,
-            NSView(),
-            normalActionsStack,
-            selectionActionsStack
-        ])
-        toolbarStack.orientation = .horizontal
-        toolbarStack.alignment = .centerY
-        toolbarStack.spacing = 8
-        toolbarStack.translatesAutoresizingMaskIntoConstraints = false
+        rightToolbarStack.orientation = .horizontal
+        rightToolbarStack.alignment = .centerY
+        rightToolbarStack.spacing = 0
+        rightToolbarStack.translatesAutoresizingMaskIntoConstraints = false
+        rightToolbarStack.addArrangedSubview(normalActionsStack)
+        rightToolbarStack.addArrangedSubview(selectionActionsStack)
 
         emptyLabel.font = NSFont.systemFont(ofSize: 14)
         emptyLabel.textColor = .secondaryLabelColor
@@ -485,15 +597,30 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         chooseFolderButton.action = #selector(chooseFolderPressed)
         chooseFolderButton.translatesAutoresizingMaskIntoConstraints = false
 
+        filterControl.translatesAutoresizingMaskIntoConstraints = false
         filterControl.target = self
         filterControl.action = #selector(filterModeChanged)
+        filterControl.identifier = NSUserInterfaceItemIdentifier("library.control.filter")
         filterControl.setAccessibilityIdentifier("library.control.filter")
         cleanupButton.target = self
         cleanupButton.action = #selector(cleanupPressed)
         cleanupButton.setAccessibilityIdentifier("library.button.cleanup")
-        refreshButton.target = self
-        refreshButton.action = #selector(refreshPressed)
-        refreshButton.setAccessibilityIdentifier("library.button.refresh")
+        cancelButton.target = self
+        cancelButton.action = #selector(cancelSelectionPressed)
+        cancelButton.title = ""
+        if #available(macOS 11.0, *) {
+            cancelButton.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Close selection")
+        }
+        cancelButton.imagePosition = .imageOnly
+        cancelButton.contentTintColor = .secondaryLabelColor
+        cancelButton.bezelStyle = .texturedRounded
+        cancelButton.identifier = NSUserInterfaceItemIdentifier("library.button.cancel")
+        cancelButton.setAccessibilityIdentifier("library.button.cancel")
+        cancelButton.isHidden = true
+        selectionCountLabel.font = NSFont.systemFont(ofSize: 12, weight: .medium)
+        selectionCountLabel.textColor = .secondaryLabelColor
+        selectionCountLabel.isHidden = true
+        selectionCountLabel.setAccessibilityIdentifier("library.label.selectionCount")
         openButton.target = self
         openButton.action = #selector(openPressed)
         openButton.setAccessibilityIdentifier("library.button.open")
@@ -511,6 +638,12 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         collectionView.delegate = self
         collectionView.isSelectable = true
         collectionView.allowsMultipleSelection = true
+        collectionView.onItemDoubleClicked = { [weak self] indexPath in
+            guard let self, indexPath.item >= 0, indexPath.item < self.items.count else { return }
+            self.collectionView.selectItems(at: [indexPath], scrollPosition: [])
+            self.updateActionButtons()
+            self.openCurrentSelection(source: .doubleClick)
+        }
         collectionView.onSelectionDragStateChanged = { [weak self] isDragging in
             guard let self else { return }
             self.isSelectionDragInProgress = isDragging
@@ -527,19 +660,28 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(toolbarStack)
+        view.addSubview(leftToolbarStack)
+        view.addSubview(filterControl)
+        view.addSubview(rightToolbarStack)
         view.addSubview(scrollView)
         view.addSubview(emptyLabel)
         view.addSubview(chooseFolderButton)
 
         NSLayoutConstraint.activate([
-            toolbarStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            toolbarStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            toolbarStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
+            filterControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
+            filterControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
+            leftToolbarStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            leftToolbarStack.centerYAnchor.constraint(equalTo: filterControl.centerYAnchor),
+            leftToolbarStack.trailingAnchor.constraint(lessThanOrEqualTo: filterControl.leadingAnchor, constant: -10),
+
+            rightToolbarStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            rightToolbarStack.centerYAnchor.constraint(equalTo: filterControl.centerYAnchor),
+            filterControl.trailingAnchor.constraint(lessThanOrEqualTo: rightToolbarStack.leadingAnchor, constant: -10),
 
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
-            scrollView.topAnchor.constraint(equalTo: toolbarStack.bottomAnchor, constant: 12),
+            scrollView.topAnchor.constraint(equalTo: filterControl.bottomAnchor, constant: 12),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -12),
 
             emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -555,6 +697,31 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         applyGridLayout()
     }
 
+    private func refreshFilterLabels() {
+        let currentFilter = SettingsStore.shared.libraryFilterMode
+        do {
+            let allCount: Int
+            let keptCount: Int
+            switch currentFilter {
+            case .all:
+                allCount = items.count
+                keptCount = items.filter(\.isKept).count
+            case .kept:
+                keptCount = items.count
+                allCount = try fileService.listItems(filter: .all).count
+            }
+            applyFilterLabels(allCount: allCount, keptCount: keptCount)
+        } catch {
+            applyFilterLabels(allCount: 0, keptCount: 0)
+        }
+    }
+
+    private func applyFilterLabels(allCount: Int, keptCount: Int) {
+        let labelState = resolveLibraryFilterLabelState(allCount: allCount, keptCount: keptCount)
+        filterControl.setLabel(labelState.allLabel, forSegment: 0)
+        filterControl.setLabel(labelState.keptLabel, forSegment: 1)
+    }
+
     private func applyGridLayout() {
         flowLayout.itemSize = NSSize(width: 180, height: 180)
         flowLayout.sectionInset = NSEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
@@ -566,18 +733,25 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
             guard let self else { return event }
             guard let window = self.view.window, window.isKeyWindow else { return event }
 
-            if event.modifierFlags.contains(.command),
-               (event.keyCode == 51 || event.keyCode == 117) {
+            switch resolveLibraryKeyboardAction(keyCode: event.keyCode, modifierFlags: event.modifierFlags) {
+            case .deleteSelection:
                 self.deleteCurrentSelection()
                 return nil
-            }
-
-            if event.keyCode == 36 || event.keyCode == 49 { // Return / Space
-                self.openCurrentSelection()
+            case .openFromSpace:
+                if let viewer = self.viewerWindowController, viewer.isWindowVisible {
+                    if viewer.canCloseWithSpaceToggle {
+                        viewer.close()
+                    }
+                    return nil
+                }
+                self.openCurrentSelection(source: .spaceKey)
                 return nil
+            case .openFromReturn:
+                self.openCurrentSelection(source: .other)
+                return nil
+            case .none:
+                return event
             }
-
-            return event
         }
     }
 
@@ -625,18 +799,40 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         // to avoid flickering while selected count is changing continuously.
         if !isSelectionDragInProgress {
             filterControl.isHidden = state.showsSelectionActions
+            cancelButton.isHidden = !state.showsSelectionActions
+            selectionCountLabel.isHidden = !state.showsSelectionActions
             normalActionsStack.isHidden = state.showsSelectionActions
             selectionActionsStack.isHidden = !state.showsSelectionActions
         }
+        selectionCountLabel.stringValue = resolveLibrarySelectionCountText(selectionCount)
+        cancelButton.isEnabled = !cancelButton.isHidden && selectionCount > 0
         openButton.isEnabled = !selectionActionsStack.isHidden && state.openEnabled
         keepButton.isEnabled = !selectionActionsStack.isHidden && state.keepEnabled
         deleteButton.isEnabled = !selectionActionsStack.isHidden && state.deleteEnabled
         keepButton.title = state.keepTitle
     }
 
-    private func openCurrentSelection() {
-        guard selectedItems.count == 1, let index = selectedIndexes.first else { return }
-        let viewer = ImageViewerWindowController(items: items, initialIndex: index)
+    private func openCurrentSelection(source: PreviewOpenSource = .other) {
+        guard
+            let index = resolveLibraryPrimarySelectedIndex(
+                selectedIndexes: selectedIndexes,
+                selectedItemCount: selectedItems.count
+            ),
+            index >= 0, index < items.count
+        else {
+            return
+        }
+        viewerWindowController?.close()
+        let entryMode: ImageViewerEntryMode = (source == .spaceKey)
+            ? .spaceToggleClosable
+            : .closeButtonOnly
+        let viewer = ImageViewerWindowController(
+            items: items,
+            initialIndex: index,
+            entryMode: entryMode,
+            anchorWindowFrame: view.window?.frame,
+            anchorWindowNumber: view.window?.windowNumber
+        )
         viewer.onKeepChanged = { [weak self] url, isKept in
             guard let self else { return }
             if let itemIndex = self.items.firstIndex(where: { $0.url == url }) {
@@ -648,6 +844,9 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
             guard let self else { return }
             self.items.removeAll(where: { $0.url == url })
             self.reloadContent()
+        }
+        viewer.onClosed = { [weak self] in
+            self?.viewerWindowController = nil
         }
         viewerWindowController = viewer
         viewer.show()
@@ -762,12 +961,13 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         NotificationCenter.default.post(name: .requestOpenCleanupSettings, object: nil)
     }
 
-    @objc private func refreshPressed() {
-        reloadContent()
+    @objc private func openPressed() {
+        openCurrentSelection(source: .other)
     }
 
-    @objc private func openPressed() {
-        openCurrentSelection()
+    @objc private func cancelSelectionPressed() {
+        collectionView.deselectAll(nil)
+        updateActionButtons()
     }
 
     @objc private func keepPressed() {
@@ -808,9 +1008,6 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
         updateActionButtons()
-        if NSApp.currentEvent?.clickCount == 2 {
-            openCurrentSelection()
-        }
     }
 
     func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
@@ -818,51 +1015,204 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
     }
 }
 
-private final class ImageViewerWindowController: NSWindowController {
+enum ImageViewerEntryMode {
+    case spaceToggleClosable
+    case closeButtonOnly
+}
+
+func resolveImageViewerCloseAction(for keyCode: UInt16, entryMode: ImageViewerEntryMode) -> Bool {
+    switch keyCode {
+    case 53: // esc
+        return true
+    case 49: // space
+        return entryMode == .spaceToggleClosable
+    default:
+        return false
+    }
+}
+
+struct ImageViewerNavigationIconAssets {
+    let previous: String
+    let next: String
+}
+
+func resolveImageViewerNavigationIconAssets() -> ImageViewerNavigationIconAssets {
+    ImageViewerNavigationIconAssets(
+        previous: "arrow-left-line",
+        next: "arrow-right-line"
+    )
+}
+
+enum ImageViewerSwipeNavigation: Equatable {
+    case previous
+    case next
+}
+
+func resolveImageViewerSwipeNavigation(deltaX: CGFloat) -> ImageViewerSwipeNavigation {
+    // Requirement-aligned mapping: swipe left => next, swipe right => previous.
+    deltaX > 0 ? .next : .previous
+}
+
+private func resolveIntersectionArea(_ lhs: NSRect, _ rhs: NSRect) -> CGFloat {
+    let intersection = lhs.intersection(rhs)
+    guard !intersection.isNull else { return 0 }
+    return intersection.width * intersection.height
+}
+
+func resolveImageViewerOverlayFrame(
+    anchorWindowFrame: NSRect?,
+    mouseLocation: NSPoint,
+    screenFrames: [NSRect],
+    mainScreenFrame: NSRect?
+) -> NSRect {
+    if let anchorWindowFrame {
+        let bestAnchorScreen = screenFrames.max(by: {
+            resolveIntersectionArea($0, anchorWindowFrame) < resolveIntersectionArea($1, anchorWindowFrame)
+        })
+        if let bestAnchorScreen, resolveIntersectionArea(bestAnchorScreen, anchorWindowFrame) > 0 {
+            return bestAnchorScreen
+        }
+    }
+    if let hovered = screenFrames.first(where: { NSMouseInRect(mouseLocation, $0, false) }) {
+        return hovered
+    }
+    if let mainScreenFrame {
+        return mainScreenFrame
+    }
+    if let firstScreenFrame = screenFrames.first {
+        return firstScreenFrame
+    }
+    // Conservative fallback for unexpected headless/bootstrapping states.
+    return NSRect(x: 0, y: 0, width: 1440, height: 900)
+}
+
+func resolveImageViewerIndexAfterDelete(currentIndex: Int, itemCountAfterDeletion: Int) -> Int? {
+    guard itemCountAfterDeletion > 0 else { return nil }
+    return min(max(0, currentIndex), itemCountAfterDeletion - 1)
+}
+
+struct ImageViewerBackdropStyle {
+    let material: NSVisualEffectView.Material
+    let blendingMode: NSVisualEffectView.BlendingMode
+    let tintAlpha: CGFloat
+    let snapshotBlurRadius: Double
+    let transitionDuration: TimeInterval
+}
+
+enum ImageViewerBackdropRenderMode: Equatable {
+    case systemMaterial
+    case capturedBlurSnapshot
+}
+
+func resolveImageViewerBackdropRenderMode(
+    reduceTransparencyEnabled: Bool
+) -> ImageViewerBackdropRenderMode {
+    reduceTransparencyEnabled ? .capturedBlurSnapshot : .systemMaterial
+}
+
+func resolveImageViewerBackdropStyle() -> ImageViewerBackdropStyle {
+    // Use a lighter material plus very subtle tint so background structures stay visible.
+    ImageViewerBackdropStyle(
+        material: .underWindowBackground,
+        blendingMode: .behindWindow,
+        tintAlpha: 0.08,
+        snapshotBlurRadius: 34,
+        transitionDuration: 0.16
+    )
+}
+
+private final class ViewerOverlayWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
+private final class ImageViewerWindowController: NSWindowController, NSWindowDelegate {
     private var items: [LibraryItem]
     private var currentIndex: Int
     private var keyMonitor: Any?
+    private var swipeMonitor: Any?
+    private var lastSwipeAt: Date = .distantPast
+    private var isClosingAnimated = false
+    private let entryMode: ImageViewerEntryMode
+    private let anchorWindowFrame: NSRect?
+    private let anchorWindowNumber: Int?
+    private let backdropRenderMode: ImageViewerBackdropRenderMode
+    private let backdropStyle = resolveImageViewerBackdropStyle()
 
     var onKeepChanged: ((URL, Bool) -> Void)?
     var onItemDeleted: ((URL) -> Void)?
+    var onClosed: (() -> Void)?
 
+    var canCloseWithSpaceToggle: Bool { entryMode == .spaceToggleClosable }
+    var isWindowVisible: Bool { window?.isVisible == true }
+
+    private let blurView = NSVisualEffectView()
+    private let backdropSnapshotView = NSImageView()
+    private let dimTintView = NSView()
     private let imageView = NSImageView()
-    private let titleLabel = NSTextField(labelWithString: "")
-    private let detailLabel = NSTextField(labelWithString: "")
-    private let prevButton = NSButton(title: "← Prev", target: nil, action: nil)
-    private let nextButton = NSButton(title: "Next →", target: nil, action: nil)
+    private let closeButton = NSButton(title: "", target: nil, action: nil)
+    private let prevButton = NSButton(title: "", target: nil, action: nil)
+    private let nextButton = NSButton(title: "", target: nil, action: nil)
     private let keepButton = NSButton(title: "Keep", target: nil, action: nil)
     private let copyButton = NSButton(title: "Copy", target: nil, action: nil)
     private let deleteButton = NSButton(title: "Delete", target: nil, action: nil)
     private let finderButton = NSButton(title: "Show in Finder", target: nil, action: nil)
+    private lazy var actionRow: NSStackView = {
+        let row = NSStackView(views: [copyButton, keepButton, deleteButton, finderButton])
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 10
+        return row
+    }()
+
+    private let navigationIconAssets = resolveImageViewerNavigationIconAssets()
 
     private let keepService = KeepMarkerService.shared
     private let trashService = TrashService.shared
     private let fileService = LibraryFileService.shared
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter
-    }()
+    private let ciContext = CIContext(options: nil)
 
-    init(items: [LibraryItem], initialIndex: Int) {
+    init(
+        items: [LibraryItem],
+        initialIndex: Int,
+        entryMode: ImageViewerEntryMode,
+        anchorWindowFrame: NSRect?,
+        anchorWindowNumber: Int?
+    ) {
         self.items = items
         self.currentIndex = max(0, min(initialIndex, max(0, items.count - 1)))
+        self.entryMode = entryMode
+        self.anchorWindowFrame = anchorWindowFrame
+        self.anchorWindowNumber = anchorWindowNumber
+        self.backdropRenderMode = resolveImageViewerBackdropRenderMode(
+            reduceTransparencyEnabled: NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+        )
 
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 980, height: 720),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+        let initialFrame = resolveImageViewerOverlayFrame(
+            anchorWindowFrame: anchorWindowFrame,
+            mouseLocation: NSEvent.mouseLocation,
+            screenFrames: NSScreen.screens.map(\.frame),
+            mainScreenFrame: NSScreen.main?.frame
+        )
+        let window = ViewerOverlayWindow(
+            contentRect: initialFrame,
+            styleMask: [.borderless],
             backing: .buffered,
             defer: false
         )
         window.setAccessibilityIdentifier("library.viewer.window")
-        window.title = "Image Viewer"
         window.isReleasedWhenClosed = false
+        window.backgroundColor = .clear
+        window.isOpaque = false
+        window.hasShadow = false
+        window.level = .floating
+        window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         super.init(window: window)
+        window.delegate = self
         configureUI()
         refreshUI()
         installKeyMonitor()
+        installSwipeMonitor()
     }
 
     required init?(coder: NSCoder) { nil }
@@ -871,30 +1221,78 @@ private final class ImageViewerWindowController: NSWindowController {
         if let keyMonitor {
             NSEvent.removeMonitor(keyMonitor)
         }
+        if let swipeMonitor {
+            NSEvent.removeMonitor(swipeMonitor)
+        }
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        onClosed?()
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        layoutOverlay()
     }
 
     func show() {
         guard let window else { return }
+        let expectedFrame = resolveImageViewerOverlayFrame(
+            anchorWindowFrame: anchorWindowFrame,
+            mouseLocation: NSEvent.mouseLocation,
+            screenFrames: NSScreen.screens.map(\.frame),
+            mainScreenFrame: NSScreen.main?.frame
+        )
+        window.setFrame(expectedFrame, display: false)
+        refreshBackdropSnapshotIfNeeded(for: expectedFrame)
+        layoutOverlay()
+
         NSApp.activate(ignoringOtherApps: true)
-        window.center()
+        window.alphaValue = 0
         window.makeKeyAndOrderFront(nil)
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = backdropStyle.transitionDuration
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            window.animator().alphaValue = 1
+        }
+        DispatchQueue.main.async { [weak self, weak window] in
+            guard let self, let window else { return }
+            window.setFrame(expectedFrame, display: false)
+            self.refreshBackdropSnapshotIfNeeded(for: expectedFrame)
+            self.layoutOverlay()
+        }
     }
 
     private func configureUI() {
         guard let contentView = window?.contentView else { return }
+        contentView.wantsLayer = true
+        contentView.layer?.backgroundColor = NSColor.clear.cgColor
+
+        blurView.material = backdropStyle.material
+        blurView.blendingMode = backdropStyle.blendingMode
+        blurView.state = .active
+        blurView.isHidden = backdropRenderMode == .capturedBlurSnapshot
+
+        backdropSnapshotView.imageScaling = .scaleAxesIndependently
+        backdropSnapshotView.isHidden = backdropRenderMode != .capturedBlurSnapshot
+
+        dimTintView.wantsLayer = true
+        dimTintView.layer?.backgroundColor = NSColor.black.withAlphaComponent(backdropStyle.tintAlpha).cgColor
 
         imageView.imageScaling = .scaleProportionallyUpOrDown
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.wantsLayer = true
-        imageView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.04).cgColor
-        imageView.layer?.cornerRadius = 8
+        imageView.layer?.cornerRadius = 10
+        imageView.layer?.masksToBounds = true
+        imageView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.12).cgColor
 
-        titleLabel.font = NSFont.systemFont(ofSize: 14, weight: .semibold)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        detailLabel.font = NSFont.systemFont(ofSize: 12)
-        detailLabel.textColor = .secondaryLabelColor
-        detailLabel.translatesAutoresizingMaskIntoConstraints = false
+        configureIconButton(closeButton, fallbackSymbolName: "xmark")
+        configureIconButton(prevButton, fallbackSymbolName: "arrow.left")
+        configureIconButton(nextButton, fallbackSymbolName: "arrow.right")
+        closeButton.setAccessibilityIdentifier("library.viewer.close")
+        prevButton.setAccessibilityIdentifier("library.viewer.prev")
+        nextButton.setAccessibilityIdentifier("library.viewer.next")
 
+        closeButton.target = self
+        closeButton.action = #selector(closePressed)
         prevButton.target = self
         prevButton.action = #selector(prevPressed)
         nextButton.target = self
@@ -908,47 +1306,168 @@ private final class ImageViewerWindowController: NSWindowController {
         finderButton.target = self
         finderButton.action = #selector(showInFinderPressed)
 
-        let navRow = NSStackView(views: [prevButton, nextButton, NSView()])
-        navRow.orientation = .horizontal
-        navRow.alignment = .centerY
-        navRow.spacing = 8
-        navRow.translatesAutoresizingMaskIntoConstraints = false
-
-        let infoRow = NSStackView(views: [titleLabel, NSView(), detailLabel])
-        infoRow.orientation = .horizontal
-        infoRow.alignment = .centerY
-        infoRow.spacing = 8
-        infoRow.translatesAutoresizingMaskIntoConstraints = false
-
-        let actionRow = NSStackView(views: [copyButton, keepButton, deleteButton, finderButton, NSView()])
-        actionRow.orientation = .horizontal
-        actionRow.alignment = .centerY
-        actionRow.spacing = 8
-        actionRow.translatesAutoresizingMaskIntoConstraints = false
-
-        contentView.addSubview(navRow)
+        contentView.addSubview(blurView)
+        contentView.addSubview(backdropSnapshotView)
+        contentView.addSubview(dimTintView)
         contentView.addSubview(imageView)
-        contentView.addSubview(infoRow)
+        contentView.addSubview(closeButton)
+        contentView.addSubview(prevButton)
+        contentView.addSubview(nextButton)
         contentView.addSubview(actionRow)
 
-        NSLayoutConstraint.activate([
-            navRow.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            navRow.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            navRow.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 14),
+        applyNavigationIconsFromBundle()
+        layoutOverlay()
+    }
 
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            imageView.topAnchor.constraint(equalTo: navRow.bottomAnchor, constant: 10),
-            imageView.bottomAnchor.constraint(equalTo: infoRow.topAnchor, constant: -12),
+    private func layoutOverlay() {
+        guard let contentView = window?.contentView else { return }
+        let bounds = contentView.bounds
+        guard bounds.width > 1, bounds.height > 1 else { return }
 
-            infoRow.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            infoRow.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            infoRow.bottomAnchor.constraint(equalTo: actionRow.topAnchor, constant: -8),
+        blurView.frame = bounds
+        backdropSnapshotView.frame = bounds
+        dimTintView.frame = bounds
 
-            actionRow.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            actionRow.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            actionRow.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
-        ])
+        let maxImageWidth = max(1, bounds.width * 0.82)
+        let maxImageHeight = max(1, bounds.height * 0.78)
+        var imageWidth = max(420, min(maxImageWidth, bounds.width - 120))
+        var imageHeight = max(260, min(maxImageHeight, bounds.height - 120))
+        imageWidth = min(imageWidth, max(1, bounds.width - 32))
+        imageHeight = min(imageHeight, max(1, bounds.height - 72))
+        imageView.frame = NSRect(
+            x: round((bounds.width - imageWidth) * 0.5),
+            y: round((bounds.height - imageHeight) * 0.5),
+            width: imageWidth,
+            height: imageHeight
+        )
+
+        let closeSize: CGFloat = 34
+        closeButton.frame = NSRect(
+            x: bounds.maxX - 20 - closeSize,
+            y: bounds.maxY - 20 - closeSize,
+            width: closeSize,
+            height: closeSize
+        )
+
+        let navSize: CGFloat = 40
+        prevButton.frame = NSRect(
+            x: 24,
+            y: round(imageView.frame.midY - navSize * 0.5),
+            width: navSize,
+            height: navSize
+        )
+        nextButton.frame = NSRect(
+            x: bounds.maxX - 24 - navSize,
+            y: round(imageView.frame.midY - navSize * 0.5),
+            width: navSize,
+            height: navSize
+        )
+
+        let rowSize = actionRow.fittingSize
+        actionRow.frame = NSRect(
+            x: round((bounds.width - rowSize.width) * 0.5),
+            y: 28,
+            width: rowSize.width,
+            height: rowSize.height
+        )
+    }
+
+    private func refreshBackdropSnapshotIfNeeded(for frame: NSRect) {
+        guard backdropRenderMode == .capturedBlurSnapshot else { return }
+        let snapshot = makeBlurredBackdropSnapshot(frame: frame)
+        backdropSnapshotView.image = snapshot
+        if snapshot == nil {
+            AppLog.log(.warn, "library.viewer", "Blur snapshot capture failed; fallback image unavailable.")
+        }
+    }
+
+    private func makeBlurredBackdropSnapshot(frame: NSRect) -> NSImage? {
+        guard let captured = makeBackdropCaptureImage(frame: frame) else { return nil }
+        let ciImage = CIImage(cgImage: captured)
+        let blurred = ciImage
+            .clampedToExtent()
+            .applyingFilter("CIGaussianBlur", parameters: [kCIInputRadiusKey: backdropStyle.snapshotBlurRadius])
+            .cropped(to: ciImage.extent)
+        guard let output = ciContext.createCGImage(blurred, from: ciImage.extent) else {
+            return nil
+        }
+        return NSImage(cgImage: output, size: frame.size)
+    }
+
+    private func makeBackdropCaptureImage(frame: NSRect) -> CGImage? {
+        if let window, window.windowNumber > 0 {
+            if let belowOverlayImage = CGWindowListCreateImage(
+                .null,
+                .optionOnScreenBelowWindow,
+                CGWindowID(window.windowNumber),
+                [.bestResolution, .boundsIgnoreFraming]
+            ) {
+                return belowOverlayImage
+            }
+        }
+
+        if let onScreenImage = CGWindowListCreateImage(
+            frame.integral,
+            .optionOnScreenOnly,
+            kCGNullWindowID,
+            [.bestResolution, .boundsIgnoreFraming]
+        ) {
+            return onScreenImage
+        }
+
+        if let anchorWindowNumber,
+           let anchorWindowImage = CGWindowListCreateImage(
+            .null,
+            .optionIncludingWindow,
+            CGWindowID(anchorWindowNumber),
+            [.bestResolution, .boundsIgnoreFraming]
+           ) {
+            return anchorWindowImage
+        }
+
+        return nil
+    }
+
+    private func configureIconButton(_ button: NSButton, fallbackSymbolName: String) {
+        if #available(macOS 11.0, *) {
+            button.image = NSImage(systemSymbolName: fallbackSymbolName, accessibilityDescription: nil)
+        }
+        button.imagePosition = .imageOnly
+        button.imageScaling = .scaleProportionallyDown
+        button.contentTintColor = .white
+        button.isBordered = false
+        button.wantsLayer = true
+        button.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.35).cgColor
+        button.layer?.cornerRadius = 8
+        button.layer?.masksToBounds = true
+    }
+
+    private func applyNavigationIconsFromBundle() {
+        prevButton.image = makeTemplateIcon(
+            named: navigationIconAssets.previous,
+            size: 18,
+            fallbackSystemName: "arrow.left"
+        )
+        nextButton.image = makeTemplateIcon(
+            named: navigationIconAssets.next,
+            size: 18,
+            fallbackSystemName: "arrow.right"
+        )
+    }
+
+    private func makeTemplateIcon(named name: String, size: CGFloat, fallbackSystemName: String) -> NSImage? {
+        if let url = Bundle.main.url(forResource: name, withExtension: "svg"),
+           let image = NSImage(contentsOf: url) {
+            image.size = NSSize(width: size, height: size)
+            image.isTemplate = true
+            return image
+        }
+        if #available(macOS 11.0, *) {
+            let config = NSImage.SymbolConfiguration(pointSize: size, weight: .medium)
+            return NSImage(systemSymbolName: fallbackSystemName, accessibilityDescription: name)?
+                .withSymbolConfiguration(config)
+        }
+        return nil
     }
 
     private func installKeyMonitor() {
@@ -965,8 +1484,10 @@ private final class ImageViewerWindowController: NSWindowController {
                 self.showNext()
                 return nil
             }
-            if event.keyCode == 53 { // esc
-                self.close()
+            if event.keyCode == 49 || event.keyCode == 53 { // space / esc
+                if resolveImageViewerCloseAction(for: event.keyCode, entryMode: self.entryMode) {
+                    self.closeWithAnimation()
+                }
                 return nil
             }
             if event.modifierFlags.contains(.command),
@@ -983,6 +1504,41 @@ private final class ImageViewerWindowController: NSWindowController {
         }
     }
 
+    private func installSwipeMonitor() {
+        guard swipeMonitor == nil else { return }
+        swipeMonitor = NSEvent.addLocalMonitorForEvents(matching: [.swipe, .scrollWheel]) { [weak self] event in
+            guard let self else { return event }
+            guard let window = self.window, window.isKeyWindow else { return event }
+
+            if event.type == .swipe {
+                if abs(event.deltaX) > 0.15 {
+                    self.handleHorizontalSwipe(deltaX: event.deltaX)
+                    return nil
+                }
+                return event
+            }
+
+            let deltaX = event.scrollingDeltaX
+            let deltaY = event.scrollingDeltaY
+            guard abs(deltaX) > abs(deltaY), abs(deltaX) > 6 else { return event }
+            self.handleHorizontalSwipe(deltaX: deltaX)
+            return nil
+        }
+    }
+
+    private func handleHorizontalSwipe(deltaX: CGFloat) {
+        let now = Date()
+        guard now.timeIntervalSince(lastSwipeAt) > 0.22 else { return }
+        lastSwipeAt = now
+
+        switch resolveImageViewerSwipeNavigation(deltaX: deltaX) {
+        case .previous:
+            showPrevious()
+        case .next:
+            showNext()
+        }
+    }
+
     private func refreshUI() {
         guard !items.isEmpty, currentIndex < items.count else {
             close()
@@ -990,8 +1546,6 @@ private final class ImageViewerWindowController: NSWindowController {
         }
         let current = items[currentIndex]
         imageView.image = try? fileService.loadImage(for: current)
-        titleLabel.stringValue = current.url.lastPathComponent
-        detailLabel.stringValue = dateFormatter.string(from: current.createdAt)
         keepButton.title = current.isKept ? "Unkeep" : "Keep"
         prevButton.isEnabled = currentIndex > 0
         nextButton.isEnabled = currentIndex < (items.count - 1)
@@ -1054,14 +1608,23 @@ private final class ImageViewerWindowController: NSWindowController {
             try trashService.moveToTrash(item.url)
             items.remove(at: currentIndex)
             onItemDeleted?(item.url)
-            if currentIndex >= items.count {
-                currentIndex = max(0, items.count - 1)
+            guard let nextIndex = resolveImageViewerIndexAfterDelete(
+                currentIndex: currentIndex,
+                itemCountAfterDeletion: items.count
+            ) else {
+                closeWithAnimation()
+                return
             }
+            currentIndex = nextIndex
             refreshUI()
             HUDService.shared.show(message: "Moved to Trash", style: .info, duration: 1.0)
         } catch {
             HUDService.shared.show(message: error.localizedDescription, style: .error, duration: 1.4)
         }
+    }
+
+    @objc private func closePressed() {
+        closeWithAnimation()
     }
 
     @objc private func prevPressed() {
@@ -1088,6 +1651,27 @@ private final class ImageViewerWindowController: NSWindowController {
         guard !items.isEmpty, currentIndex < items.count else { return }
         NSWorkspace.shared.activateFileViewerSelecting([items[currentIndex].url])
     }
-}
 
+    private func closeWithAnimation() {
+        guard let window else {
+            close()
+            return
+        }
+        guard !isClosingAnimated else { return }
+        guard window.isVisible else {
+            close()
+            return
+        }
+        isClosingAnimated = true
+        NSAnimationContext.runAnimationGroup({ context in
+            context.duration = backdropStyle.transitionDuration
+            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            window.animator().alphaValue = 0
+        }, completionHandler: { [weak self] in
+            guard let self else { return }
+            self.isClosingAnimated = false
+            self.close()
+        })
+    }
+}
 

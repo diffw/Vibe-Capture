@@ -233,9 +233,7 @@ final class LibraryUITests: XCTestCase {
 
     func testLibraryControlsExist() {
         XCTAssertTrue(app.windows["library.window"].waitForExistence(timeout: 5))
-        XCTAssertTrue(element("library.control.viewmode").waitForExistence(timeout: 5))
         XCTAssertTrue(element("library.control.filter").waitForExistence(timeout: 5))
-        XCTAssertTrue(element("library.button.refresh").waitForExistence(timeout: 5))
         XCTAssertTrue(element("library.button.cleanup").waitForExistence(timeout: 5))
     }
 
