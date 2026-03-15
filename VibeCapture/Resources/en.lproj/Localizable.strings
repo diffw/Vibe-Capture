@@ -139,6 +139,9 @@
 
 /* [Context: HUD] Image copied */
 "hud.image_copied" = "Image copied";
+"hud.images_copied" = "%d images copied";
+"overlay.hint.drag_select" = "Drag to select area";
+"overlay.hint.double_click_fullscreen" = "Double-click for full screen";
 
 /* [Context: HUD] Image & Prompt copied (Copy & Arm) */
 "hud.image_prompt_copied" = "Image & Prompt copied";

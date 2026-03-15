@@ -1,5 +1,29 @@
 import AppKit
 
+enum OverlayMouseUpAction: Equatable {
+    case scheduleCancel
+    case cancelNow
+    case captureSelection(CGRect)
+    case captureFullScreen
+}
+
+func resolveOverlayMouseUpAction(clickCount: Int, selectionRectGlobal: CGRect?) -> OverlayMouseUpAction {
+    if clickCount >= 2 {
+        return .captureFullScreen
+    }
+    guard let rect = selectionRectGlobal else {
+        return .scheduleCancel
+    }
+    if rect.width < 5 || rect.height < 5 {
+        return .cancelNow
+    }
+    return .captureSelection(rect)
+}
+
+func shouldShowOverlayInteractionHint() -> Bool {
+    true
+}
+
 final class ScreenshotOverlayController {
     /// Completion callback receives: selection rect, start screen displayID, and a cleanup callback.
     /// The cleanup callback MUST be called to close overlay windows.
@@ -15,6 +39,7 @@ final class ScreenshotOverlayController {
     private var cursorWasSet = false
     private var isFinishing = false
     private var globalKeyMonitor: Any?
+    private var pendingSingleClickCancel: DispatchWorkItem?
 
     func start(frozenBackgroundsByDisplayID: [CGDirectDisplayID: NSImage], completion: @escaping Completion) {
         AppLog.log(.info, "overlay", "start")
@@ -53,6 +78,7 @@ final class ScreenshotOverlayController {
 
     func stop() {
         AppLog.log(.info, "overlay", "stop")
+        cancelPendingSingleClickCancel()
         isFinishing = false
 
         for win in windows {
@@ -77,12 +103,13 @@ final class ScreenshotOverlayController {
         }
     }
 
-    func handleMouseDown() {
+    func handleMouseDown(_ event: NSEvent) {
         guard !isFinishing else { return }
+        cancelPendingSingleClickCancel()
         let p = NSEvent.mouseLocation
-        AppLog.log(.debug, "overlay", "mouseDown x=\(Int(p.x)) y=\(Int(p.y))")
+        AppLog.log(.debug, "overlay", "mouseDown x=\(Int(p.x)) y=\(Int(p.y)) clickCount=\(event.clickCount)")
         startPoint = p
-        startScreen = NSScreen.screens.first(where: { $0.frame.contains(p) })
+        startScreen = resolveScreen(at: p)
         selectionRectGlobal = nil
         updateSelection()
     }
@@ -101,23 +128,25 @@ final class ScreenshotOverlayController {
         updateSelection()
     }
 
-    func handleMouseUp() {
+    func handleMouseUp(_ event: NSEvent) {
         guard !isFinishing else { return }
         defer { updateSelection() }
-        guard let rect = selectionRectGlobal else {
-            AppLog.log(.info, "overlay", "mouseUp without selection -> cancel")
+        let action = resolveOverlayMouseUpAction(clickCount: event.clickCount, selectionRectGlobal: selectionRectGlobal)
+        switch action {
+        case .captureFullScreen:
+            captureCurrentScreenFullscreen()
+        case .captureSelection(let rect):
+            AppLog.log(.info, "overlay", "mouseUp selection w=\(Int(rect.width)) h=\(Int(rect.height))")
+            finish(rect)
+        case .cancelNow:
+            if let rect = selectionRectGlobal {
+                AppLog.log(.info, "overlay", "mouseUp tiny selection -> cancel w=\(Int(rect.width)) h=\(Int(rect.height))")
+            }
             finish(nil)
-            return
+        case .scheduleCancel:
+            AppLog.log(.info, "overlay", "mouseUp without selection -> schedule cancel")
+            scheduleSingleClickCancel()
         }
-
-        if rect.width < 5 || rect.height < 5 {
-            AppLog.log(.info, "overlay", "mouseUp tiny selection -> cancel w=\(Int(rect.width)) h=\(Int(rect.height))")
-            finish(nil)
-            return
-        }
-
-        AppLog.log(.info, "overlay", "mouseUp selection w=\(Int(rect.width)) h=\(Int(rect.height))")
-        finish(rect)
     }
 
     func handleKeyDown(_ event: NSEvent) {
@@ -136,6 +165,7 @@ final class ScreenshotOverlayController {
 
     private func finish(_ rect: CGRect?) {
         guard !isFinishing else { return }
+        cancelPendingSingleClickCancel()
         isFinishing = true
 
         let completion = self.completion
@@ -194,6 +224,42 @@ final class ScreenshotOverlayController {
             y: max(rect.minY, min(point.y, rect.maxY))
         )
     }
+
+    private func resolveScreen(at point: CGPoint) -> NSScreen? {
+        if let screen = NSScreen.screens.first(where: { $0.frame.contains(point) }) {
+            return screen
+        }
+        return NSScreen.main ?? NSScreen.screens.first
+    }
+
+    private func scheduleSingleClickCancel() {
+        cancelPendingSingleClickCancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self, !self.isFinishing else { return }
+            AppLog.log(.info, "overlay", "single-click timeout -> cancel")
+            self.finish(nil)
+        }
+        pendingSingleClickCancel = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + max(0.05, NSEvent.doubleClickInterval), execute: workItem)
+    }
+
+    private func cancelPendingSingleClickCancel() {
+        pendingSingleClickCancel?.cancel()
+        pendingSingleClickCancel = nil
+    }
+
+    private func captureCurrentScreenFullscreen() {
+        cancelPendingSingleClickCancel()
+        let mouse = NSEvent.mouseLocation
+        guard let screen = resolveScreen(at: mouse) else {
+            finish(nil)
+            return
+        }
+        startScreen = screen
+        let rect = screen.frame
+        AppLog.log(.info, "overlay", "double-click -> fullscreen capture w=\(Int(rect.width)) h=\(Int(rect.height))")
+        finish(rect)
+    }
 }
 
 final class OverlayWindow: NSPanel {
@@ -234,9 +300,9 @@ final class OverlayWindow: NSPanel {
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         contentView = overlayView
 
-        overlayView.onMouseDown = { [weak self] in self?.controller?.handleMouseDown() }
+        overlayView.onMouseDown = { [weak self] event in self?.controller?.handleMouseDown(event) }
         overlayView.onMouseDragged = { [weak self] in self?.controller?.handleMouseDragged() }
-        overlayView.onMouseUp = { [weak self] in self?.controller?.handleMouseUp() }
+        overlayView.onMouseUp = { [weak self] event in self?.controller?.handleMouseUp(event) }
         overlayView.onKeyDown = { [weak self] event in self?.controller?.handleKeyDown(event) }
         overlayView.onMouseMoved = { [weak self] in self?.controller?.handleMouseMoved() }
     }
@@ -265,9 +331,9 @@ final class OverlayView: NSView {
     /// Selection size for display during drag
     var selectionSize: CGSize?
 
-    var onMouseDown: (() -> Void)?
+    var onMouseDown: ((NSEvent) -> Void)?
     var onMouseDragged: (() -> Void)?
-    var onMouseUp: (() -> Void)?
+    var onMouseUp: ((NSEvent) -> Void)?
     var onKeyDown: ((NSEvent) -> Void)?
     var onMouseMoved: (() -> Void)?
 
@@ -288,7 +354,7 @@ final class OverlayView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
-        onMouseDown?()
+        onMouseDown?(event)
     }
 
     override func mouseDragged(with event: NSEvent) {
@@ -296,7 +362,7 @@ final class OverlayView: NSView {
     }
 
     override func mouseUp(with event: NSEvent) {
-        onMouseUp?()
+        onMouseUp?(event)
     }
 
     override func keyDown(with event: NSEvent) {
@@ -371,11 +437,26 @@ final class OverlayView: NSView {
             let coordText = "X: \(Int(globalPos.x))  Y: \(Int(globalPos.y))"
             // Position label offset from cursor
             let labelPos = CGPoint(x: pos.x + 20, y: pos.y - 25)
-            drawInfoLabel(text: coordText, at: labelPos, centered: false)
+            let coordRect = drawInfoLabel(text: coordText, at: labelPos, centered: false)
+
+            if shouldShowOverlayInteractionHint() {
+                let hintText = "\(L("overlay.hint.drag_select")) · \(L("overlay.hint.double_click_fullscreen"))"
+                let hintPoint = resolveOverlayInteractionHintPoint(coordRect: coordRect)
+                _ = drawInfoLabel(text: hintText, at: hintPoint, centered: false)
+            }
         }
     }
 
-    private func drawInfoLabel(text: String, at point: CGPoint, centered: Bool) {
+    private func resolveOverlayInteractionHintPoint(coordRect: CGRect) -> CGPoint {
+        let preferredBelowY = coordRect.minY - 26
+        if preferredBelowY >= 4 {
+            return CGPoint(x: coordRect.minX, y: preferredBelowY)
+        }
+        return CGPoint(x: coordRect.minX, y: coordRect.maxY + 6)
+    }
+
+    @discardableResult
+    private func drawInfoLabel(text: String, at point: CGPoint, centered: Bool) -> CGRect {
         let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         let attrs: [NSAttributedString.Key: Any] = [
             .font: font,
@@ -408,6 +489,7 @@ final class OverlayView: NSView {
         let textX = bgX + padding
         let textY = bgY + (bgHeight - textSize.height) / 2
         attrStr.draw(at: CGPoint(x: textX, y: textY))
+        return bgRect
     }
 }
 

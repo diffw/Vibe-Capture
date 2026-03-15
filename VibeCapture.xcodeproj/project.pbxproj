@@ -42,6 +42,7 @@
 		A1B2C3D4E5F60718293A4D30 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */; };
 		A1B2C3D4E5F60718293A4D31 /* RoundedHoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */; };
 		A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */; };
+		E0A100000000000000000001 /* ThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A000000000000000000001 /* ThumbnailService.swift */; };
 		A1B2C3D4E5F60718293A4D33 /* ScreenshotPreviewPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C33 /* ScreenshotPreviewPanelController.swift */; };
 		A1B2C3D4E5F60718293A4D34 /* CountdownCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C34 /* CountdownCloseButton.swift */; };
 		A1B2C3D4E5F60718293A4D35 /* DraggableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C35 /* DraggableImageView.swift */; };
@@ -104,6 +105,8 @@
 		B1B2C3D4E5F60718293AC021 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC011 /* VibeCapture/Tests/VibeCaptureTests/EntitlementsServiceTests.swift */; };
 		B1B2C3D4E5F60718293AC022 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC012 /* VibeCapture/Tests/VibeCaptureTests/ProStatusTests.swift */; };
 		B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */; };
+		E0A100000000000000000010 /* VibeCapture/Tests/VibeCaptureIntegrationTests/ThumbnailIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A000000000000000000010 /* VibeCapture/Tests/VibeCaptureIntegrationTests/ThumbnailIntegrationTests.swift */; };
+		E0A100000000000000000020 /* VibeCapture/Tests/VibeCaptureTests/Performance/ThumbnailPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A000000000000000000020 /* VibeCapture/Tests/VibeCaptureTests/Performance/ThumbnailPerformanceTests.swift */; };
 		B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */; };
 		B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */; };
 		B1B2C3D4E5F60718293AC028 /* VibeCap.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4C70 /* VibeCap.storekit */; };
@@ -166,6 +169,7 @@
 		A1B2C3D4E5F60718293A4C30 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C31 /* RoundedHoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedHoverButton.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewService.swift; sourceTree = "<group>"; };
+		E0A000000000000000000001 /* ThumbnailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailService.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C33 /* ScreenshotPreviewPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotPreviewPanelController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C34 /* CountdownCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownCloseButton.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4C35 /* DraggableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableImageView.swift; sourceTree = "<group>"; };
@@ -228,6 +232,8 @@
 		B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift; sourceTree = "<group>"; };
+		E0A000000000000000000010 /* VibeCapture/Tests/VibeCaptureIntegrationTests/ThumbnailIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureIntegrationTests/ThumbnailIntegrationTests.swift; sourceTree = "<group>"; };
+		E0A000000000000000000020 /* VibeCapture/Tests/VibeCaptureTests/Performance/ThumbnailPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/Performance/ThumbnailPerformanceTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABC040 /* VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibeCapture/Tests/VibeCaptureTests/ClipboardAutoPasteCoreTests.swift; sourceTree = "<group>"; };
 		B1B2C3D4E5F60718293ABD000 /* VibeCapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VibeCapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -336,6 +342,7 @@
 				A1B2C3D4E5F60718293A4C0B /* ScreenCaptureService.swift */,
 				8A5BF129A5F54D31BDB3C30D /* ScreenCropConverter.swift */,
 				A1B2C3D4E5F60718293A4C32 /* ScreenshotPreviewService.swift */,
+				E0A000000000000000000001 /* ThumbnailService.swift */,
 				A1B2C3D4E5F60718293A4C0C /* ScreenshotSaveService.swift */,
 			);
 			path = Services;
@@ -481,6 +488,8 @@
 				B1B2C3D4E5F60718293ABC014 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift */,
 				B1B2C3D4E5F60718293ABC015 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift */,
 				B1B2C3D4E5F60718293ABC020 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift */,
+				E0A000000000000000000010 /* VibeCapture/Tests/VibeCaptureIntegrationTests/ThumbnailIntegrationTests.swift */,
+				E0A000000000000000000020 /* VibeCapture/Tests/VibeCaptureTests/Performance/ThumbnailPerformanceTests.swift */,
 				B1B2C3D4E5F60718293ABC030 /* VibeCapture/Tests/VibeCaptureUITests/PaywallUITests.swift */,
 			);
 			name = Tests;
@@ -654,6 +663,7 @@
 				A1B2C3D4E5F60718293A4D81 /* ClipboardAutoPasteService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D06 /* ClipboardService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D32 /* ScreenshotPreviewService.swift in Sources */,
+				E0A100000000000000000001 /* ThumbnailService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D07 /* HUDService.swift in Sources */,
 				A1B2C3D4E5F60718293A4D37 /* AppLog.swift in Sources */,
 				A1B2C3D4E5F60718293A4D30 /* LocalizationManager.swift in Sources */,
@@ -704,6 +714,8 @@
 				D0A20000000000000000000A /* VibeCapture/Tests/VibeCaptureTests/OnboardingStoreTests.swift in Sources */,
 				D0A20000000000000000000B /* VibeCapture/Tests/VibeCaptureTests/OnboardingAutoAdvanceTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC024 /* VibeCapture/Tests/VibeCaptureIntegrationTests/PurchaseFlowTests.swift in Sources */,
+				E0A100000000000000000010 /* VibeCapture/Tests/VibeCaptureIntegrationTests/ThumbnailIntegrationTests.swift in Sources */,
+				E0A100000000000000000020 /* VibeCapture/Tests/VibeCaptureTests/Performance/ThumbnailPerformanceTests.swift in Sources */,
 				B1B2C3D4E5F60718293AC025 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockCapabilityService.swift in Sources */,
 				B1B2C3D4E5F60718293AC026 /* VibeCapture/Tests/VibeCaptureTests/Mocks/MockEntitlementsService.swift in Sources */,
 			);

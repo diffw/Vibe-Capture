@@ -408,6 +408,22 @@ final class LibraryFileService {
         return items.sorted(by: { $0.createdAt > $1.createdAt })
     }
 
+    func countImageFiles() throws -> Int {
+        guard let folderURL = currentFolderURL() else {
+            throw LibraryServiceError.folderNotConfigured
+        }
+        let didStart = folderURL.startAccessingSecurityScopedResource()
+        defer { if didStart { folderURL.stopAccessingSecurityScopedResource() } }
+
+        let urls = try fileManager.contentsOfDirectory(
+            at: folderURL,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        )
+        let allowed = Set(["png", "jpg", "jpeg"])
+        return urls.count(where: { allowed.contains($0.pathExtension.lowercased()) })
+    }
+
     func loadImage(for item: LibraryItem) throws -> NSImage {
         let fallbackFolderURL = item.url.deletingLastPathComponent()
         let scopedFolderURL = resolvedFolderURL(for: fallbackFolderURL)

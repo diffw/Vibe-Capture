@@ -34,6 +34,8 @@
 "modal.button.enable_accessibility" = "啟用 →";
 "modal.button.enable_auto_send" = "啟用 →";
 "hud.image_copied" = "圖片已複製";
+"overlay.hint.drag_select" = "拖曳框選區域";
+"overlay.hint.double_click_fullscreen" = "雙擊擷取目前螢幕";
 "hud.image_prompt_copied" = "圖片與提示詞已複製";
 "hud.copied" = "已複製";
 "hud.prompt_copied" = "指令已複製";

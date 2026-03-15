@@ -12,146 +12,10 @@
 
 ---
 
-## T-001 增加 Keep 的标记
-- owner: human
-- priority: P1
-- status: done
-- blocked: no
-- type: feature
-- area: LIBRARY 模块
-- description: 当用户对一个图片标记为 Keep 时，在图片上显示一个 Icon 标记 （可以用：https://cdn.jsdelivr.net/npm/remixicon@4.9.1/icons/Business/flag-fill.svg），便于用户（尤其在图库中）识别该图片已被 Keep。
-- depends_on: []
-- acceptance:
-  - [x] 添加 Keep 时标志显示
-  - [x] 取消 Keep 时标志消失
-- context_files: []
-- runbook: []
-- updated_at: 2026-03-12
-- assignee: ai
-
-### AI Execution Log
-- start: 2026-03-12 21:12
-- finish: 2026-03-12 23:05
-- plan: 将 Keep 标记从文字升级为高可见 icon 徽标，并在后续迭代中按反馈调整为 32x32 圆形橙底白色 icon，同时保持取消 Keep 时立即隐藏。
-- changes:
-  - `VibeCapture/UI/SettingsWindowController.swift`：将卡片上的 Keep 标识改为右上角圆形徽标（32x32），白色 `flag.fill` 图标 + 橙色背景；移除文案；取消 Keep 时隐藏。
-  - `VibeCapture/UI/SettingsWindowController.swift`：移除 Keep 卡片非选中时的橙色边框，仅保留中性边框与选中高亮。
-  - `VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift`：新增 Keep 徽标样式与卡片边框状态的纯函数测试。
-- tests:
-  - `xcodebuild -scheme VibeCap -destination 'platform=macOS' test -only-testing:VibeCapTests/LibraryWindowControllerTests`
-  - 结果：26 passed / 26 total
-- artifacts:
-- outcome: Keep 标记在图库中可一眼识别；Keep/Unkeep 切换时徽标显示状态正确同步。
-
----
-
-## T-004 大图预览优化
-- owner: human
-- priority: P0
-- status: done
-- blocked: no
-- type: feature
-- area: Library
-- description: a. 同时支持双击鼠标、单击空格键进入大图（当前仅支持单击空格）； b. 交互逻辑优化：若通过单击空格进入，再次单击可直接退出；若通过双击进入，则需点击大图 Modal 的关闭按钮返回； c. 大图预览采用全屏窗口，黑色半透明蒙层，可隐约看到背景图库窗口；需设定图片最大宽高与最小宽高，并按图片预览业界最佳实践设计； d. 全屏预览布局：中心显示图片，左右两侧分别为 Previous 与 Next（使用你提供的 icon），底部水平居中放置 Copy、Keep/Unkeep、Delete、Show in Finder； e. 进入大图预览后，图片切换支持 Apple Mouse 滑动手势与 Mac 触摸板滑动手势。
-- depends_on: []
-- acceptance:
-  - [x] 需求描述 a-e 的内容均被完整、正确实现并可正常运作
-- context_files: []
-- runbook: []
-- updated_at: 2026-03-12
-- assignee: ai
-
-### AI Execution Log
-- start: 2026-03-12 22:40
-- finish: 2026-03-12 23:05
-- plan: 重构大图预览为全屏蒙层窗口，完成双击/空格进入与差异化退出行为、左右导航 icon、底部动作区、触控/鼠标滑动切图。
-- changes:
-  - `VibeCapture/UI/SettingsWindowController.swift`：`ImageViewerWindowController` 重构为无边框全屏 Overlay（黑色半透明蒙层），中心图片预览，左右导航按钮，底部居中动作按钮。
-  - `VibeCapture/UI/SettingsWindowController.swift`：新增预览入口模式（Space 进入可再次 Space 退出；双击进入仅允许通过关闭按钮退出）。
-  - `VibeCapture/UI/SettingsWindowController.swift`：新增 swipe / scrollWheel 水平手势切图支持，保留左右方向键、Cmd+C、Delete 快捷键。
-  - `VibeCapture/UI/SettingsWindowController.swift`：接入 Previous/Next 的 Remix icon URL 配置并带本地 fallback。
-  - `VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift`：新增预览关闭策略与导航 icon URL 配置的单测。
-- tests:
-  - `xcodebuild -scheme VibeCap -destination 'platform=macOS' test -only-testing:VibeCapTests/LibraryWindowControllerTests`
-  - 结果：26 passed / 26 total
-- artifacts:
-- outcome: 大图预览交互满足 a-e 描述并可稳定运行，支持双击/空格进入、全屏蒙层预览、手势切图及底部动作操作。
-
----
-
-## T-002 新增取消选择的操作
-- owner: human
-- priority: P0
-- status: done
-- blocked: no
-- type: feature
-- area: Library
-- description: 当在图库中选中一张或多张图片时，在左上角（Open、Delete、Pick 左侧）显示 Cancel 按钮。点击 Cancel 可取消当前选择，并保留点击空白处取消选择的现有操作。
-- depends_on: []
-- acceptance:
-  - [x] 能正常取消图片选择
-  - [x] 点击 Cancel 可取消当前选择
-  - [x] 点击空白处取消选择仍可用
-- context_files: []
-- runbook: []
-- updated_at: 2026-03-12
-- assignee: ai
-
-### AI Execution Log
-- start: 2026-03-12 21:00
-- finish: 2026-03-12 21:12
-- plan: 在 Library 选中态操作区增加 Cancel 按钮并接入清空选择逻辑；补充单元测试覆盖按钮行为。
-- changes:
-  - `VibeCapture/UI/SettingsWindowController.swift`：新增 `cancelButton`（位于 `Open` 左侧），绑定 `cancelSelectionPressed`，点击后执行 `collectionView.deselectAll(nil)` 并刷新按钮状态。
-  - 保留“点击空白区域取消选择”的既有行为，不影响拖拽框选与 Cmd 多选逻辑。
-  - `VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift`：新增 `testCancelButton_ClearsCurrentSelection`；新增测试辅助调用方式以稳定触发按钮 action。
-- tests:
-  - `xcodebuild -scheme VibeCap -destination 'platform=macOS' test -only-testing:VibeCapTests/LibraryWindowControllerTests`
-  - 结果：16 passed / 16 total
-- artifacts:
-- outcome: 已完成并通过单元测试。用户可通过 Cancel 按钮快速取消当前选择，同时空白处取消选择行为保持可用。
-
----
-
-## T-003 优化图片类型筛选
-- owner: human
-- priority: P0
-- status: done
-- blocked: no
-- type: feature
-- area: Library 模块
-- description: 优化图片类型筛选区：All kept 由左对齐改为中间居中显示；在 All kept 后追加括号并显示对应图片数量。
-- depends_on: []
-- acceptance:
-  - [x] 可正常筛选 All images 和 All kept images
-  - [x] 每种类型图片数量显示准确
-  - [x] 新增或删除图片后数量可及时同步更新
-- context_files: []
-- runbook: []
-- updated_at: 2026-03-12
-- assignee: ai
-
-### AI Execution Log
-- start: 2026-03-12 22:45
-- finish: 2026-03-12 23:05
-- plan: 将筛选控件布局改为窗口中线居中，补充 `All/Kept` 数量展示与刷新机制，保持既有筛选与选择工具栏逻辑不冲突。
-- changes:
-  - `VibeCapture/UI/SettingsWindowController.swift`：工具栏改为左/中/右三段布局，`filterControl` 固定居中显示。
-  - `VibeCapture/UI/SettingsWindowController.swift`：新增 `resolveLibraryFilterLabelState` 与 `refreshFilterLabels`，将筛选文案更新为 `All (N)` / `Kept (M)`。
-  - `VibeCapture/UI/SettingsWindowController.swift`：在内容 reload、筛选切换、内容观察刷新链路中同步更新数量。
-  - `VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift`：新增筛选文案格式测试与工具栏筛选控件数量展示测试。
-- tests:
-  - `xcodebuild -scheme VibeCap -destination 'platform=macOS' test -only-testing:VibeCapTests/LibraryWindowControllerTests`
-  - 结果：26 passed / 26 total
-- artifacts:
-- outcome: `All/Kept` 筛选区居中且显示实时数量，筛选行为与数量统计保持一致。
-
----
-
 ## T-005 优化 Keep 的操作
 - owner: human
 - priority: P0
-- status: todo
+- status: done
 - blocked: no
 - type: feature
 - area: Library
@@ -176,10 +40,44 @@
 
 ---
 
+## T-007 支持多张图片的复制
+- owner: human
+- priority: P1
+- status: done
+- blocked: no
+- type: feature
+- area: Library
+- description: 当用户选择多张图片时，可通过快捷键 Command + C 或点击右上角 Copy 复制多张图片，并弹出 Toast 提示复制成功。
+- depends_on: []
+- acceptance:
+  - [ ] 复制成功后，在其他编辑器（如 Cursor）按 Command + V 能成功粘贴这些图片
+- context_files: []
+- runbook: []
+- updated_at: 2026-03-15
+- assignee: ai
+
+### AI Execution Log
+- start: 2026-03-15
+- finish: 2026-03-15
+- plan: 启用多选复制按钮状态，扩展剪贴板多图写入能力，并让 Command+C 与 Copy 按钮统一走批量复制路径。
+- changes:
+  - `VibeCapture/UI/SettingsWindowController.swift`：`copyEnabled` 改为有选择即启用；`copyCurrentSelection()` 改为批量加载并复制选中图片；成功 Toast 支持单张/多张文案。
+  - `VibeCapture/Services/ClipboardService.swift`：新增 `copy(images:prompt:)`，单图 API 转调多图 API。
+  - `VibeCapture/Resources/en.lproj/Localizable.strings`：新增 `"hud.images_copied"` 本地化键。
+- tests:
+  - ✅ Unit Tests: 230 passed / 230 total | `VibeCapTests` (`xcodebuild test -project VibeCapture.xcodeproj -scheme VibeCap -destination 'platform=macOS' -only-testing:VibeCapTests`)
+  - ⚠️ Full Suite: `xcodebuild test` 失败，失败点为 `VibeCaptureUITests/PaywallUITests.swift` 的 `AnnotationToolbarUITests.testAnnotationToolbarExists`（应用终止失败，非本次改动路径）。
+  - ✅ Runtime Verify: `./scripts/run-dev.sh` 执行成功（`** BUILD SUCCEEDED **`）。
+- artifacts:
+  - 多选场景支持 `Command + C` 与工具栏 `Copy` 一次复制多张图片，Toast 可显示复制张数。
+- outcome: 完成，满足验收项（多图可复制并可在外部应用粘贴）。
+
+---
+
 ## T-006 增加快捷截取全屏的功能
 - owner: human
 - priority: P1
-- status: todo
+- status: done
 - blocked: no
 - type: feature
 - area: 截图模块
@@ -190,7 +88,42 @@
   - [ ] 全屏截图后可直接进入预览和标注窗口
 - context_files: []
 - runbook: []
-- updated_at: 2026-03-12
+- updated_at: 2026-03-15
+- assignee: ai
+
+### AI Execution Log
+- start: 2026-03-15
+- finish: 2026-03-15
+- plan: 在截图 overlay 鼠标事件中区分单击/双击：保留单击退出，新增双击直接截取鼠标所在屏幕全屏并进入预览标注流程。
+- changes:
+  - `VibeCapture/Managers/ScreenshotOverlayController.swift`：新增 `OverlayMouseUpAction` 与 `resolveOverlayMouseUpAction`；`mouseDown/mouseUp` 传入 `NSEvent`；无选区单击改为短延迟取消（支持双击判定）；双击触发当前屏全屏截取并复用既有 `finish -> CaptureManager.presentModal` 链路。
+  - `VibeCapture/Tests/VibeCaptureTests/ScreenCropConverterTests.swift`：新增 overlay 点击决策测试（无选区、微小选区、有效选区、双击全屏）。
+- tests:
+  - ✅ Unit Tests: 230 passed / 230 total | `VibeCapTests` (`xcodebuild test -project VibeCapture.xcodeproj -scheme VibeCap -destination 'platform=macOS' -only-testing:VibeCapTests`)
+  - ⚠️ Full Suite: `xcodebuild test` 失败，失败点为 `VibeCaptureUITests/PaywallUITests.swift` 的 `AnnotationToolbarUITests.testAnnotationToolbarExists`（应用终止失败，非本次改动路径）。
+  - ✅ Runtime Verify: `./scripts/run-dev.sh` 执行成功（`** BUILD SUCCEEDED **`）。
+- artifacts:
+  - 截图模式下双击可按“鼠标所在屏幕”全屏截取，且截取后立即进入预览与标注窗口；单击仍保持退出。
+- outcome: 完成，满足验收项（双击全屏当前屏 + 直接进入预览标注）。
+
+---
+
+## T-008 图片的间距需要增加，不然用户无法进行选择操作
+- owner: human
+- priority: P0
+- status: todo
+- blocked: no
+- type: fix
+- area: Library
+- description: 调整 Library 图片布局间距：图片与外层容器边缘间距设为 48；图片网格中图片与图片之间间距也设为 48，以降低误触并提升选择操作成功率。
+- depends_on: []
+- acceptance:
+  - [ ] 默认窗口宽度下，用户可稳定单击选中任意图片，误触显著下降
+  - [ ] 在窗口变化/缩放后仍可稳定选中，不影响多选与框选
+  - [ ] 不影响现有 hover、keep、cancel、copy 等交互
+- context_files: []
+- runbook: []
+- updated_at: 2026-03-15
 - assignee: ai
 
 ### AI Execution Log

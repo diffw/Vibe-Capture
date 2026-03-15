@@ -230,6 +230,17 @@ final class LibraryServicesTests: XCTestCase {
         XCTAssertEqual(image.size.height, 20, accuracy: 0.1)
     }
 
+    func testCountImageFilesReturnsCorrectCount() throws {
+        _ = try writeImage(named: "count-a.png", daysAgo: 0)
+        _ = try writeImage(named: "count-b.jpg", daysAgo: 0)
+        let txtURL = temporaryFolderURL.appendingPathComponent("readme.txt")
+        try "hello".write(to: txtURL, atomically: true, encoding: .utf8)
+
+        let service = LibraryFileService()
+        let count = try service.countImageFiles()
+        XCTAssertEqual(count, 2)
+    }
+
     func testTrashServiceCanMoveListedItemToTrash() throws {
         let targetURL = try writeImage(named: "trash-item.png", daysAgo: 0)
         let service = LibraryFileService()
@@ -364,6 +375,75 @@ final class LibraryServicesTests: XCTestCase {
     }
 }
 
+// MARK: - ThumbnailService Tests
+
+final class ThumbnailServiceTests: XCTestCase {
+
+    func testCacheKey_sameInputsProduceSameKey() {
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let key1 = ThumbnailService.cacheKey(path: "/tmp/a.png", modDate: date)
+        let key2 = ThumbnailService.cacheKey(path: "/tmp/a.png", modDate: date)
+        XCTAssertEqual(key1, key2)
+        XCTAssertEqual(key1.count, 64, "SHA-256 hex should be 64 chars")
+    }
+
+    func testCacheKey_differentPathsProduceDifferentKeys() {
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let key1 = ThumbnailService.cacheKey(path: "/tmp/a.png", modDate: date)
+        let key2 = ThumbnailService.cacheKey(path: "/tmp/b.png", modDate: date)
+        XCTAssertNotEqual(key1, key2)
+    }
+
+    func testCacheKey_differentDatesProduceDifferentKeys() {
+        let date1 = Date(timeIntervalSince1970: 1_700_000_000)
+        let date2 = Date(timeIntervalSince1970: 1_700_000_001)
+        let key1 = ThumbnailService.cacheKey(path: "/tmp/a.png", modDate: date1)
+        let key2 = ThumbnailService.cacheKey(path: "/tmp/a.png", modDate: date2)
+        XCTAssertNotEqual(key1, key2)
+    }
+
+    func testDownsample_largeImageIsScaledDown() {
+        let source = makeImage(width: 2000, height: 1000)
+        let result = ThumbnailService.downsample(source, maxEdge: 400)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.size.width, 400, accuracy: 1)
+        XCTAssertEqual(result!.size.height, 200, accuracy: 1)
+    }
+
+    func testDownsample_smallImageIsReturnedUnchanged() {
+        let source = makeImage(width: 200, height: 100)
+        let result = ThumbnailService.downsample(source, maxEdge: 400)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.size.width, 200, accuracy: 1)
+        XCTAssertEqual(result!.size.height, 100, accuracy: 1)
+    }
+
+    func testDownsample_tallImageScalesByHeight() {
+        let source = makeImage(width: 500, height: 1000)
+        let result = ThumbnailService.downsample(source, maxEdge: 400)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.size.height, 400, accuracy: 1)
+        XCTAssertEqual(result!.size.width, 200, accuracy: 1)
+    }
+
+    func testDownsample_exactEdgeIsReturnedUnchanged() {
+        let source = makeImage(width: 400, height: 300)
+        let result = ThumbnailService.downsample(source, maxEdge: 400)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.size.width, 400, accuracy: 1)
+        XCTAssertEqual(result!.size.height, 300, accuracy: 1)
+    }
+
+    private func makeImage(width: CGFloat, height: CGFloat) -> NSImage {
+        let image = NSImage(size: NSSize(width: width, height: height))
+        image.lockFocus()
+        NSColor.red.setFill()
+        NSBezierPath(rect: NSRect(x: 0, y: 0, width: width, height: height)).fill()
+        image.unlockFocus()
+        return image
+    }
+}
+
 final class CaptureModalWindowControllerTests: XCTestCase {
     func testPreferredWindowLevelInUITestingIsNormal() {
         let level = CaptureModalWindowController.preferredWindowLevel(isUITesting: true)
@@ -472,6 +552,25 @@ final class LibraryWindowControllerTests: XCTestCase {
         }
     }
 
+    func testSelectionToolbar_PlacesCopyButtonBeforeOpenButton() throws {
+        try withLibraryWindowHavingItems { sut, collectionView in
+            collectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: [])
+            guard
+                let rootView = sut.window?.contentViewController?.view,
+                let copyButton = findButton(identifier: "library.button.copy", in: rootView),
+                let openButton = findButton(identifier: "library.button.open", in: rootView)
+            else {
+                XCTFail("Expected Copy and Open buttons in selection toolbar.")
+                return
+            }
+
+            rootView.layoutSubtreeIfNeeded()
+            let copyFrame = copyButton.convert(copyButton.bounds, to: rootView)
+            let openFrame = openButton.convert(openButton.bounds, to: rootView)
+            XCTAssertLessThan(copyFrame.minX, openFrame.minX)
+        }
+    }
+
     func testFilterControl_DisplaysItemCountsInLabels() throws {
         try withLibraryWindowHavingItems { sut, _ in
             guard
@@ -518,6 +617,94 @@ final class LibraryWindowControllerTests: XCTestCase {
         XCTAssertEqual(style.backgroundColor, .systemOrange)
     }
 
+    func testResolveLibraryKeepActionButtonStyle_UsesWhiteBackgroundAndDarkForeground() {
+        let style = resolveLibraryKeepActionButtonStyle()
+        XCTAssertEqual(style.symbolName, "flag.fill")
+        XCTAssertEqual(style.iconTintColor, .darkGray)
+        XCTAssertEqual(style.backgroundColor, .white)
+    }
+
+    func testResolveLibraryKeepActionButtonStyle_MatchesBadgeBorderStyle() {
+        let badgeStyle = resolveLibraryKeepBadgeStyle()
+        let actionStyle = resolveLibraryKeepActionButtonStyle()
+        XCTAssertEqual(actionStyle.borderColor, badgeStyle.borderColor)
+    }
+
+    func testResolveLibraryKeepControlMetrics_KeepsIconSizesConsistentAcrossStates() {
+        let metrics = resolveLibraryKeepControlMetrics()
+        XCTAssertEqual(metrics.keepActionButtonHeight, 28, accuracy: 0.001)
+        XCTAssertEqual(metrics.keptBadgeDiameter, 28, accuracy: 0.001)
+        XCTAssertEqual(metrics.keepActionButtonHeight, metrics.keptBadgeDiameter, accuracy: 0.001)
+    }
+
+    func testResolveLibraryKeepTooltipText_ForUnkeptItem_ShowsKeep() {
+        XCTAssertEqual(resolveLibraryKeepTooltipText(isKept: false), "Keep")
+    }
+
+    func testResolveLibraryKeepTooltipText_ForKeptItem_ShowsUnkeep() {
+        XCTAssertEqual(resolveLibraryKeepTooltipText(isKept: true), "Unkeep")
+    }
+
+    func testResolveLibraryShouldScheduleReload_WhenSuppressedKeepNotification_ReturnsFalse() {
+        let shouldSchedule = resolveLibraryShouldScheduleReload(
+            notificationReason: "keep",
+            suppressLocalKeepReload: true
+        )
+        XCTAssertFalse(shouldSchedule)
+    }
+
+    func testResolveLibraryShouldScheduleReload_WhenKeepNotificationNotSuppressed_ReturnsTrue() {
+        let shouldSchedule = resolveLibraryShouldScheduleReload(
+            notificationReason: "keep",
+            suppressLocalKeepReload: false
+        )
+        XCTAssertTrue(shouldSchedule)
+    }
+
+    func testResolveLibraryShouldScheduleReload_WhenReasonIsNotKeep_ReturnsTrue() {
+        let shouldSchedule = resolveLibraryShouldScheduleReload(
+            notificationReason: "delete",
+            suppressLocalKeepReload: true
+        )
+        XCTAssertTrue(shouldSchedule)
+    }
+
+    func testResolveLibraryKeepControlState_ForKeptItem_ShowsKeptBadge() {
+        let state = resolveLibraryKeepControlState(
+            isKept: true,
+            isHoveredOnPreview: false,
+            isSelected: false
+        )
+        XCTAssertEqual(state, .keptBadge)
+    }
+
+    func testResolveLibraryKeepControlState_ForHoveredUnkeptItem_ShowsKeepActionButton() {
+        let state = resolveLibraryKeepControlState(
+            isKept: false,
+            isHoveredOnPreview: true,
+            isSelected: false
+        )
+        XCTAssertEqual(state, .keepActionButton)
+    }
+
+    func testResolveLibraryKeepControlState_ForSelectedUnkeptItem_ShowsKeepActionButton() {
+        let state = resolveLibraryKeepControlState(
+            isKept: false,
+            isHoveredOnPreview: false,
+            isSelected: true
+        )
+        XCTAssertEqual(state, .keepActionButton)
+    }
+
+    func testResolveLibraryKeepControlState_ForIdleUnkeptItem_HidesControls() {
+        let state = resolveLibraryKeepControlState(
+            isKept: false,
+            isHoveredOnPreview: false,
+            isSelected: false
+        )
+        XCTAssertEqual(state, .hidden)
+    }
+
     func testResolveLibraryKeyboardAction_CommandDeleteTriggersDelete() {
         XCTAssertEqual(
             resolveLibraryKeyboardAction(keyCode: 51, modifierFlags: [.command]),
@@ -526,6 +713,13 @@ final class LibraryWindowControllerTests: XCTestCase {
         XCTAssertEqual(
             resolveLibraryKeyboardAction(keyCode: 117, modifierFlags: [.command]),
             .deleteSelection
+        )
+    }
+
+    func testResolveLibraryKeyboardAction_CommandCTriggersCopySelection() {
+        XCTAssertEqual(
+            resolveLibraryKeyboardAction(keyCode: 8, modifierFlags: [.command]),
+            .copySelection
         )
     }
 
@@ -568,23 +762,30 @@ final class LibraryWindowControllerTests: XCTestCase {
         XCTAssertEqual(assets.next, "arrow-right-line")
     }
 
-    func testResolveImageViewerBackdropStyle_UsesFullscreenGaussianBlur() {
+    func testResolveImageViewerBackdropStyle_KeepsOverlayMaterialSettingsStable() {
         let style = resolveImageViewerBackdropStyle()
         XCTAssertEqual(style.material, .underWindowBackground)
         XCTAssertEqual(style.blendingMode, .behindWindow)
     }
 
-    func testResolveImageViewerBackdropStyle_UsesSubtleDarkTintForReadability() {
+    func testResolveImageViewerBackdropStyle_UsesDarkMaskOpacity() {
         let style = resolveImageViewerBackdropStyle()
-        XCTAssertEqual(style.tintAlpha, 0.08, accuracy: 0.001)
-        XCTAssertGreaterThan(style.tintAlpha, 0)
-        XCTAssertLessThan(style.tintAlpha, 0.2)
+        XCTAssertEqual(style.tintAlpha, 0.5, accuracy: 0.001)
+        XCTAssertGreaterThan(style.tintAlpha, 0.45)
+        XCTAssertLessThanOrEqual(style.tintAlpha, 0.5)
     }
 
-    func testResolveImageViewerBackdropStyle_UsesStrongerSnapshotBlurRadius() {
+    func testResolveImageViewerBackdropStyle_EnablesSnapshotBlurOnDarkMask() {
         let style = resolveImageViewerBackdropStyle()
-        XCTAssertEqual(style.snapshotBlurRadius, 34, accuracy: 0.001)
-        XCTAssertGreaterThan(style.snapshotBlurRadius, 24)
+        XCTAssertEqual(style.snapshotBlurRadius, 100, accuracy: 0.001)
+        XCTAssertGreaterThan(style.snapshotBlurRadius, 0)
+    }
+
+    func testResolveImageViewerBackdropStyle_UsesDownsampleScaleForSnapshotPerformance() {
+        let style = resolveImageViewerBackdropStyle()
+        XCTAssertEqual(style.snapshotDownsampleScale, 0.35, accuracy: 0.001)
+        XCTAssertGreaterThan(style.snapshotDownsampleScale, 0)
+        XCTAssertLessThan(style.snapshotDownsampleScale, 1)
     }
 
     func testResolveImageViewerBackdropStyle_UsesFastFadeTransition() {
@@ -592,6 +793,248 @@ final class LibraryWindowControllerTests: XCTestCase {
         XCTAssertEqual(style.transitionDuration, 0.16, accuracy: 0.001)
         XCTAssertGreaterThan(style.transitionDuration, 0)
         XCTAssertLessThanOrEqual(style.transitionDuration, 0.2)
+    }
+
+    func testResolveImageViewerBackdropCapturePolicies_WhenOverlayWindowExists_UsesBelowWindowThenOnScreen() {
+        let policies = resolveImageViewerBackdropCapturePolicies(hasOverlayWindowNumber: true)
+        XCTAssertEqual(
+            policies,
+            [.onScreenBelowOverlayWindow, .onScreenOnly]
+        )
+    }
+
+    func testResolveImageViewerBackdropCapturePolicies_WhenOverlayWindowMissing_UsesOnScreenOnly() {
+        let policies = resolveImageViewerBackdropCapturePolicies(hasOverlayWindowNumber: false)
+        XCTAssertEqual(policies, [.onScreenOnly])
+    }
+
+    func testResolveImageViewerValidatedDownsampleScale_ClampsOutOfRangeValues() {
+        XCTAssertEqual(resolveImageViewerValidatedDownsampleScale(0), 0.1, accuracy: 0.001)
+        XCTAssertEqual(resolveImageViewerValidatedDownsampleScale(2), 1, accuracy: 0.001)
+    }
+
+    func testResolveImageViewerBlurRadiusForDownsample_ScalesRadiusWithDownsampleFactor() {
+        let radius = resolveImageViewerBlurRadiusForDownsample(
+            snapshotBlurRadius: 100,
+            downsampleScale: 0.35
+        )
+        XCTAssertEqual(radius, 35, accuracy: 0.001)
+    }
+
+    func testResolveImageViewerShouldRefreshBackdropSnapshot_SkipsSameFrameWhenSnapshotExists() {
+        let frame = NSRect(x: 0, y: 0, width: 1920, height: 1080)
+        XCTAssertFalse(
+            resolveImageViewerShouldRefreshBackdropSnapshot(
+                previousFrame: frame,
+                currentFrame: frame,
+                hasSnapshotImage: true,
+                forceRefresh: false
+            )
+        )
+    }
+
+    func testResolveImageViewerShouldRefreshBackdropSnapshot_RefreshesWhenFrameChangesOrImageMissing() {
+        let previous = NSRect(x: 0, y: 0, width: 1920, height: 1080)
+        let current = NSRect(x: 10, y: 0, width: 1920, height: 1080)
+        XCTAssertTrue(
+            resolveImageViewerShouldRefreshBackdropSnapshot(
+                previousFrame: previous,
+                currentFrame: current,
+                hasSnapshotImage: true,
+                forceRefresh: false
+            )
+        )
+        XCTAssertTrue(
+            resolveImageViewerShouldRefreshBackdropSnapshot(
+                previousFrame: previous,
+                currentFrame: previous,
+                hasSnapshotImage: false,
+                forceRefresh: false
+            )
+        )
+    }
+
+    func testResolveImageViewerShouldRefreshBackdropSnapshot_ForceRefreshAlwaysTrue() {
+        let frame = NSRect(x: 0, y: 0, width: 1920, height: 1080)
+        XCTAssertTrue(
+            resolveImageViewerShouldRefreshBackdropSnapshot(
+                previousFrame: frame,
+                currentFrame: frame,
+                hasSnapshotImage: true,
+                forceRefresh: true
+            )
+        )
+    }
+
+    func testResolveImageViewerOverlayWindowLevel_UsesFloatingLevelForStablePreview() {
+        XCTAssertEqual(
+            resolveImageViewerOverlayWindowLevel().rawValue,
+            NSWindow.Level.floating.rawValue
+        )
+    }
+
+    func testResolveImageViewerOverlayCollectionBehavior_UsesStableFullscreenAuxiliaryFlags() {
+        let behavior = resolveImageViewerOverlayCollectionBehavior()
+        XCTAssertTrue(behavior.contains(.moveToActiveSpace))
+        XCTAssertTrue(behavior.contains(.fullScreenAuxiliary))
+        XCTAssertFalse(behavior.contains(.canJoinAllSpaces))
+        XCTAssertFalse(behavior.contains(.stationary))
+    }
+
+    func testResolveImageViewerBackdropSnapshotScaling_UsesAxisIndependentScaleToGuaranteeCoverage() {
+        XCTAssertEqual(
+            resolveImageViewerBackdropSnapshotScaling(),
+            .scaleAxesIndependently
+        )
+    }
+
+    func testResolveImageViewerImageContainerBackgroundColor_RemovesMiddleOverlayLayer() {
+        XCTAssertNil(resolveImageViewerImageContainerBackgroundColor())
+    }
+
+    func testResolveImageViewerImageCornerRadius_UsesEightPoints() {
+        XCTAssertEqual(resolveImageViewerImageCornerRadius(), 8, accuracy: 0.001)
+    }
+
+    func testResolveImageViewerImageScaling_UsesProportionallyDownToPreventUpscale() {
+        XCTAssertEqual(resolveImageViewerImageScaling(), .scaleProportionallyDown)
+    }
+
+    func testResolveImageViewerMaxContainerSize_UsesOverlayCapsWithoutMinimumImageSize() {
+        let bounds = NSRect(x: 0, y: 0, width: 1200, height: 800)
+        let maxSize = resolveImageViewerMaxContainerSize(overlayBounds: bounds)
+        XCTAssertEqual(maxSize.width, 984, accuracy: 0.001) // 1200 * 0.82
+        XCTAssertEqual(maxSize.height, 624, accuracy: 0.001) // 800 * 0.78
+    }
+
+    func testResolveImageViewerDisplayedImageSize_DoesNotUpscaleSmallImage() {
+        let size = resolveImageViewerDisplayedImageSize(
+            imageSize: NSSize(width: 64, height: 48),
+            maxContainerSize: NSSize(width: 900, height: 700)
+        )
+        XCTAssertEqual(size.width, 64, accuracy: 0.001)
+        XCTAssertEqual(size.height, 48, accuracy: 0.001)
+    }
+
+    func testResolveImageViewerDisplayedImageSize_DownscalesLargeImageToContainer() {
+        let size = resolveImageViewerDisplayedImageSize(
+            imageSize: NSSize(width: 1600, height: 1200),
+            maxContainerSize: NSSize(width: 400, height: 300)
+        )
+        XCTAssertEqual(size.width, 400, accuracy: 0.001)
+        XCTAssertEqual(size.height, 300, accuracy: 0.001)
+    }
+
+    func testResolveImageViewerDisplayedImageSize_PreservesAspectRatioForTallImage() {
+        let size = resolveImageViewerDisplayedImageSize(
+            imageSize: NSSize(width: 600, height: 1200),
+            maxContainerSize: NSSize(width: 400, height: 300)
+        )
+        XCTAssertEqual(size.width, 150, accuracy: 0.001)
+        XCTAssertEqual(size.height, 300, accuracy: 0.001)
+    }
+
+    func testResolveImageViewerShouldCloseOnBackgroundClick_WhenHitViewIsNil_ReturnsTrue() {
+        let imageView = NSView(frame: .zero)
+        XCTAssertTrue(
+            resolveImageViewerShouldCloseOnBackgroundClick(
+                hitView: nil,
+                imageView: imageView,
+                interactiveViews: []
+            )
+        )
+    }
+
+    func testResolveImageViewerShouldCloseOnBackgroundClick_WhenHitImageViewOrDescendant_ReturnsFalse() {
+        let imageView = NSView(frame: .zero)
+        let imageSubview = NSView(frame: .zero)
+        imageView.addSubview(imageSubview)
+
+        XCTAssertFalse(
+            resolveImageViewerShouldCloseOnBackgroundClick(
+                hitView: imageView,
+                imageView: imageView,
+                interactiveViews: []
+            )
+        )
+        XCTAssertFalse(
+            resolveImageViewerShouldCloseOnBackgroundClick(
+                hitView: imageSubview,
+                imageView: imageView,
+                interactiveViews: []
+            )
+        )
+    }
+
+    func testResolveImageViewerShouldCloseOnBackgroundClick_WhenHitButtonArea_ReturnsFalse() {
+        let imageView = NSView(frame: .zero)
+        let actionRow = NSStackView()
+        let button = NSButton(title: "Copy", target: nil, action: nil)
+        actionRow.addSubview(button)
+
+        XCTAssertFalse(
+            resolveImageViewerShouldCloseOnBackgroundClick(
+                hitView: button,
+                imageView: imageView,
+                interactiveViews: [actionRow]
+            )
+        )
+    }
+
+    func testResolveImageViewerShouldCloseOnBackgroundClick_WhenHitBackgroundView_ReturnsTrue() {
+        let imageView = NSView(frame: .zero)
+        let backgroundView = NSView(frame: .zero)
+        let actionRow = NSStackView()
+
+        XCTAssertTrue(
+            resolveImageViewerShouldCloseOnBackgroundClick(
+                hitView: backgroundView,
+                imageView: imageView,
+                interactiveViews: [actionRow]
+            )
+        )
+    }
+
+    func testResolveImageViewerNavigationButtonAlpha_WhenEnabled_UsesFullOpacity() {
+        XCTAssertEqual(
+            resolveImageViewerNavigationButtonAlpha(isEnabled: true),
+            1.0,
+            accuracy: 0.001
+        )
+    }
+
+    func testResolveImageViewerNavigationButtonAlpha_WhenDisabled_UsesLowerOpacity() {
+        XCTAssertEqual(
+            resolveImageViewerNavigationButtonAlpha(isEnabled: false),
+            0.28,
+            accuracy: 0.001
+        )
+    }
+
+    func testResolveImageViewerCGCaptureRect_ConvertsAppKitToCGCoordinates() {
+        let appKitRect = NSRect(x: -1920, y: -30, width: 1920, height: 1080)
+        let primaryHeight: CGFloat = 1050
+        let cgRect = resolveImageViewerCGCaptureRect(
+            appKitRect: appKitRect,
+            primaryScreenHeight: primaryHeight
+        )
+        XCTAssertEqual(cgRect.origin.x, -1920, accuracy: 0.01)
+        XCTAssertEqual(cgRect.origin.y, 0, accuracy: 0.01)
+        XCTAssertEqual(cgRect.width, 1920, accuracy: 0.01)
+        XCTAssertEqual(cgRect.height, 1080, accuracy: 0.01)
+    }
+
+    func testResolveImageViewerCGCaptureRect_PrimaryScreenIsIdentity() {
+        let appKitRect = NSRect(x: 0, y: 0, width: 1680, height: 1050)
+        let primaryHeight: CGFloat = 1050
+        let cgRect = resolveImageViewerCGCaptureRect(
+            appKitRect: appKitRect,
+            primaryScreenHeight: primaryHeight
+        )
+        XCTAssertEqual(cgRect.origin.x, 0, accuracy: 0.01)
+        XCTAssertEqual(cgRect.origin.y, 0, accuracy: 0.01)
+        XCTAssertEqual(cgRect.width, 1680, accuracy: 0.01)
+        XCTAssertEqual(cgRect.height, 1050, accuracy: 0.01)
     }
 
     func testResolveImageViewerBackdropRenderMode_UsesSnapshotWhenReduceTransparencyEnabled() {
@@ -681,9 +1124,18 @@ final class LibraryWindowControllerTests: XCTestCase {
         XCTAssertNil(resolveImageViewerIndexAfterDelete(currentIndex: 0, itemCountAfterDeletion: 0))
     }
 
+    func testResolveDeleteRequiresConfirmation_WhenSingleItem_ReturnsFalse() {
+        XCTAssertFalse(resolveDeleteRequiresConfirmation(itemCount: 1))
+    }
+
+    func testResolveDeleteRequiresConfirmation_WhenMultipleItems_ReturnsTrue() {
+        XCTAssertTrue(resolveDeleteRequiresConfirmation(itemCount: 2))
+    }
+
     func testResolveLibraryActionState_WhenNoSelection_HidesAndDisablesAllActions() {
         let state = resolveLibraryActionState(selectionCount: 0, allSelectedKept: false)
         XCTAssertFalse(state.showsSelectionActions)
+        XCTAssertFalse(state.copyEnabled)
         XCTAssertFalse(state.openEnabled)
         XCTAssertFalse(state.keepEnabled)
         XCTAssertFalse(state.deleteEnabled)
@@ -693,6 +1145,7 @@ final class LibraryWindowControllerTests: XCTestCase {
     func testResolveLibraryActionState_WhenSingleSelection_EnablesAllActions() {
         let state = resolveLibraryActionState(selectionCount: 1, allSelectedKept: false)
         XCTAssertTrue(state.showsSelectionActions)
+        XCTAssertTrue(state.copyEnabled)
         XCTAssertTrue(state.openEnabled)
         XCTAssertTrue(state.keepEnabled)
         XCTAssertTrue(state.deleteEnabled)
@@ -702,10 +1155,69 @@ final class LibraryWindowControllerTests: XCTestCase {
     func testResolveLibraryActionState_WhenMultipleSelection_DisablesOpen() {
         let state = resolveLibraryActionState(selectionCount: 3, allSelectedKept: true)
         XCTAssertTrue(state.showsSelectionActions)
+        XCTAssertTrue(state.copyEnabled)
         XCTAssertFalse(state.openEnabled)
         XCTAssertTrue(state.keepEnabled)
         XCTAssertTrue(state.deleteEnabled)
         XCTAssertEqual(state.keepTitle, "Unkeep")
+    }
+
+    func testResolveLibraryCopyHUDKey_WhenSingleImage_UsesSingleKey() {
+        XCTAssertEqual(resolveLibraryCopyHUDKey(copiedCount: 1), "hud.image_copied")
+    }
+
+    func testResolveLibraryCopyHUDKey_WhenMultipleImages_UsesPluralKey() {
+        XCTAssertEqual(resolveLibraryCopyHUDKey(copiedCount: 3), "hud.images_copied")
+    }
+
+    func testClipboardServiceCopyImages_WhenEmpty_ThrowsWriteFailed() {
+        XCTAssertThrowsError(try ClipboardService.shared.copy(images: [], prompt: "")) { error in
+            guard case ClipboardError.writeFailed = error else {
+                XCTFail("Expected ClipboardError.writeFailed, got \(error)")
+                return
+            }
+        }
+    }
+
+    func testResolveOverlayMouseUpAction_WhenNoSelection_SchedulesCancel() {
+        XCTAssertEqual(
+            resolveOverlayMouseUpAction(clickCount: 1, selectionRectGlobal: nil),
+            .scheduleCancel
+        )
+    }
+
+    func testResolveOverlayMouseUpAction_WhenTinySelection_CancelsImmediately() {
+        XCTAssertEqual(
+            resolveOverlayMouseUpAction(
+                clickCount: 1,
+                selectionRectGlobal: CGRect(x: 10, y: 10, width: 2, height: 2)
+            ),
+            .cancelNow
+        )
+    }
+
+    func testResolveOverlayMouseUpAction_WhenValidSelection_CapturesSelection() {
+        XCTAssertEqual(
+            resolveOverlayMouseUpAction(
+                clickCount: 1,
+                selectionRectGlobal: CGRect(x: 10, y: 10, width: 50, height: 40)
+            ),
+            .captureSelection(CGRect(x: 10, y: 10, width: 50, height: 40))
+        )
+    }
+
+    func testResolveOverlayMouseUpAction_WhenDoubleClick_CapturesFullScreen() {
+        XCTAssertEqual(
+            resolveOverlayMouseUpAction(
+                clickCount: 2,
+                selectionRectGlobal: nil
+            ),
+            .captureFullScreen
+        )
+    }
+
+    func testShouldShowOverlayInteractionHint_AlwaysReturnsTrue() {
+        XCTAssertTrue(shouldShowOverlayInteractionHint())
     }
 
     func testResolveLibraryMarqueeSelection_WhenCommandNotActive_ReplacesSelection() {
