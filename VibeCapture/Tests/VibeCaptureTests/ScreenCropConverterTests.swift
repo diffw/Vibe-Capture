@@ -1179,6 +1179,60 @@ final class LibraryWindowControllerTests: XCTestCase {
         }
     }
 
+    func testClipboardServiceCopyImagesWithFileURLs_WritesFileURLAndBitmapTypes() throws {
+        let fileManager = FileManager.default
+        let temporaryFolderURL = fileManager.temporaryDirectory.appendingPathComponent(
+            "vibecap-clipboard-types-tests-\(UUID().uuidString)",
+            isDirectory: true
+        )
+        try fileManager.createDirectory(at: temporaryFolderURL, withIntermediateDirectories: true)
+        defer { try? fileManager.removeItem(at: temporaryFolderURL) }
+
+        let fileURL = try writeImage(named: "clipboard-types.png", in: temporaryFolderURL)
+        guard let image = NSImage(contentsOf: fileURL) else {
+            XCTFail("Expected NSImage from test fixture.")
+            return
+        }
+
+        try ClipboardService.shared.copy(images: [image], fileURLs: [fileURL], prompt: "")
+
+        guard let item = NSPasteboard.general.pasteboardItems?.first else {
+            XCTFail("Expected at least one pasteboard item.")
+            return
+        }
+
+        XCTAssertTrue(item.types.contains(.fileURL))
+        XCTAssertTrue(item.types.contains(.png) || item.types.contains(.tiff))
+    }
+
+    func testClipboardServiceCopyImagesWithFileURLs_WritesOneItemPerFile() throws {
+        let fileManager = FileManager.default
+        let temporaryFolderURL = fileManager.temporaryDirectory.appendingPathComponent(
+            "vibecap-clipboard-count-tests-\(UUID().uuidString)",
+            isDirectory: true
+        )
+        try fileManager.createDirectory(at: temporaryFolderURL, withIntermediateDirectories: true)
+        defer { try? fileManager.removeItem(at: temporaryFolderURL) }
+
+        let fileURL0 = try writeImage(named: "clipboard-count-0.png", in: temporaryFolderURL)
+        let fileURL1 = try writeImage(named: "clipboard-count-1.png", in: temporaryFolderURL)
+        guard
+            let image0 = NSImage(contentsOf: fileURL0),
+            let image1 = NSImage(contentsOf: fileURL1)
+        else {
+            XCTFail("Expected NSImage fixtures for multi-copy test.")
+            return
+        }
+
+        try ClipboardService.shared.copy(
+            images: [image0, image1],
+            fileURLs: [fileURL0, fileURL1],
+            prompt: ""
+        )
+
+        XCTAssertEqual(NSPasteboard.general.pasteboardItems?.count, 2)
+    }
+
     func testResolveOverlayMouseUpAction_WhenNoSelection_SchedulesCancel() {
         XCTAssertEqual(
             resolveOverlayMouseUpAction(clickCount: 1, selectionRectGlobal: nil),
@@ -1218,6 +1272,27 @@ final class LibraryWindowControllerTests: XCTestCase {
 
     func testShouldShowOverlayInteractionHint_AlwaysReturnsTrue() {
         XCTAssertTrue(shouldShowOverlayInteractionHint())
+    }
+
+    func testResolveLibraryCopyStrategy_WhenSingleSelection_UsesDirectClipboard() {
+        XCTAssertEqual(
+            resolveLibraryCopyStrategy(selectionCount: 1, hasAccessibilityPermission: false),
+            .directClipboard
+        )
+    }
+
+    func testResolveLibraryCopyStrategy_WhenMultiSelectionAndHasAccessibility_UsesArmedAutoPaste() {
+        XCTAssertEqual(
+            resolveLibraryCopyStrategy(selectionCount: 3, hasAccessibilityPermission: true),
+            .armedAutoPaste
+        )
+    }
+
+    func testResolveLibraryCopyStrategy_WhenMultiSelectionWithoutAccessibility_RequiresPermission() {
+        XCTAssertEqual(
+            resolveLibraryCopyStrategy(selectionCount: 3, hasAccessibilityPermission: false),
+            .requiresAccessibilityPermission
+        )
     }
 
     func testResolveLibraryMarqueeSelection_WhenCommandNotActive_ReplacesSelection() {

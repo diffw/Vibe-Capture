@@ -124,6 +124,19 @@ func resolveLibraryCopyHUDKey(copiedCount: Int) -> String {
     copiedCount > 1 ? "hud.images_copied" : "hud.image_copied"
 }
 
+enum LibraryCopyStrategy: Equatable {
+    case directClipboard
+    case armedAutoPaste
+    case requiresAccessibilityPermission
+}
+
+func resolveLibraryCopyStrategy(selectionCount: Int, hasAccessibilityPermission: Bool) -> LibraryCopyStrategy {
+    if selectionCount <= 1 {
+        return .directClipboard
+    }
+    return hasAccessibilityPermission ? .armedAutoPaste : .requiresAccessibilityPermission
+}
+
 func resolveLibraryKeyboardAction(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags) -> LibraryKeyboardAction {
     if modifierFlags.contains(.command), (keyCode == 51 || keyCode == 117) {
         return .deleteSelection
@@ -1198,7 +1211,29 @@ private final class LibraryViewController: NSViewController, NSCollectionViewDat
         }
         do {
             let images = try indexes.map { try fileService.loadImage(for: items[$0]) }
-            try ClipboardService.shared.copy(images: images, prompt: "")
+            let strategy = resolveLibraryCopyStrategy(
+                selectionCount: images.count,
+                hasAccessibilityPermission: ClipboardAutoPasteService.shared.hasAccessibilityPermission
+            )
+
+            switch strategy {
+            case .directClipboard:
+                let fileURLs = indexes.map { items[$0].url }
+                try ClipboardService.shared.copy(images: images, fileURLs: fileURLs, prompt: "")
+            case .armedAutoPaste:
+                ClipboardAutoPasteService.shared.updateConfig { config in
+                    config.repeatOnEveryUserPaste = true
+                    config.restoreClipboardAfter = false
+                }
+                ClipboardAutoPasteService.shared.prepare(text: "", images: images)
+                _ = ClipboardAutoPasteService.shared.arm()
+            case .requiresAccessibilityPermission:
+                ClipboardAutoPasteService.shared.requestAccessibilityPermission()
+                PermissionsUI.openAccessibilitySettings()
+                HUDService.shared.show(message: L("permission.accessibility.message"), style: .error, duration: 1.4)
+                return
+            }
+
             let toastKey = resolveLibraryCopyHUDKey(copiedCount: images.count)
             let message = images.count > 1 ? L(toastKey, images.count) : L(toastKey)
             HUDService.shared.show(message: message, style: .success, duration: 1.0)

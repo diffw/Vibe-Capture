@@ -733,6 +733,10 @@ final class CaptureModalViewController: NSViewController, NSTextViewDelegate, An
             return true
         }
 
+        ClipboardAutoPasteService.shared.updateConfig { config in
+            config.repeatOnEveryUserPaste = false
+            config.restoreClipboardAfter = true
+        }
         ClipboardAutoPasteService.shared.prepare(text: prompt, images: [finalImage])
         ClipboardAutoPasteService.shared.arm()
         HUDService.shared.show(message: L("hud.image_prompt_copied"), style: .success, duration: 1.0)

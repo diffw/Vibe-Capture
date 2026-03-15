@@ -90,5 +90,90 @@ final class ClipboardAutoPasteCoreTests: XCTestCase {
             .restoreClipboard,
         ])
     }
+
+    func testArmWithoutPrompt_PrimesFirstImageBeforeUserPaste() {
+        var core = ClipboardAutoPasteCore()
+        core.config = .init(delayBetweenPastes: 0.25, armTimeoutSeconds: 10, restoreClipboardAfter: true)
+        core.prepare(text: "", imageCount: 2)
+
+        let effects = core.arm()
+
+        XCTAssertEqual(core.state, .armed)
+        XCTAssertEqual(effects, [
+            .captureClipboard,
+            .writeImageOnly(index: 0),
+            .startMonitoring,
+            .startTimeout(10),
+        ])
+    }
+
+    func testUserPasteDetectedWithoutPrompt_OneImageOnlyRestoresClipboard() {
+        var core = ClipboardAutoPasteCore()
+        core.config = .init(delayBetweenPastes: 0.3, armTimeoutSeconds: 10, restoreClipboardAfter: true, userPasteSettlingDelay: 0.25)
+        core.prepare(text: "", imageCount: 1)
+        _ = core.arm()
+
+        let effects = core.userPasteDetected()
+
+        XCTAssertEqual(core.state, .idle)
+        XCTAssertEqual(effects, [
+            .stopMonitoring,
+            .cancelTimeout,
+            .scheduleRestoreClipboard(after: 0.3),
+        ])
+    }
+
+    func testUserPasteDetectedWithoutPrompt_TwoImagesSchedulesSecondImagePaste() {
+        var core = ClipboardAutoPasteCore()
+        core.config = .init(delayBetweenPastes: 0.4, armTimeoutSeconds: 10, restoreClipboardAfter: true, userPasteSettlingDelay: 0.2)
+        core.prepare(text: "", imageCount: 2)
+        _ = core.arm()
+
+        let effects = core.userPasteDetected()
+
+        XCTAssertEqual(core.state, .autoPasting(nextIndex: 1))
+        XCTAssertEqual(effects, [
+            .stopMonitoring,
+            .cancelTimeout,
+            .scheduleNextPaste(after: 0.2),
+        ])
+    }
+
+    func testRepeatMode_RearmsAfterCycleWithoutRestoringClipboard() {
+        var core = ClipboardAutoPasteCore()
+        core.config = .init(
+            delayBetweenPastes: 0.3,
+            armTimeoutSeconds: 10,
+            restoreClipboardAfter: false,
+            repeatOnEveryUserPaste: true,
+            userPasteSettlingDelay: 0.2
+        )
+        core.prepare(text: "", imageCount: 3)
+        _ = core.arm()
+
+        let first = core.userPasteDetected()
+        XCTAssertEqual(first, [
+            .stopMonitoring,
+            .cancelTimeout,
+            .scheduleNextPaste(after: 0.2),
+        ])
+
+        let second = core.autoPasteTick()
+        XCTAssertEqual(second, [
+            .writeImageOnly(index: 1),
+            .simulatePaste,
+            .scheduleNextPaste(after: 0.3),
+        ])
+
+        let third = core.autoPasteTick()
+        XCTAssertEqual(core.state, .armed)
+        XCTAssertEqual(third, [
+            .writeImageOnly(index: 2),
+            .simulatePaste,
+            .writeImageOnly(index: 0),
+            .startMonitoring,
+            .startTimeout(10),
+        ])
+    }
 }
 

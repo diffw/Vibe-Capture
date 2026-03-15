@@ -60,13 +60,14 @@ final class ClipboardAutoPasteService {
         core.prepare(text: text, imageCount: preparedImagesPNG.count)
     }
 
-    func arm() {
+    @discardableResult
+    func arm() -> Bool {
         guard hasAccessibilityPermission else {
             requestAccessibilityPermission()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 PermissionsUI.openAccessibilitySettings()
             }
-            return
+            return false
         }
 
         disarm(reason: "Re-arm")
@@ -78,6 +79,7 @@ final class ClipboardAutoPasteService {
             userInfo: ["timeoutSeconds": core.config.armTimeoutSeconds]
         )
         execute(core.arm(), token: sequenceToken)
+        return true
     }
 
     func disarm(reason: String) {

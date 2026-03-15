@@ -40,6 +40,35 @@
 
 ---
 
+## T-009 支持 Terminal 粘贴（Image + Prompt）
+- owner: human
+- priority: P0
+- status: todo
+- blocked: no
+- type: feature
+- area: 截图复制&粘贴
+- description: 1）保持目前对可视化编辑器的图片复制/粘贴支持；2）当用户将复制内容粘贴到任意 Terminal 工具时，粘贴为图片本地路径（如 /Users/diffwang/Desktop/VibeCap/VC\ 20260314-162840.png）；3）当用户复制内容包含「图片 + Prompt」时，也支持在 Terminal 中粘贴。
+- depends_on: []
+- acceptance:
+  - [ ] 保持现有可视化编辑器粘贴能力不回退
+  - [ ] 在任意 Terminal 中可粘贴图片本地路径
+  - [ ] 若复制时带有 Prompt，粘贴到 Terminal 时也能包含 Prompt 内容
+- context_files: []
+- runbook: []
+- updated_at: 2026-03-15
+- assignee: ai
+
+### AI Execution Log
+- start:
+- finish:
+- plan:
+- changes:
+- tests:
+- artifacts:
+- outcome:
+
+---
+
 ## T-007 支持多张图片的复制
 - owner: human
 - priority: P1
